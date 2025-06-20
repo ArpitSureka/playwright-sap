@@ -1,5 +1,5 @@
 // Copyright 2014 The Chromium Authors. All rights reserved.
-// Modifications copyright (c) Microsoft Corporation.
+// Modifications Copyright (c) Arpit Sureka.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are

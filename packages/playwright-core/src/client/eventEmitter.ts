@@ -1,6 +1,6 @@
 /**
  * Copyright Joyent, Inc. and other Node contributors.
- * Modifications copyright (c) Microsoft Corporation.
+ * Modifications Copyright (c) Arpit Sureka.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the

@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2010, The WebM Project authors. All rights reserved.
  * Copyright (c) 2013 The Chromium Authors. All rights reserved.
- * Copyright (C) 2020 Microsoft Corporation.
+ * Copyright (C) 2020 Arpit Sureka
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions

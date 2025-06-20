@@ -10321,7 +10321,7 @@ index 0000000000000000000000000000000000000000..5fabe06a3289689246c36dfd96eb9900
 +++ b/Source/WebKit/UIProcess/API/Cocoa/_WKBrowserInspector.h
 @@ -0,0 +1,55 @@
 +/*
-+ * Copyright (C) 2019 Microsoft Corporation.
++ * Copyright (C) 2019 Arpit Sureka
 + *
 + * Redistribution and use in source and binary forms, with or without
 + * modification, are permitted provided that the following conditions
@@ -10382,7 +10382,7 @@ index 0000000000000000000000000000000000000000..69eb9c6aa30beb8ea21a0ef647e46304
 +++ b/Source/WebKit/UIProcess/API/Cocoa/_WKBrowserInspector.mm
 @@ -0,0 +1,60 @@
 +/*
-+ * Copyright (C) 2019 Microsoft Corporation.
++ * Copyright (C) 2019 Arpit Sureka
 + *
 + * Redistribution and use in source and binary forms, with or without
 + * modification, are permitted provided that the following conditions
@@ -10507,7 +10507,7 @@ index 0000000000000000000000000000000000000000..575245fc1f279a75f7e74c26652cf772
 +++ b/Source/WebKit/UIProcess/API/glib/WebKitBrowserInspector.cpp
 @@ -0,0 +1,158 @@
 +/*
-+ * Copyright (C) 2019 Microsoft Corporation.
++ * Copyright (C) 2019 Arpit Sureka
 + *
 + * Redistribution and use in source and binary forms, with or without
 + * modification, are permitted provided that the following conditions
@@ -10671,7 +10671,7 @@ index 0000000000000000000000000000000000000000..e0b1da48465c850f541532ed961d1b77
 +++ b/Source/WebKit/UIProcess/API/glib/WebKitBrowserInspectorPrivate.h
 @@ -0,0 +1,32 @@
 +/*
-+ * Copyright (C) 2019 Microsoft Corporation.
++ * Copyright (C) 2019 Arpit Sureka
 + *
 + * Redistribution and use in source and binary forms, with or without
 + * modification, are permitted provided that the following conditions
@@ -10971,7 +10971,7 @@ index 0000000000000000000000000000000000000000..45221096280941d747ef3f46749b1466
 +++ b/Source/WebKit/UIProcess/API/gtk/WebKitBrowserInspector.h
 @@ -0,0 +1,81 @@
 +/*
-+ * Copyright (C) 2019 Microsoft Corporation.
++ * Copyright (C) 2019 Arpit Sureka
 + *
 + * Redistribution and use in source and binary forms, with or without
 + * modification, are permitted provided that the following conditions
@@ -11309,7 +11309,7 @@ index 0000000000000000000000000000000000000000..273c5105cdf1638955cea01128c9bbab
 +++ b/Source/WebKit/UIProcess/API/wpe/WebKitBrowserInspector.h
 @@ -0,0 +1,81 @@
 +/*
-+ * Copyright (C) 2019 Microsoft Corporation.
++ * Copyright (C) 2019 Arpit Sureka
 + *
 + * Redistribution and use in source and binary forms, with or without
 + * modification, are permitted provided that the following conditions
@@ -11565,7 +11565,7 @@ index 0000000000000000000000000000000000000000..cfb57a48ce387b79613b757e2eb4de2c
 +++ b/Source/WebKit/UIProcess/BrowserInspectorPipe.cpp
 @@ -0,0 +1,61 @@
 +/*
-+ * Copyright (C) 2019 Microsoft Corporation.
++ * Copyright (C) 2019 Arpit Sureka
 + *
 + * Redistribution and use in source and binary forms, with or without
 + * modification, are permitted provided that the following conditions
@@ -11632,7 +11632,7 @@ index 0000000000000000000000000000000000000000..cd66887de171cda7d15a8e4dc6dbff63
 +++ b/Source/WebKit/UIProcess/BrowserInspectorPipe.h
 @@ -0,0 +1,38 @@
 +/*
-+ * Copyright (C) 2019 Microsoft Corporation.
++ * Copyright (C) 2019 Arpit Sureka
 + *
 + * Redistribution and use in source and binary forms, with or without
 + * modification, are permitted provided that the following conditions
@@ -12403,7 +12403,7 @@ index 0000000000000000000000000000000000000000..55a0cf8cd5be1cdd33165fe904a8f0ff
 +++ b/Source/WebKit/UIProcess/Inspector/Agents/InspectorScreencastAgent.cpp
 @@ -0,0 +1,392 @@
 +/*
-+ * Copyright (C) 2020 Microsoft Corporation.
++ * Copyright (C) 2020 Arpit Sureka
 + *
 + * Redistribution and use in source and binary forms, with or without
 + * modification, are permitted provided that the following conditions
@@ -12801,7 +12801,7 @@ index 0000000000000000000000000000000000000000..f53bb59c65a4ced0360e473fb9ed9a36
 +++ b/Source/WebKit/UIProcess/Inspector/Agents/InspectorScreencastAgent.h
 @@ -0,0 +1,109 @@
 +/*
-+ * Copyright (C) 2020 Microsoft Corporation.
++ * Copyright (C) 2020 Arpit Sureka
 + *
 + * Redistribution and use in source and binary forms, with or without
 + * modification, are permitted provided that the following conditions
@@ -12918,7 +12918,7 @@ index 0000000000000000000000000000000000000000..bec42378013c93ee6bd37f62a1d6a1c6
 +/*
 + * Copyright (c) 2010, The WebM Project authors. All rights reserved.
 + * Copyright (c) 2013 The Chromium Authors. All rights reserved.
-+ * Copyright (C) 2020 Microsoft Corporation.
++ * Copyright (C) 2020 Arpit Sureka
 + *
 + * Redistribution and use in source and binary forms, with or without
 + * modification, are permitted provided that the following conditions
@@ -13365,7 +13365,7 @@ index 0000000000000000000000000000000000000000..caf0474267c1bda6346f7b025b6646bb
 +++ b/Source/WebKit/UIProcess/Inspector/Agents/ScreencastEncoder.h
 @@ -0,0 +1,82 @@
 +/*
-+ * Copyright (C) 2020 Microsoft Corporation.
++ * Copyright (C) 2020 Arpit Sureka
 + *
 + * Redistribution and use in source and binary forms, with or without
 + * modification, are permitted provided that the following conditions
@@ -13454,7 +13454,7 @@ index 0000000000000000000000000000000000000000..9b269b356e206f0252245a1497adb0d0
 @@ -0,0 +1,69 @@
 +/*
 + * Copyright (c) 2014 The WebM project authors. All Rights Reserved.
-+ * Copyright (C) 2020 Microsoft Corporation.
++ * Copyright (C) 2020 Arpit Sureka
 + *
 + * Redistribution and use in source and binary forms, with or without
 + * modification, are permitted provided that the following conditions
@@ -13528,7 +13528,7 @@ index 0000000000000000000000000000000000000000..e2ce910f3fd7f587add552275b7e7176
 +++ b/Source/WebKit/UIProcess/Inspector/Agents/WebMFileWriter.h
 @@ -0,0 +1,53 @@
 +/*
-+ * Copyright (C) 2020 Microsoft Corporation.
++ * Copyright (C) 2020 Arpit Sureka
 + *
 + * Redistribution and use in source and binary forms, with or without
 + * modification, are permitted provided that the following conditions
@@ -14194,7 +14194,7 @@ index 0000000000000000000000000000000000000000..6a04ee480bc3a8270a7de20b1cd0da71
 +++ b/Source/WebKit/UIProcess/Inspector/mac/ScreencastEncoderMac.mm
 @@ -0,0 +1,55 @@
 +/*
-+ * Copyright (C) 2020 Microsoft Corporation.
++ * Copyright (C) 2020 Arpit Sureka
 + *
 + * Redistribution and use in source and binary forms, with or without
 + * modification, are permitted provided that the following conditions
@@ -14255,7 +14255,7 @@ index 0000000000000000000000000000000000000000..663f92f0df76042cf6385b056f8a917d
 +++ b/Source/WebKit/UIProcess/InspectorDialogAgent.cpp
 @@ -0,0 +1,88 @@
 +/*
-+ * Copyright (C) 2019 Microsoft Corporation.
++ * Copyright (C) 2019 Arpit Sureka
 + *
 + * Redistribution and use in source and binary forms, with or without
 + * modification, are permitted provided that the following conditions
@@ -14349,7 +14349,7 @@ index 0000000000000000000000000000000000000000..d0e11ed81a6257c011df23d5870da740
 +++ b/Source/WebKit/UIProcess/InspectorDialogAgent.h
 @@ -0,0 +1,70 @@
 +/*
-+ * Copyright (C) 2019 Microsoft Corporation.
++ * Copyright (C) 2019 Arpit Sureka
 + *
 + * Redistribution and use in source and binary forms, with or without
 + * modification, are permitted provided that the following conditions
@@ -14425,7 +14425,7 @@ index 0000000000000000000000000000000000000000..59827ffa02a8a3c7890ab0b5a8f54244
 +++ b/Source/WebKit/UIProcess/InspectorPlaywrightAgent.cpp
 @@ -0,0 +1,1011 @@
 +/*
-+ * Copyright (C) 2019 Microsoft Corporation.
++ * Copyright (C) 2019 Arpit Sureka
 + *
 + * Redistribution and use in source and binary forms, with or without
 + * modification, are permitted provided that the following conditions
@@ -15442,7 +15442,7 @@ index 0000000000000000000000000000000000000000..f9185788a118f57e98bec149909a206d
 +++ b/Source/WebKit/UIProcess/InspectorPlaywrightAgent.h
 @@ -0,0 +1,141 @@
 +/*
-+ * Copyright (C) 2019 Microsoft Corporation.
++ * Copyright (C) 2019 Arpit Sureka
 + *
 + * Redistribution and use in source and binary forms, with or without
 + * modification, are permitted provided that the following conditions
@@ -15589,7 +15589,7 @@ index 0000000000000000000000000000000000000000..e7a3dcc533294bb6e12f65d79b5b716b
 +++ b/Source/WebKit/UIProcess/InspectorPlaywrightAgentClient.h
 @@ -0,0 +1,73 @@
 +/*
-+ * Copyright (C) 2019 Microsoft Corporation.
++ * Copyright (C) 2019 Arpit Sureka
 + *
 + * Redistribution and use in source and binary forms, with or without
 + * modification, are permitted provided that the following conditions
@@ -15775,7 +15775,7 @@ index 0000000000000000000000000000000000000000..95b682567eba682f927317cd3327a531
 +++ b/Source/WebKit/UIProcess/PlaywrightFullScreenManagerProxyClient.cpp
 @@ -0,0 +1,64 @@
 +/*
-+ * Copyright (C) 2023 Microsoft Corporation.
++ * Copyright (C) 2023 Arpit Sureka
 + *
 + * Redistribution and use in source and binary forms, with or without
 + * modification, are permitted provided that the following conditions
@@ -15845,7 +15845,7 @@ index 0000000000000000000000000000000000000000..a8a92a6c5f4b03724decc97828291f6f
 +++ b/Source/WebKit/UIProcess/PlaywrightFullScreenManagerProxyClient.h
 @@ -0,0 +1,56 @@
 +/*
-+ * Copyright (C) 2023 Microsoft Corporation.
++ * Copyright (C) 2023 Arpit Sureka
 + *
 + * Redistribution and use in source and binary forms, with or without
 + * modification, are permitted provided that the following conditions
@@ -15919,7 +15919,7 @@ index 0000000000000000000000000000000000000000..b1ddac8c1442cb4da17f50d92599ef9a
 +++ b/Source/WebKit/UIProcess/RemoteInspectorPipe.cpp
 @@ -0,0 +1,230 @@
 +/*
-+ * Copyright (C) 2019 Microsoft Corporation.
++ * Copyright (C) 2019 Arpit Sureka
 + *
 + * Redistribution and use in source and binary forms, with or without
 + * modification, are permitted provided that the following conditions
@@ -16155,7 +16155,7 @@ index 0000000000000000000000000000000000000000..6d04f9290135069359ce6bf872654648
 +++ b/Source/WebKit/UIProcess/RemoteInspectorPipe.h
 @@ -0,0 +1,65 @@
 +/*
-+ * Copyright (C) 2019 Microsoft Corporation.
++ * Copyright (C) 2019 Arpit Sureka
 + *
 + * Redistribution and use in source and binary forms, with or without
 + * modification, are permitted provided that the following conditions
@@ -16238,7 +16238,7 @@ index 0000000000000000000000000000000000000000..0a8d10ae990997684766df46719c65aa
 +++ b/Source/WebKit/UIProcess/WebPageInspectorEmulationAgent.cpp
 @@ -0,0 +1,159 @@
 +/*
-+ * Copyright (C) 2019 Microsoft Corporation.
++ * Copyright (C) 2019 Arpit Sureka
 + *
 + * Redistribution and use in source and binary forms, with or without
 + * modification, are permitted provided that the following conditions
@@ -16403,7 +16403,7 @@ index 0000000000000000000000000000000000000000..d00d00ce8fd800dc1497b36b8a495c5b
 +++ b/Source/WebKit/UIProcess/WebPageInspectorEmulationAgent.h
 @@ -0,0 +1,76 @@
 +/*
-+ * Copyright (C) 2019 Microsoft Corporation.
++ * Copyright (C) 2019 Arpit Sureka
 + *
 + * Redistribution and use in source and binary forms, with or without
 + * modification, are permitted provided that the following conditions
@@ -16485,7 +16485,7 @@ index 0000000000000000000000000000000000000000..6cb20d95c1cd8682b025cfdf4ac74f49
 +++ b/Source/WebKit/UIProcess/WebPageInspectorInputAgent.cpp
 @@ -0,0 +1,394 @@
 +/*
-+ * Copyright (C) 2019 Microsoft Corporation.
++ * Copyright (C) 2019 Arpit Sureka
 + *
 + * Redistribution and use in source and binary forms, with or without
 + * modification, are permitted provided that the following conditions
@@ -16885,7 +16885,7 @@ index 0000000000000000000000000000000000000000..26a2a3c0791c334f811ec99a630314f8
 +++ b/Source/WebKit/UIProcess/WebPageInspectorInputAgent.h
 @@ -0,0 +1,87 @@
 +/*
-+ * Copyright (C) 2019 Microsoft Corporation.
++ * Copyright (C) 2019 Arpit Sureka
 + *
 + * Redistribution and use in source and binary forms, with or without
 + * modification, are permitted provided that the following conditions
@@ -18138,7 +18138,7 @@ index 0000000000000000000000000000000000000000..ac01ad1653b22a0f22c45a196659e68f
 +++ b/Source/WebKit/UIProcess/glib/InspectorPlaywrightAgentClientGLib.cpp
 @@ -0,0 +1,201 @@
 +/*
-+ * Copyright (C) 2019 Microsoft Corporation.
++ * Copyright (C) 2019 Arpit Sureka
 + *
 + * Redistribution and use in source and binary forms, with or without
 + * modification, are permitted provided that the following conditions
@@ -18345,7 +18345,7 @@ index 0000000000000000000000000000000000000000..441442d899e4088f5c24ae9f70c3e4ff
 +++ b/Source/WebKit/UIProcess/glib/InspectorPlaywrightAgentClientGLib.h
 @@ -0,0 +1,61 @@
 +/*
-+ * Copyright (C) 2019 Microsoft Corporation.
++ * Copyright (C) 2019 Arpit Sureka
 + *
 + * Redistribution and use in source and binary forms, with or without
 + * modification, are permitted provided that the following conditions
@@ -18515,7 +18515,7 @@ index 0000000000000000000000000000000000000000..bf78de1915940c2d3292514cf0fe4e68
 +++ b/Source/WebKit/UIProcess/gtk/InspectorTargetProxyGtk.cpp
 @@ -0,0 +1,48 @@
 +/*
-+ * Copyright (C) 2019 Microsoft Corporation.
++ * Copyright (C) 2019 Arpit Sureka
 + *
 + * Redistribution and use in source and binary forms, with or without
 + * modification, are permitted provided that the following conditions
@@ -18582,7 +18582,7 @@ index 0000000000000000000000000000000000000000..7d9672b0f831b5b7f6acf14ede26e1e8
 +++ b/Source/WebKit/UIProcess/gtk/WebPageInspectorEmulationAgentGtk.cpp
 @@ -0,0 +1,117 @@
 +/*
-+ * Copyright (C) 2019 Microsoft Corporation.
++ * Copyright (C) 2019 Arpit Sureka
 + *
 + * Redistribution and use in source and binary forms, with or without
 + * modification, are permitted provided that the following conditions
@@ -18705,7 +18705,7 @@ index 0000000000000000000000000000000000000000..36ab6e9aec9f8d79fb13a8a49beadaaf
 +++ b/Source/WebKit/UIProcess/gtk/WebPageInspectorInputAgentGtk.cpp
 @@ -0,0 +1,76 @@
 +/*
-+ * Copyright (C) 2019 Microsoft Corporation.
++ * Copyright (C) 2019 Arpit Sureka
 + *
 + * Redistribution and use in source and binary forms, with or without
 + * modification, are permitted provided that the following conditions
@@ -18804,7 +18804,7 @@ index 0000000000000000000000000000000000000000..2aabc02a4b5432f68a6e85fd96897756
 +++ b/Source/WebKit/UIProcess/mac/InspectorPlaywrightAgentClientMac.h
 @@ -0,0 +1,53 @@
 +/*
-+ * Copyright (C) 2019 Microsoft Corporation.
++ * Copyright (C) 2019 Arpit Sureka
 + *
 + * Redistribution and use in source and binary forms, with or without
 + * modification, are permitted provided that the following conditions
@@ -18863,7 +18863,7 @@ index 0000000000000000000000000000000000000000..a4b23bf4cf7c4cb6ef9d25d4121b20a6
 +++ b/Source/WebKit/UIProcess/mac/InspectorPlaywrightAgentClientMac.mm
 @@ -0,0 +1,96 @@
 +/*
-+ * Copyright (C) 2019 Microsoft Corporation.
++ * Copyright (C) 2019 Arpit Sureka
 + *
 + * Redistribution and use in source and binary forms, with or without
 + * modification, are permitted provided that the following conditions
@@ -18965,7 +18965,7 @@ index 0000000000000000000000000000000000000000..8adbd51bfecad2a273117588bf50f8f7
 +++ b/Source/WebKit/UIProcess/mac/InspectorTargetProxyMac.mm
 @@ -0,0 +1,42 @@
 +/*
-+ * Copyright (C) 2019 Microsoft Corporation.
++ * Copyright (C) 2019 Arpit Sureka
 + *
 + * Redistribution and use in source and binary forms, with or without
 + * modification, are permitted provided that the following conditions
@@ -19212,7 +19212,7 @@ index 0000000000000000000000000000000000000000..6113f4cd60a5d72b8ead61176cb43200
 +++ b/Source/WebKit/UIProcess/mac/WebPageInspectorEmulationAgentMac.mm
 @@ -0,0 +1,44 @@
 +/*
-+ * Copyright (C) 2019 Microsoft Corporation.
++ * Copyright (C) 2019 Arpit Sureka
 + *
 + * Redistribution and use in source and binary forms, with or without
 + * modification, are permitted provided that the following conditions
@@ -19262,7 +19262,7 @@ index 0000000000000000000000000000000000000000..dd52991f936aa1c046b404801ee97237
 +++ b/Source/WebKit/UIProcess/mac/WebPageInspectorInputAgentMac.mm
 @@ -0,0 +1,135 @@
 +/*
-+ * Copyright (C) 2019 Microsoft Corporation.
++ * Copyright (C) 2019 Arpit Sureka
 + *
 + * Redistribution and use in source and binary forms, with or without
 + * modification, are permitted provided that the following conditions
@@ -19459,7 +19459,7 @@ index 0000000000000000000000000000000000000000..4f54a9445e5a7ecdb750c5c521da4f39
 +++ b/Source/WebKit/UIProcess/win/InspectorPlaywrightAgentClientWin.cpp
 @@ -0,0 +1,89 @@
 +/*
-+ * Copyright (C) 2020 Microsoft Corporation.
++ * Copyright (C) 2020 Arpit Sureka
 + *
 + * Redistribution and use in source and binary forms, with or without
 + * modification, are permitted provided that the following conditions
@@ -19554,7 +19554,7 @@ index 0000000000000000000000000000000000000000..df18883b2b7d22d73540cb084d3dd529
 +++ b/Source/WebKit/UIProcess/win/InspectorPlaywrightAgentClientWin.h
 @@ -0,0 +1,60 @@
 +/*
-+ * Copyright (C) 2020 Microsoft Corporation.
++ * Copyright (C) 2020 Arpit Sureka
 + *
 + * Redistribution and use in source and binary forms, with or without
 + * modification, are permitted provided that the following conditions
@@ -19620,7 +19620,7 @@ index 0000000000000000000000000000000000000000..135a60361fa8fbf907382625e7c8dd4e
 +++ b/Source/WebKit/UIProcess/win/InspectorTargetProxyWin.cpp
 @@ -0,0 +1,36 @@
 +/*
-+ * Copyright (C) 2020 Microsoft Corporation.
++ * Copyright (C) 2020 Arpit Sureka
 + *
 + * Redistribution and use in source and binary forms, with or without
 + * modification, are permitted provided that the following conditions
@@ -19690,7 +19690,7 @@ index 0000000000000000000000000000000000000000..df55ee613ec085cb85ed12b45deff3a1
 +++ b/Source/WebKit/UIProcess/win/WebPageInspectorEmulationAgentWin.cpp
 @@ -0,0 +1,58 @@
 +/*
-+ * Copyright (C) 2020 Microsoft Corporation.
++ * Copyright (C) 2020 Arpit Sureka
 + *
 + * Redistribution and use in source and binary forms, with or without
 + * modification, are permitted provided that the following conditions
@@ -19754,7 +19754,7 @@ index 0000000000000000000000000000000000000000..8b474c730139b44a13c9d5b2d13ee204
 +++ b/Source/WebKit/UIProcess/win/WebPageInspectorInputAgentWin.cpp
 @@ -0,0 +1,55 @@
 +/*
-+ * Copyright (C) 2020 Microsoft Corporation.
++ * Copyright (C) 2020 Arpit Sureka
 + *
 + * Redistribution and use in source and binary forms, with or without
 + * modification, are permitted provided that the following conditions
@@ -19828,7 +19828,7 @@ index 0000000000000000000000000000000000000000..24da079059ed4a45131e18d7fbf56a29
 +++ b/Source/WebKit/UIProcess/wpe/InspectorTargetProxyWPE.cpp
 @@ -0,0 +1,40 @@
 +/*
-+ * Copyright (C) 2019 Microsoft Corporation.
++ * Copyright (C) 2019 Arpit Sureka
 + *
 + * Redistribution and use in source and binary forms, with or without
 + * modification, are permitted provided that the following conditions
@@ -20233,7 +20233,7 @@ index 0000000000000000000000000000000000000000..182398f24909cbc42cac897d66546991
 +++ b/Source/WebKit/UIProcess/wpe/WebPageInspectorEmulationAgentWPE.cpp
 @@ -0,0 +1,53 @@
 +/*
-+ * Copyright (C) 2019 Microsoft Corporation.
++ * Copyright (C) 2019 Arpit Sureka
 + *
 + * Redistribution and use in source and binary forms, with or without
 + * modification, are permitted provided that the following conditions
@@ -20292,7 +20292,7 @@ index 0000000000000000000000000000000000000000..a7d88f8c745f95af21db71dcfce368ba
 +++ b/Source/WebKit/UIProcess/wpe/WebPageInspectorInputAgentWPE.cpp
 @@ -0,0 +1,55 @@
 +/*
-+ * Copyright (C) 2019 Microsoft Corporation.
++ * Copyright (C) 2019 Arpit Sureka
 + *
 + * Redistribution and use in source and binary forms, with or without
 + * modification, are permitted provided that the following conditions

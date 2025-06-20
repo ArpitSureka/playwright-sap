@@ -1,7 +1,7 @@
 /**
  * @license
  * Copyright 2024 Google Inc.
- * Modifications copyright (c) Microsoft Corporation.
+ * Modifications Copyright (c) Arpit Sureka.
  * SPDX-License-Identifier: Apache-2.0
  */
 

@@ -1,6 +1,6 @@
 /**
  * The MIT License (MIT)
- * Modifications copyright (c) Microsoft Corporation.
+ * Modifications Copyright (c) Arpit Sureka.
  *
  * Copyright (c) 2016-2023 Isaac Z. Schlueter i@izs.me, James Talmage james@talmage.io (github.com/jamestalmage), and
  * Contributors

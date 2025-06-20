@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Copyright (c) Microsoft Corporation.
+ * Copyright (c) Arpit Sureka.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ const mixins = new Map();
 const COPYRIGHT_HEADER = `/*
  * MIT License
  *
- * Copyright (c) Microsoft Corporation.
+ * Copyright (c) Arpit Sureka.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal

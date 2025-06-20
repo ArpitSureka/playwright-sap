@@ -1872,7 +1872,7 @@ END OF @sinclair/typebox@0.27.8 AND INFORMATION
 =========================================
 MIT License
 
-    Copyright (c) Microsoft Corporation.
+    Copyright (c) Arpit Sureka.
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
@@ -1898,7 +1898,7 @@ END OF @types/istanbul-lib-coverage@2.0.6 AND INFORMATION
 =========================================
 MIT License
 
-    Copyright (c) Microsoft Corporation.
+    Copyright (c) Arpit Sureka.
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
@@ -1924,7 +1924,7 @@ END OF @types/istanbul-lib-report@3.0.3 AND INFORMATION
 =========================================
 MIT License
 
-    Copyright (c) Microsoft Corporation.
+    Copyright (c) Arpit Sureka.
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
@@ -1950,7 +1950,7 @@ END OF @types/istanbul-reports@3.0.4 AND INFORMATION
 =========================================
 MIT License
 
-    Copyright (c) Microsoft Corporation.
+    Copyright (c) Arpit Sureka.
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
@@ -1976,7 +1976,7 @@ END OF @types/node@22.5.4 AND INFORMATION
 =========================================
 MIT License
 
-    Copyright (c) Microsoft Corporation.
+    Copyright (c) Arpit Sureka.
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
@@ -2002,7 +2002,7 @@ END OF @types/stack-utils@2.0.3 AND INFORMATION
 =========================================
 MIT License
 
-    Copyright (c) Microsoft Corporation.
+    Copyright (c) Arpit Sureka.
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
@@ -2028,7 +2028,7 @@ END OF @types/yargs-parser@21.0.3 AND INFORMATION
 =========================================
 MIT License
 
-    Copyright (c) Microsoft Corporation.
+    Copyright (c) Arpit Sureka.
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
