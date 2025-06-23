@@ -33,6 +33,7 @@ import { createVueEngine } from './vueSelectorEngine';
 import { XPathEngine } from './xpathSelectorEngine';
 import { ConsoleAPI } from './consoleApi';
 import { UtilityScript } from './utilityScript';
+import { ui5RoleEngine } from './sap/ui5SelectorEngine';
 
 import type { AriaTemplateNode } from '@isomorphic/ariaSnapshot';
 import type { CSSComplexSelectorList } from '@isomorphic/cssParser';
@@ -230,6 +231,8 @@ export class InjectedScript {
     this._engines.set('internal:describe', this._createDescribeEngine());
     this._engines.set('aria-ref', this._createAriaRefEngine());
 
+    this._engines.set('ui5:role', ui5RoleEngine());
+
     for (const { name, source } of options.customEngines)
       this._engines.set(name, this.eval(source));
 
@@ -369,6 +372,8 @@ export class InjectedScript {
   private _queryEngineAll(part: ParsedSelectorPart, root: SelectorRoot): Element[] {
     const result = this._engines.get(part.name)!.queryAll(root, part.body);
     for (const element of result) {
+      if (!element)
+        throw this.createStacklessError(`Expected a Node but got ${Object.prototype.toString.call(element)}`);
       if (!('nodeName' in element))
         throw this.createStacklessError(`Expected a Node but got ${Object.prototype.toString.call(element)}`);
     }

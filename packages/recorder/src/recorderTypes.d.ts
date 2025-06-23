@@ -108,5 +108,15 @@ declare global {
     playwrightElementPicked: (elementInfo: ElementInfo, userGesture?: boolean) => void;
     playwrightSourcesEchoForTest: Source[];
     dispatch(data: any): Promise<void>;
+    sap: {
+      ui: {
+        require: (paths: string[], callback: (...args: any[]) => void) => void;
+        define: (name: string, dependencies: string[], factory: (...args: any[]) => any) => void;
+        getCore: () => {
+          byId: (id: string) => any;
+          getElementById: (id: string) => any;
+        }
+      }
+    }
   }
 }

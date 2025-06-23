@@ -19,10 +19,11 @@ import { escapeForAttributeSelector, escapeForTextSelector, escapeRegExp, quoteC
 import { closestCrossShadow, isElementVisible, isInsideScope, parentElementOrShadowHost } from './domUtils';
 import { beginAriaCaches, endAriaCaches, getAriaRole, getElementAccessibleName } from './roleUtils';
 import { elementText, getElementLabels } from './selectorUtils';
+import { buildSAPSelectors } from './sap/selectorGenerator';
 
 import type { InjectedScript } from './injectedScript';
 
-type SelectorToken = {
+export type SelectorToken = {
   engine: string;
   selector: string;
   score: number;  // Lower is better.
@@ -160,6 +161,7 @@ function generateSelectorFor(cache: Cache, injectedScript: InjectedScript, targe
     const allowNthMatch = element === targetElement;
 
     let textCandidates = allowText ? buildTextCandidates(injectedScript, element, element === targetElement) : [];
+    const sapCandidates = buildSAPSelectors(injectedScript, element);
     if (element !== targetElement) {
       // Do not use regex for parent elements (for performance).
       textCandidates = filterRegexTokens(textCandidates);
@@ -169,7 +171,7 @@ function generateSelectorFor(cache: Cache, injectedScript: InjectedScript, targe
         .map(token => [token]);
 
     // First check all text and non-text candidates for the element.
-    let result = chooseFirstSelector(injectedScript, options.root ?? targetElement.ownerDocument, element, [...textCandidates, ...noTextCandidates], allowNthMatch);
+    let result = chooseFirstSelector(injectedScript, options.root ?? targetElement.ownerDocument, element, [...textCandidates, ...noTextCandidates, ...sapCandidates], allowNthMatch);
 
     // Do not use regex for chained selectors (for performance).
     textCandidates = filterRegexTokens(textCandidates);

@@ -72,6 +72,16 @@ declare global {
     playwright?: any;
     inspect: (element: Element | undefined) => void;
     __pw_resume: () => Promise<void>;
+    sap: {
+      ui: {
+        require: (paths: string[], callback: (...args: any[]) => void) => void;
+        define: (name: string, dependencies: string[], factory: (...args: any[]) => any) => void;
+        getCore: () => {
+          byId: (id: string) => any;
+          getElementById: (id: string) => any;
+        }
+      }
+    }
   }
 }
 

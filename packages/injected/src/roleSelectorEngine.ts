@@ -55,7 +55,7 @@ function validateSupportedOp(attr: AttributeSelectorPart, ops: AttributeSelector
     throw new Error(`"${attr.name}" does not support "${attr.op}" matcher`);
 }
 
-function validateAttributes(attrs: AttributeSelectorPart[], role: string): RoleEngineOptions {
+export function validateAttributes(attrs: AttributeSelectorPart[], role: string): RoleEngineOptions {
   const options: RoleEngineOptions = { role };
   for (const attr of attrs) {
     switch (attr.name) {

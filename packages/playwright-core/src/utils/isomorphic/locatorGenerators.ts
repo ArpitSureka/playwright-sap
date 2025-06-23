@@ -21,7 +21,7 @@ import type { NestedSelectorBody } from './selectorParser';
 import type { ParsedSelector } from './selectorParser';
 
 export type Language = 'javascript' | 'python' | 'java' | 'csharp' | 'jsonl';
-export type LocatorType = 'default' | 'role' | 'text' | 'label' | 'placeholder' | 'alt' | 'title' | 'test-id' | 'nth' | 'first' | 'last' | 'visible' | 'has-text' | 'has-not-text' | 'has' | 'hasNot' | 'frame' | 'frame-locator' | 'and' | 'or' | 'chain';
+export type LocatorType = 'default' | 'role' | 'text' | 'label' | 'placeholder' | 'alt' | 'title' | 'test-id' | 'nth' | 'first' | 'last' | 'visible' | 'has-text' | 'has-not-text' | 'has' | 'hasNot' | 'frame' | 'frame-locator' | 'and' | 'or' | 'chain' | 'ui5:role';
 export type LocatorBase = 'page' | 'locator' | 'frame-locator';
 export type Quote = '\'' | '"' | '`';
 
@@ -215,6 +215,18 @@ function innerAsLocators(factory: LocatorFactory, parsed: ParsedSelector, isFram
         continue;
       }
     }
+    if (part.name === 'ui5:role') {
+      const attrSelector = parseAttributeSelector(part.body as string, true);
+      const options: LocatorOptions = { attrs: [] };
+      for (const attr of attrSelector.attributes) {
+        if (attr.name === 'id') {
+          options.exact = attr.caseSensitive;
+          options.name = attr.value;
+        }
+      }
+      tokens.push([factory.generateLocator(base, 'role', attrSelector.name, options)]);
+      continue;
+    }
 
     // Selectors can be prefixed with engine name, e.g. xpath=//foo
     let locatorPartWithEngine: string | undefined;
@@ -330,6 +342,19 @@ export class JavaScriptLocatorFactory implements LocatorFactory {
         return this.toCallWithExact('getByLabel', body, !!options.exact);
       case 'title':
         return this.toCallWithExact('getByTitle', body, !!options.exact);
+      case 'ui5:role':
+        const attrs2: string[] = [];
+        if (isRegExp(options.name)) {
+          attrs2.push(`name: ${this.regexToSourceString(options.name)}`);
+        } else if (typeof options.name === 'string') {
+          attrs2.push(`name: ${this.quote(options.name)}`);
+          if (options.exact)
+            attrs2.push(`exact: true`);
+        }
+        for (const { name, value } of options.attrs!)
+          attrs2.push(`${name}: ${typeof value === 'string' ? this.quote(value) : value}`);
+        const attrString2 = attrs2.length ? `, { ${attrs2.join(', ')} }` : '';
+        return `getByRoleSAP(${this.quote(body as string)}${attrString2})`;
       default:
         throw new Error('Unknown selector kind ' + kind);
     }

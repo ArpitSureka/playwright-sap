@@ -52,5 +52,15 @@ declare global {
     __ctDispatchFunction: (ordinal: number, args: any[]) => void;
     __pwUnwrapObject: (value: any) => Promise<any>;
     __pwTransformObject: (value: any, mapping: (v: any) => { result: any } | undefined) => any;
+    sap: {
+      ui: {
+        require: (paths: string[], callback: (...args: any[]) => void) => void;
+        define: (name: string, dependencies: string[], factory: (...args: any[]) => any) => void;
+        getCore: () => {
+          byId: (id: string) => any;
+          getElementById: (id: string) => any;
+        }
+      }
+    }
   }
 }
