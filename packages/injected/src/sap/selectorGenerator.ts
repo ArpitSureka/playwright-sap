@@ -18,7 +18,19 @@ import { InjectedScript } from '@injected/injectedScript';
 import { SelectorToken } from '@injected/selectorGenerator';
 
 import { buildUI5Selectors } from './ui5selectorGenerator';
+import { checkSAPSelector } from './common';
 
 export function buildSAPSelectors(injectedScript: InjectedScript, element: Element): SelectorToken[][] {
   return buildUI5Selectors(injectedScript, element);
+}
+
+export function chooseFirstSelectorSAP(window: Window, tokens: SelectorToken[], targetElement: Element, result: Element[]): SelectorToken[] | null {
+  let sapSelector = false;
+  tokens.forEach(selector => sapSelector = selector.engine === 'ui5:role' || sapSelector);
+  // Not written case for nth selector
+  if (sapSelector && result.length === 1) {
+    if (checkSAPSelector(result, targetElement, window))
+      return tokens;
+  }
+  return [];
 }

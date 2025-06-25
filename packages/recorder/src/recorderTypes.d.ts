@@ -16,6 +16,7 @@
 
 import type { Language } from '../../playwright-core/src/utils/isomorphic/locatorGenerators';
 import type { AriaTemplateNode } from '@isomorphic/ariaSnapshot';
+import type { SAP } from '@sap/types/sapWindow';
 
 export type Point = { x: number; y: number };
 
@@ -108,15 +109,6 @@ declare global {
     playwrightElementPicked: (elementInfo: ElementInfo, userGesture?: boolean) => void;
     playwrightSourcesEchoForTest: Source[];
     dispatch(data: any): Promise<void>;
-    sap: {
-      ui: {
-        require: (paths: string[], callback: (...args: any[]) => void) => void;
-        define: (name: string, dependencies: string[], factory: (...args: any[]) => any) => void;
-        getCore: () => {
-          byId: (id: string) => any;
-          getElementById: (id: string) => any;
-        }
-      }
-    }
+    sap : SAP;
   }
 }

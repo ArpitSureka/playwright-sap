@@ -16,15 +16,14 @@
 
 import { SelectorEngine, SelectorRoot } from '@injected/selectorEngine';
 import { parseAttributeSelector } from '@isomorphic/selectorParser';
-
-import { buildUI5TreeModel, checkSAPUI5, getElementFromUI5Id, UI5Node } from './common';
+import { buildUI5TreeModel, checkSAPUI5, getElementFromUI5Id, UI5Node } from '@sap/common';
 
 export function ui5RoleEngine(): SelectorEngine {
   return {
     queryAll: (scope: SelectorRoot, selector: string): Element[] => {
 
       const parsed = parseAttributeSelector(selector, true);
-      const role = parsed.name.toLowerCase();
+      const role = parsed.name;
 
       if (!role)
         throw new Error(`Role must not be empty`);
@@ -38,7 +37,6 @@ export function ui5RoleEngine(): SelectorEngine {
         throw new Error(`Window error UI5 Selector Engine`);
 
       const ui5DocumentTree = buildUI5TreeModel(document.body, window);
-
       if (parsed.attributes[0].name === 'id')
         return ui5IdSelectorEngine(ui5DocumentTree, role, parsed.attributes[0].value, window);
       else
@@ -52,9 +50,11 @@ export function ui5IdSelectorEngine(ui5Tree: UI5Node[], role: string, id: string
   const result: Element[] = [];
 
   function dfs(node: UI5Node) {
-    if (node.id === id && node.name === role && node.id === id)
-      result.push(getElementFromUI5Id(node.id, window));
-
+    if (node.id.toLowerCase() === id.toLowerCase() && node.name.toLowerCase() === role.toLowerCase()) {
+      const ele = getElementFromUI5Id(node.id, window);
+      if (ele)
+        result.push(ele);
+    }
     if (node.content && node.content.length > 0) {
       for (const child of node.content)
         dfs(child);

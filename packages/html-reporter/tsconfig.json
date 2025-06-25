@@ -21,6 +21,7 @@
       "@web/*": ["../web/src/*"],
       "@playwright/*": ["../playwright/src/*"],
       "@recorder/*": ["../recorder/src/*"],
+      "@sap/*": ["../sap/*"],
       "@testIsomorphic/*": ["../playwright/src/isomorphic/*"],
       "playwright-core/lib/*": ["../playwright-core/src/*"],
       "playwright/lib/*": ["../playwright/src/*"],

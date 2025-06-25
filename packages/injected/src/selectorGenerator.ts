@@ -19,7 +19,7 @@ import { escapeForAttributeSelector, escapeForTextSelector, escapeRegExp, quoteC
 import { closestCrossShadow, isElementVisible, isInsideScope, parentElementOrShadowHost } from './domUtils';
 import { beginAriaCaches, endAriaCaches, getAriaRole, getElementAccessibleName } from './roleUtils';
 import { elementText, getElementLabels } from './selectorUtils';
-import { buildSAPSelectors } from './sap/selectorGenerator';
+import { buildSAPSelectors, chooseFirstSelectorSAP } from './sap/selectorGenerator';
 
 import type { InjectedScript } from './injectedScript';
 
@@ -487,6 +487,11 @@ function chooseFirstSelector(injectedScript: InjectedScript, scope: Element | Do
       // We are the only match - found the best selector.
       return tokens;
     }
+
+    // SAP Selector Token
+    const sapSelectorToken = chooseFirstSelectorSAP(injectedScript.window, tokens, targetElement, result);
+    if (sapSelectorToken)
+      return sapSelectorToken;
 
     // Otherwise, perhaps we can use nth=?
     const index = result.indexOf(targetElement);

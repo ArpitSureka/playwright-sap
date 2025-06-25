@@ -372,8 +372,6 @@ export class InjectedScript {
   private _queryEngineAll(part: ParsedSelectorPart, root: SelectorRoot): Element[] {
     const result = this._engines.get(part.name)!.queryAll(root, part.body);
     for (const element of result) {
-      if (!element)
-        throw this.createStacklessError(`Expected a Node but got ${Object.prototype.toString.call(element)}`);
       if (!('nodeName' in element))
         throw this.createStacklessError(`Expected a Node but got ${Object.prototype.toString.call(element)}`);
     }

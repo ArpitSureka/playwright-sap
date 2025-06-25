@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import type { SAP } from '@sap/types/sapWindow';
+
 export type ImportRef = {
   __pw_type: 'importRef',
   id: string,
@@ -51,15 +53,6 @@ export class ImportRegistry {
 declare global {
   interface Window {
     __pwRegistry: ImportRegistry;
-    sap: {
-      ui: {
-        require: (paths: string[], callback: (...args: any[]) => void) => void;
-        define: (name: string, dependencies: string[], factory: (...args: any[]) => any) => void;
-        getCore: () => {
-          byId: (id: string) => any;
-          getElementById: (id: string) => any;
-        }
-      }
-    }
+    sap: SAP;
   }
 }

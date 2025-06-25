@@ -39,6 +39,7 @@ export default defineConfig({
       '@testIsomorphic': path.resolve(__dirname, '../playwright/src/isomorphic'),
       '@trace': path.resolve(__dirname, '../trace/src'),
       '@web': path.resolve(__dirname, '../web/src'),
+      '@sap': path.resolve(__dirname, '../sap'),
     },
   },
   build: {

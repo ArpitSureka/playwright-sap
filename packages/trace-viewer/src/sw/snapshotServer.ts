@@ -18,6 +18,7 @@ import type { URLSearchParams } from 'url';
 import type { SnapshotRenderer } from './snapshotRenderer';
 import type { SnapshotStorage } from './snapshotStorage';
 import type { ResourceSnapshot } from '@trace/snapshot';
+import type { SAP } from '@sap/types/sapWindow';
 
 type Point = { x: number, y: number };
 
@@ -120,16 +121,7 @@ export class SnapshotServer {
 declare global {
   interface Window {
     showSnapshot: (url: string, point?: Point) => Promise<void>;
-    sap: {
-      ui: {
-        require: (paths: string[], callback: (...args: any[]) => void) => void;
-        define: (name: string, dependencies: string[], factory: (...args: any[]) => any) => void;
-        getCore: () => {
-          byId: (id: string) => any;
-          getElementById: (id: string) => any;
-        }
-      }
-    }
+    sap: SAP;
   }
 }
 

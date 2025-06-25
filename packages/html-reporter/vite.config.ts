@@ -28,6 +28,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@web': path.resolve(__dirname, '../web/src'),
+      '@sap': path.resolve(__dirname, '../sap'),
     },
   },
   build: {

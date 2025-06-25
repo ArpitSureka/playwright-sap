@@ -21,6 +21,7 @@ import { escapeForTextSelector } from '@isomorphic/stringUtils';
 import type { InjectedScript } from './injectedScript';
 import type { Language } from '@isomorphic/locatorGenerators';
 import type { ByRoleOptions } from '@isomorphic/locatorUtils';
+import type { SAP } from '@sap/types/sapWindow';
 
 const selectorSymbol = Symbol('selector');
 
@@ -72,16 +73,7 @@ declare global {
     playwright?: any;
     inspect: (element: Element | undefined) => void;
     __pw_resume: () => Promise<void>;
-    sap: {
-      ui: {
-        require: (paths: string[], callback: (...args: any[]) => void) => void;
-        define: (name: string, dependencies: string[], factory: (...args: any[]) => any) => void;
-        getCore: () => {
-          byId: (id: string) => any;
-          getElementById: (id: string) => any;
-        }
-      }
-    }
+    sap: SAP;
   }
 }
 

@@ -16,6 +16,7 @@
 
 import { createGuid } from './utils/crypto';
 import { InvalidSelectorError,  parseSelector, stringifySelector, visitAllSelectorParts } from '../utils/isomorphic/selectorParser';
+import { _builtinEnginesSAP } from './sap/selectors';
 
 import type { ParsedSelector } from '../utils/isomorphic/selectorParser';
 import type * as channels from '@protocol/channels';
@@ -44,7 +45,7 @@ export class Selectors {
       'internal:and', 'internal:or', 'internal:chain',
       'role', 'internal:attr', 'internal:label', 'internal:text',
       'internal:role', 'internal:testid', 'internal:describe',
-      'aria-ref', 'ui5:role'
+      'aria-ref', ..._builtinEnginesSAP
     ]);
     this._builtinEnginesInMainWorld = new Set([
       '_react', '_vue',

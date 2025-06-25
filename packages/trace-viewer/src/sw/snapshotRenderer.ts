@@ -19,6 +19,7 @@ import { escapeHTMLAttribute, escapeHTML } from '@isomorphic/stringUtils';
 import type { FrameSnapshot, NodeNameAttributesChildNodesSnapshot, NodeSnapshot, RenderedFrameSnapshot, ResourceSnapshot, SubtreeReferenceSnapshot } from '@trace/snapshot';
 import type { PageEntry } from '../types/entries';
 import type { LRUCache } from './lruCache';
+import type { SAP } from '@sap/types/sapWindow';
 
 function findClosest<T>(items: T[], metric: (v: T) => number, target: number) {
   return items.find((item, index) => {
@@ -251,16 +252,7 @@ type FrameBoundingRectsInfo = {
 declare global {
   interface Window {
     __playwright_frame_bounding_rects__: FrameBoundingRectsInfo;
-    sap: {
-      ui: {
-        require: (paths: string[], callback: (...args: any[]) => void) => void;
-        define: (name: string, dependencies: string[], factory: (...args: any[]) => any) => void;
-        getCore: () => {
-          byId: (id: string) => any;
-          getElementById: (id: string) => any;
-        }
-      }
-    }
+   sap: SAP;
   }
 }
 

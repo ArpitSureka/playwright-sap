@@ -26,21 +26,13 @@ import type { Progress } from './progress';
 import type * as types from './types';
 import type { Rect } from '../utils/isomorphic/types';
 import type { ParsedSelector } from '../utils/isomorphic/selectorParser';
+import type { SAP } from '@sap/types/sapWindow';
 
 
 declare global {
   interface Window {
     __pwCleanupScreenshot?: () => void;
-    sap: {
-      ui: {
-        require: (paths: string[], callback: (...args: any[]) => void) => void;
-        define: (name: string, dependencies: string[], factory: (...args: any[]) => any) => void;
-        getCore: () => {
-          byId: (id: string) => any;
-          getElementById: (id: string) => any;
-        }
-      }
-    }
+    sap: SAP;
   }
 }
 

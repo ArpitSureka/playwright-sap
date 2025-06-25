@@ -16,9 +16,10 @@
 
 import { InjectedScript } from '@injected/injectedScript';
 import { SelectorToken } from '@injected/selectorGenerator';
+import { buildUI5TreeModel, checkSAPUI5, UI5errorMessage, UI5Node } from '@sap/common';
 
-import { buildUI5TreeModel, checkSAPUI5, UI5errorMessage, UI5Node } from './common';
 
+// Builds UI5 Selectors
 export function buildUI5Selectors(injectedScript: InjectedScript, element: Element): SelectorToken[][] {
 
   const candidates: SelectorToken[][] = [];
@@ -33,7 +34,7 @@ export function buildUI5Selectors(injectedScript: InjectedScript, element: Eleme
       while (ui5SelectorMap_element.length === 0 || ui5SelectorMap_element.length > 1) {
         if (currentElement === element.getRootNode() || currentElement === element.ownerDocument.body)
           return [];
-        ui5SelectorMap_element = buildUI5TreeModel(currentElement, win);
+        ui5SelectorMap_element = buildUI5TreeModel(currentElement, win, 2);
         if (ui5SelectorMap_element.length === 0 || ui5SelectorMap_element.length > 1) {
           currentElement = currentElement.parentElement;
           if (!currentElement)

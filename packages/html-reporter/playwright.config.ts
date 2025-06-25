@@ -34,6 +34,7 @@ export default defineConfig({
       resolve: {
         alias: {
           '@web': path.resolve(path.dirname(url.fileURLToPath(import.meta.url)), '../web/src'),
+          '@sap': path.resolve(path.dirname(url.fileURLToPath(import.meta.url)), '../sap'),
         },
       }
     },

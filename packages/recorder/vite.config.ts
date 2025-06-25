@@ -29,6 +29,7 @@ export default defineConfig({
       '@isomorphic': path.resolve(__dirname, '../playwright-core/src/utils/isomorphic'),
       '@protocol': path.resolve(__dirname, '../protocol/src'),
       '@web': path.resolve(__dirname, '../web/src'),
+      '@sap': path.resolve(__dirname, '../sap'),
     },
   },
   build: {

@@ -16,16 +16,18 @@
 
 import {  parseAttributeSelector, parseSelector, stringifySelector } from './selectorParser';
 import { escapeWithQuotes, normalizeEscapedRegexQuotes, toSnakeCase, toTitleCase } from './stringUtils';
+import { innerAsLocatorsSAP } from './sap/locatorGenerators';
 
 import type { NestedSelectorBody } from './selectorParser';
 import type { ParsedSelector } from './selectorParser';
+import type { LocatorTypeSAP } from './sap/locatorGenerators';
 
 export type Language = 'javascript' | 'python' | 'java' | 'csharp' | 'jsonl';
-export type LocatorType = 'default' | 'role' | 'text' | 'label' | 'placeholder' | 'alt' | 'title' | 'test-id' | 'nth' | 'first' | 'last' | 'visible' | 'has-text' | 'has-not-text' | 'has' | 'hasNot' | 'frame' | 'frame-locator' | 'and' | 'or' | 'chain' | 'ui5:role';
+export type LocatorType = 'default' | 'role' | 'text' | 'label' | 'placeholder' | 'alt' | 'title' | 'test-id' | 'nth' | 'first' | 'last' | 'visible' | 'has-text' | 'has-not-text' | 'has' | 'hasNot' | 'frame' | 'frame-locator' | 'and' | 'or' | 'chain' | LocatorTypeSAP;
 export type LocatorBase = 'page' | 'locator' | 'frame-locator';
 export type Quote = '\'' | '"' | '`';
 
-type LocatorOptions = {
+export type LocatorOptions = {
   attrs?: { name: string, value: string | boolean | number }[],
   exact?: boolean,
   name?: string | RegExp,
@@ -215,16 +217,10 @@ function innerAsLocators(factory: LocatorFactory, parsed: ParsedSelector, isFram
         continue;
       }
     }
-    if (part.name === 'ui5:role') {
-      const attrSelector = parseAttributeSelector(part.body as string, true);
-      const options: LocatorOptions = { attrs: [] };
-      for (const attr of attrSelector.attributes) {
-        if (attr.name === 'id') {
-          options.exact = attr.caseSensitive;
-          options.name = attr.value;
-        }
-      }
-      tokens.push([factory.generateLocator(base, 'role', attrSelector.name, options)]);
+
+    const innerTokensSAP = innerAsLocatorsSAP(part, base, factory);
+    if (innerTokensSAP) {
+      tokens.push(innerTokensSAP);
       continue;
     }
 
