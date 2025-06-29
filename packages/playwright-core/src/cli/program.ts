@@ -660,7 +660,7 @@ async function codegen(options: Options & { target: string, output?: string, tes
     outputFile: outputFile ? path.resolve(outputFile) : undefined,
     handleSIGINT: false,
   });
-  await openPage(context, url);
+  await openPage(context, 'ui5.sap.com');
 }
 
 async function waitForPage(page: Page, captureOptions: CaptureOptions) {

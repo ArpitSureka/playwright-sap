@@ -229,6 +229,7 @@ function generateSelectorFor(cache: Cache, injectedScript: InjectedScript, targe
   };
 
   return calculate(targetElement, !options.noText);
+
 }
 
 function buildNoTextCandidates(injectedScript: InjectedScript, element: Element, options: InternalOptions): SelectorToken[] {
@@ -490,7 +491,7 @@ function chooseFirstSelector(injectedScript: InjectedScript, scope: Element | Do
 
     // SAP Selector Token
     const sapSelectorToken = chooseFirstSelectorSAP(injectedScript.window, tokens, targetElement, result);
-    if (sapSelectorToken)
+    if (sapSelectorToken && sapSelectorToken.length)
       return sapSelectorToken;
 
     // Otherwise, perhaps we can use nth=?

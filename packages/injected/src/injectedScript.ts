@@ -46,6 +46,7 @@ import type { SelectorEngine, SelectorRoot } from './selectorEngine';
 import type { GenerateSelectorOptions } from './selectorGenerator';
 import type { ElementText, TextMatcher } from './selectorUtils';
 import type { Builtins } from './utilityScript';
+import { c } from 'vite/dist/node/moduleRunnerTransport.d-DJ_mE5sf';
 
 
 export type FrameExpectParams = Omit<channels.FrameExpectParams, 'expectedValue'> & { expectedValue?: any };
@@ -313,7 +314,10 @@ export class InjectedScript {
   }
 
   querySelectorAll(selector: ParsedSelector, root: Node): Element[] {
+
+    console.log('querySelectorAll', stringifySelector(selector), 'on', root.nodeName, 'with', root.nodeType, 'nodeType');
     if (selector.capture !== undefined) {
+      console.log(1);
       if (selector.parts.some(part => part.name === 'nth'))
         throw this.createStacklessError(`Can't query n-th element in a request with the capture.`);
       const withHas: ParsedSelector = { parts: selector.parts.slice(0, selector.capture + 1) };
@@ -327,12 +331,12 @@ export class InjectedScript {
 
     if (!(root as any)['querySelectorAll'])
       throw this.createStacklessError('Node is not queryable.');
-
+    console.log(2);
     if (selector.capture !== undefined) {
       // We should have handled the capture above.
       throw this.createStacklessError('Internal error: there should not be a capture in the selector.');
     }
-
+    console.log(3);
     // Workaround so that ":scope" matches the ShadowRoot.
     // This is, unfortunately, because an ElementHandle can point to any Node (including ShadowRoot/Document/etc),
     // and not just to an Element, and we support various APIs on ElementHandle like "textContent()".
@@ -341,6 +345,7 @@ export class InjectedScript {
 
     this._evaluator.begin();
     try {
+      console.log(4);
       let roots = new Set<Element>([root as Element]);
       for (const part of selector.parts) {
         if (part.name === 'nth') {
@@ -354,6 +359,7 @@ export class InjectedScript {
         } else if (kLayoutSelectorNames.includes(part.name as LayoutSelectorName)) {
           roots = this._queryLayoutSelector(roots, part, root);
         } else {
+          console.log(5);
           const next = new Set<Element>();
           for (const root of roots) {
             const all = this._queryEngineAll(part, root);
@@ -363,6 +369,7 @@ export class InjectedScript {
           roots = next;
         }
       }
+      console.log(roots.size, 'elements found for selector', stringifySelector(selector));
       return [...roots];
     } finally {
       this._evaluator.end();

@@ -238,7 +238,7 @@ class RecordActionTool implements RecorderTool {
     }
 
     this._cancelPendingClickAction();
-
+    console.log('Pending click action cancelled');
     // Stall click in case we are observing double-click.
     if (event.detail === 1) {
       this._pendingClickAction = {

@@ -47,6 +47,7 @@ export class RecorderCollection extends EventEmitter {
 
   async performAction(actionInContext: actions.ActionInContext) {
     await this._addAction(actionInContext, async () => {
+      console.log(`12324Performing action: ${actionInContext.action.name} on page: ${actionInContext.frame.pageAlias} frame: ${actionInContext.frame.framePath.join(' > ')}`);
       await performAction(this._pageAliases, actionInContext);
     });
   }

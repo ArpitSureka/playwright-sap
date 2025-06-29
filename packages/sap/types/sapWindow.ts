@@ -22,5 +22,8 @@ export type SAP = {
             byId: (id: string) => any;
             getElementById: (id: string) => any;
         }
+        core: {
+            ElementMetadata: any;
+        }
     }
 };

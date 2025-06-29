@@ -340,13 +340,10 @@ export class JavaScriptLocatorFactory implements LocatorFactory {
         return this.toCallWithExact('getByTitle', body, !!options.exact);
       case 'ui5:role':
         const attrs2: string[] = [];
-        if (isRegExp(options.name)) {
-          attrs2.push(`name: ${this.regexToSourceString(options.name)}`);
-        } else if (typeof options.name === 'string') {
-          attrs2.push(`name: ${this.quote(options.name)}`);
-          if (options.exact)
-            attrs2.push(`exact: true`);
-        }
+        // Add Regex support for UI5 roles. -- Need to Implement this. - Commemented code is wrong.
+        // if (isRegExp(options.name)) {
+        //   attrs2.push(`name: ${this.regexToSourceString(options.name)}`);
+        // }
         for (const { name, value } of options.attrs!)
           attrs2.push(`${name}: ${typeof value === 'string' ? this.quote(value) : value}`);
         const attrString2 = attrs2.length ? `, { ${attrs2.join(', ')} }` : '';

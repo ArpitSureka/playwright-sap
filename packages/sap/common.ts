@@ -105,6 +105,9 @@ const _createUI5TreeModel = function(nodeElement: Element, resultArray: UI5Node[
     subResult = results[results.length - 1].content;
   }
 
+  if (childDepth && childDepth <= 0)
+    return;
+
   while (childNode) {
     _createUI5TreeModel(childNode, subResult, win, childDepth);
     childNode = childNode.nextElementSibling;
@@ -113,6 +116,27 @@ const _createUI5TreeModel = function(nodeElement: Element, resultArray: UI5Node[
 
 // Control Properties Info
 // ================================================================================
+// Copied from chrome ui5 inspector extension
+
+/**
+ * Creates an object with all control properties.
+ * @param {string} controlId
+ * @returns {Object}
+ * @private
+ */
+// Caching is not implemented yet, so this function will always return fresh data. -- Need to implement.
+export const getPropertiesUsingControlId = function(controlId: string, win: Window): any {
+  const control = _getElementById(controlId, win);
+  const properties = Object.create(null);
+
+  if (control) {
+    properties.own = _getOwnProperties(control);
+    properties.inherited = _getInheritedProperties(control, win);
+    properties.isPropertiesData = true;
+  }
+
+  return properties;
+};
 
 /**
  * Creates an object with the control properties that are not inherited.
@@ -120,7 +144,8 @@ const _createUI5TreeModel = function(nodeElement: Element, resultArray: UI5Node[
  * @returns {Object}
  * @private
  */
-export const _getOwnProperties = function(control: any) {
+// This function can be optimized it is giving a lot of data about properties which are not being used. --- Need to implement.
+const _getOwnProperties = function(control: any) {
   const result = Object.create(null);
   const controlPropertiesFromMetadata = control.getMetadata().getProperties();
 
@@ -139,13 +164,31 @@ export const _getOwnProperties = function(control: any) {
 };
 
 /**
+ * Creates an array with the control properties that are inherited.
+ * @param {Object} control - UI5 control.
+ * @returns {Array}
+ * @private
+ */
+const _getInheritedProperties = function(control: any, win: Window): any[] {
+  const result: any[] = [];
+  let inheritedMetadata = control.getMetadata().getParent();
+
+  while (inheritedMetadata instanceof win.sap.ui.core.ElementMetadata) {
+    result.push(_copyInheritedProperties(control, inheritedMetadata));
+    inheritedMetadata = inheritedMetadata.getParent();
+  }
+
+  return result;
+};
+
+/**
  * Copies the inherited properties of a UI5 control from the metadata.
  * @param {Object} control - UI5 Control.
  * @param {Object} inheritedMetadata - UI5 control metadata.
  * @returns {Object}
  * @private
  */
-export const _copyInheritedProperties = function(control: any, inheritedMetadata: any) {
+const _copyInheritedProperties = function(control: any, inheritedMetadata: any) {
   const inheritedMetadataProperties = inheritedMetadata.getProperties();
   const result = Object.create(null);
 
