@@ -230,7 +230,6 @@ export class ContextRecorder extends EventEmitter {
 
   private async _createActionInContext(frame: Frame, action: actions.Action): Promise<actions.ActionInContext> {
     const frameDescription = await this._describeFrame(frame);
-    console.log(`Creating action in context for frame: ${frameDescription.pageAlias} ${frameDescription.framePath.join(' > ')}`);
     const actionInContext: actions.ActionInContext = {
       frame: frameDescription,
       action,
@@ -242,7 +241,6 @@ export class ContextRecorder extends EventEmitter {
   }
 
   private async _performAction(frame: Frame, action: actions.PerformOnRecordAction) {
-    console.log(`Performing action in context for frame: ${frame._page.mainFrame().url()} ${frame._page.mainFrame().name()}`);
     await this._collection.performAction(await this._createActionInContext(frame, action));
   }
 

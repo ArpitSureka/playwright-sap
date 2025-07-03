@@ -27,7 +27,6 @@ export async function performAction(pageAliases: Map<Page, string>, actionInCont
   const callMetadata = serverSideCallMetadata();
   const mainFrame = mainFrameForAction(pageAliases, actionInContext);
   const { action } = actionInContext;
-  console.log('sder');
   const kActionTimeout = 5000;
 
   if (action.name === 'navigate') {
@@ -47,7 +46,6 @@ export async function performAction(pageAliases: Map<Page, string>, actionInCont
 
   if (action.name === 'click') {
     const options = toClickOptions(action);
-    console.log('Clicking on selector:', selector, 'with options:', options);
     await mainFrame.click(callMetadata, selector, { ...options, timeout: kActionTimeout, strict: true });
     return;
   }

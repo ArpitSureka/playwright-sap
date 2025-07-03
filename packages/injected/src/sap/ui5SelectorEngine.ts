@@ -18,7 +18,7 @@ import { SelectorEngine, SelectorRoot } from '@injected/selectorEngine';
 import { parseAttributeSelector } from '@isomorphic/selectorParser';
 import { buildUI5TreeModel, checkSAPUI5, getElementFromUI5Id, getPropertiesUsingControlId, UI5Node } from '@sap/common';
 
-import { allowedProperties } from './ui5selectorGenerator';
+import { createPropertyValueMatcher } from './common';
 
 export function ui5RoleEngine(): SelectorEngine {
   return {
@@ -40,10 +40,10 @@ export function ui5RoleEngine(): SelectorEngine {
 
       const ui5DocumentTree = buildUI5TreeModel(document.body, window);
       let result: Element[] = [];
-      if (parsed.attributes[0].name)
-        result = ui5IdSelectorEngineForProperty(ui5DocumentTree, role, parsed.attributes[0].name, parsed.attributes[0].value, window);
-      else
-        throw new Error(`Role ${role} is not supported by UI5 Selector Engine`);
+      if (parsed.attributes.length === 1 && parsed.attributes[0].name)
+        result = ui5IdSelectorEngineForProperty(ui5DocumentTree, role, parsed.attributes[0].name, parsed.attributes[0].value, parsed.attributes[0].caseSensitive, window);
+      else if (parsed.attributes.length > 1)
+        throw new Error(`Not supported multiple attributes in UI5 selector: ${selector}`);
 
       const resultSet = new Set<Element>();
       result.forEach(ele => {
@@ -60,17 +60,20 @@ export function ui5RoleEngine(): SelectorEngine {
   };
 }
 
-function ui5IdSelectorEngineForProperty(ui5Tree: UI5Node[], role: string, propertyName: string, propertyValue: string, window: Window): Element[] {
+function ui5IdSelectorEngineForProperty(ui5Tree: UI5Node[], role: string, propertyName: string, propertyValue: string, exact: boolean, window: Window): Element[] {
   // Depth-first search for nodes matching id and role
   const result: Element[] = [];
 
-  if (!allowedProperties.includes(propertyName))
-    throw new Error(`Property ${propertyName} is not supported.`);
+  // Currenlty we are not checking if the role is allowed or not, allowing everything.
+  // if (!getAllowedProperties(role).includes(propertyName))
+  //   throw new Error(`Property ${propertyName} is not supported.`);
+
+  const propertyValueMatcher = createPropertyValueMatcher(propertyValue, propertyName, role, exact);
 
   function dfs(node: UI5Node) {
 
     // This search can be optimized currently this function builds both properites inherited and own. We can optimize it to first fetch own properties and then check inherited properties only if own properties are not found.  -- Need to implement.
-    if (checkIfNodeContainsProperty(node, role, propertyName, propertyValue, window)) {
+    if (checkIfNodeContainsProperty(node, role, propertyName, propertyValue, window, propertyValueMatcher)) {
       const ele = getElementFromUI5Id(node.id, window);
       if (ele)
         result.push(ele);
@@ -88,7 +91,9 @@ function ui5IdSelectorEngineForProperty(ui5Tree: UI5Node[], role: string, proper
   return result;
 }
 
-function checkIfNodeContainsProperty(node: UI5Node, role: string, propertyName: string, propertyValue: string, window: Window): boolean {
+// propertyName is case-sensative
+// propertyValue is neither case sensative nor exact match if the string contains that string it will still be a match
+function checkIfNodeContainsProperty(node: UI5Node, role: string, propertyName: string, propertyValue: string, window: Window, propertyValueMatcher: (text: string) => boolean): boolean {
   const properties = getPropertiesUsingControlId(node.id, window);
   if (!properties || !properties.own || !properties.own.properties)
     return false;
@@ -96,7 +101,7 @@ function checkIfNodeContainsProperty(node: UI5Node, role: string, propertyName: 
   if (properties.own.meta && properties.own.meta.controlName &&
       properties.own.meta.controlName.split('.').pop().toLowerCase() === role.toLowerCase()) {
     const property = properties.own.properties[propertyName];
-    if (property && property.value && property.value.toLowerCase() === propertyValue.toLowerCase())
+    if (property && property.value && propertyValueMatcher(property.value))
       return true;
   }
 
@@ -109,8 +114,7 @@ function checkIfNodeContainsProperty(node: UI5Node, role: string, propertyName: 
         continue;
 
       const inheritedProperty = inherited.properties[propertyName];
-      if (inheritedProperty && inheritedProperty.value && inheritedProperty.value.toLowerCase() ===
-          propertyValue.toLowerCase())
+      if (inheritedProperty && inheritedProperty.value && propertyValueMatcher(inheritedProperty.value))
         return true;
     }
   }

@@ -20,6 +20,8 @@ import { SelectorToken } from '@injected/selectorGenerator';
 import { buildUI5Selectors } from './ui5selectorGenerator';
 import { checkSAPSelector } from './common';
 
+const kNthScoreUI5 = 10;
+
 export function buildSAPSelectors(injectedScript: InjectedScript, element: Element): SelectorToken[][] {
   return buildUI5Selectors(injectedScript, element);
 }
@@ -29,8 +31,15 @@ export function chooseFirstSelectorSAP(window: Window, tokens: SelectorToken[], 
   tokens.forEach(selector => sapSelector = selector.engine === 'ui5:role' || sapSelector);
   // Not written case for nth selector
   if (sapSelector && result.length === 1) {
-    if (checkSAPSelector(result, targetElement, window))
+    if (checkSAPSelector(result[0], targetElement, window))
       return tokens;
+  } else if (sapSelector && result.length > 1) {
+    for (let index = 0; index < result.length; index++) {
+      if (checkSAPSelector(result[index], targetElement, window)){
+        const nth: SelectorToken = { engine: 'nth', selector: String(index), score: kNthScoreUI5 };
+        return [...tokens, nth];
+      }
+    }
   }
   return [];
 }

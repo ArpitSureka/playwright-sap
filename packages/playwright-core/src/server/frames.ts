@@ -1091,19 +1091,17 @@ export class Frame extends SdkObject {
     performActionPreChecks: boolean,
     action: (handle: dom.ElementHandle<Element>) => Promise<R | 'error:notconnected'>): Promise<R> {
     progress.log(`waiting for ${this._asLocator(selector)}`);
-    console.log(`  waiting for ${this._asLocator(selector)}`);
     return this.retryWithProgressAndTimeouts(progress, [0, 20, 50, 100, 100, 500], async continuePolling => {
       if (performActionPreChecks)
         await this._page.performActionPreChecks(progress);
-
-      const resolved = await this.selectors.resolveInjectedForSelector(selector, { strict });
-      console.log(`  resolved locator "${selector}" to ${resolved ? resolved.info.parsed : 'nothing'}`);
+      // SAP Support Change: Added mainWorld : true inside resolveInjectedForSelector
+      // Because without it querySelectorAll was not working as document.defaultView didnt contain sap object.
+      const resolved = await this.selectors.resolveInjectedForSelector(selector, { strict, mainWorld: true });
       progress.throwIfAborted();
       if (!resolved)
         return continuePolling;
       const result = await resolved.injected.evaluateHandle((injected, { info, callId }) => {
         const elements = injected.querySelectorAll(info.parsed, document);
-        console.log(`  locator resolved to ${elements.length} elements`);
         if (callId)
           injected.markTargetElements(new Set(elements), callId);
         const element = elements[0] as Element | undefined;

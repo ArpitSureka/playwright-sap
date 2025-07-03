@@ -16,12 +16,11 @@
 
 import { buildUI5TreeModel, UI5Node } from '@sap/common';
 
-export function checkSAPSelector(results: Element[], targetElement: Element, window: Window): Boolean {
+// This function is used to check sap selectror, wether result and target element has the same ui5 parent element
+export function checkSAPSelector(result: Element, targetElement: Element, window: Window): Boolean {
   let currentElement: Element | null = targetElement;
-  if (results.length !== 1)
-    return false;
   let ui5TargetTree: UI5Node[] = [];
-  const resultUI5Tree = buildUI5TreeModel(results[0], window, 1);
+  const resultUI5Tree = buildUI5TreeModel(result, window, 1);
   while (ui5TargetTree.length === 0 && currentElement){
     ui5TargetTree = buildUI5TreeModel(currentElement, window, 1);
     currentElement = currentElement.parentElement;
@@ -30,4 +29,35 @@ export function checkSAPSelector(results: Element[], targetElement: Element, win
     return true;
 
   return false;
+}
+
+// Inspired from packages/injected/src/injectedScript.ts - createTextMatcher
+export function createPropertyValueMatcher(propertyValue: string, propertyName: string, propertyRole: string, exact: boolean = false): (text: string) => boolean {
+
+
+  // Cases added corresponding to the code in checkAndMakeSelectorTokens - packages/injected/src/sap/common.ts
+  if (propertyName.toLowerCase() === 'icon' || (propertyRole.toLowerCase() === 'icon' && propertyName.toLowerCase() === 'src'))
+    return (elementValue: string) => elementValue.includes(propertyValue);
+
+  if (propertyName.toLowerCase() !== 'text') {
+    if (exact)
+      return (elementValue: string) => elementValue === propertyValue;
+    else
+      return (elementValue: string) => elementValue.toLowerCase() === propertyValue.toLowerCase();
+  }
+
+  // This is a regex checker in case propertyName. regex wont come from codegen but if the user explicitly tries to use regex in code.
+  if (propertyValue[0] === '/' && propertyValue.lastIndexOf('/') > 0) {
+    const lastSlash = propertyValue.lastIndexOf('/');
+    const re = new RegExp(propertyValue.substring(1, lastSlash), propertyValue.substring(lastSlash + 1));
+    return  (elementValue: string) => re.test(elementValue);
+  }
+
+  // In case the user explicitly adds exact = true - will only work when propertyName is text.
+  // Exact = true dosnt come directly from codegen.
+  if (exact)
+    return  (elementValue: string) => elementValue === propertyValue ;
+
+  // Currently i mode is the default if present or not prosent
+  return (elementValue: string) => elementValue.toLowerCase().includes(propertyValue.toLowerCase()) ;
 }

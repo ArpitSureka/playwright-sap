@@ -346,6 +346,8 @@ export class JavaScriptLocatorFactory implements LocatorFactory {
         // }
         for (const { name, value } of options.attrs!)
           attrs2.push(`${name}: ${typeof value === 'string' ? this.quote(value) : value}`);
+        if (options.exact)
+          attrs2.push(`exact : true`);
         const attrString2 = attrs2.length ? `, { ${attrs2.join(', ')} }` : '';
         return `getByRoleSAP(${this.quote(body as string)}${attrString2})`;
       default:
