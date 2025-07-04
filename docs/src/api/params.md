@@ -1302,6 +1302,11 @@ Whether to find an exact match: case-sensitive and whole-string. Default to fals
 
 Required aria role.
 
+## get-by-role-UI5-to-have-role-role
+- `propertyRole` <[string]>
+
+Required propertyRole.
+
 ## locator-get-by-role-option-checked
 * since: v1.27
 - `checked` <[boolean]>
@@ -1358,6 +1363,12 @@ Learn more about [accessible name](https://w3c.github.io/accname/#dfn-accessible
 - `exact` <[boolean]>
 
 Whether [`option: name`] is matched exactly: case-sensitive and whole-string. Defaults to false. Ignored when [`option: name`] is a regular expression. Note that exact match still trims whitespace.
+
+## locator-get-by-role-UI5-option-exact
+* since: v1.28
+- `exact` <[boolean]>
+
+Documentation on exact not ready yet.
 
 ## locator-get-by-role-option-pressed
 * since: v1.27
@@ -1664,6 +1675,10 @@ await page
     .GetByPlaceholder("name@example.com")
     .FillAsync("playwright@microsoft.com");
 ```
+
+## template-locator-get-by-role-UI5
+
+Documentation not ready for getByRoleUI5
 
 ## template-locator-get-by-role
 

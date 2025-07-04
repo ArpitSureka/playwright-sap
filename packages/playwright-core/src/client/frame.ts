@@ -15,8 +15,7 @@
  * limitations under the License.
  */
 
-import { getByRoleUI5Selector } from '@isomorphic/sap/locatorUtils';
-
+import { getByRoleUI5Selector } from '../utils/isomorphic/sap/locatorUtils';
 import { EventEmitter } from './eventEmitter';
 import { ChannelOwner } from './channelOwner';
 import { addSourceUrlToScript } from './clientHelper';
@@ -40,7 +39,7 @@ import type * as api from '../../types/types';
 import type { ByRoleOptions } from '../utils/isomorphic/locatorUtils';
 import type { URLMatch } from '../utils/isomorphic/urlMatch';
 import type * as channels from '@protocol/channels';
-import type { ByRoleUI5Options } from '@isomorphic/sap/locatorUtils';
+import type { ByRoleUI5Options } from '../utils/isomorphic/sap/locatorUtils';
 
 export type WaitForNavigationOptions = {
   timeout?: number,

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { escapeForAttributeSelector } from '@isomorphic/stringUtils';
+import { escapeForAttributeSelector } from '../stringUtils';
 
 export type ByRoleUI5Options = Record<string, string>;
 
@@ -27,5 +27,5 @@ export function getByRoleUI5Selector(role: string, options: ByRoleUI5Options = {
   for (const [key, value] of Object.entries(options))
     optionsString.push(`[${key}=${escapeForAttributeSelector(value, exact)}]`);
 
-  return `internal:role=${role}${optionsString.join('')}`;
+  return `ui5:role=${role}${optionsString.join('')}`;
 }

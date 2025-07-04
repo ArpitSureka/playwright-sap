@@ -13,8 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { getByRoleUI5Selector } from '@isomorphic/sap/locatorUtils';
-
+import { getByRoleUI5Selector } from '../utils/isomorphic/sap/locatorUtils';
 import { ElementHandle } from './elementHandle';
 import { parseResult, serializeArgument } from './jsHandle';
 import { asLocator } from '../utils/isomorphic/locatorGenerators';
@@ -29,7 +28,7 @@ import type * as structs from '../../types/structs';
 import type * as api from '../../types/types';
 import type { ByRoleOptions } from '../utils/isomorphic/locatorUtils';
 import type * as channels from '@protocol/channels';
-import type { ByRoleUI5Options } from '@isomorphic/sap/locatorUtils';
+import type { ByRoleUI5Options } from '../utils/isomorphic/sap/locatorUtils';
 
 
 export type LocatorOptions = {

@@ -2267,6 +2267,25 @@ Attribute name to get the value for.
 
 ### option: Page.getByPlaceholder.exact = %%-locator-get-by-text-exact-%%
 
+## method: Page.getByRoleUI5
+* since: v1.27
+- returns: <[Locator]>
+
+%%-template-locator-get-by-role-UI5-%%
+
+### param: Page.getByRoleUI5.role = %%-get-by-role-UI5-to-have-role-role-%%
+* since: v1.27
+
+### param: Page.getByRoleUI5.properties
+* since: v1.27
+* langs: js
+- `properties` ?<[Record<string, string>]>
+
+### param: Page.getByRoleUI5.exact
+* since: v1.8
+* langs: js
+- `exact` ?<[boolean]>
+
 ## method: Page.getByRole
 * since: v1.27
 - returns: <[Locator]>

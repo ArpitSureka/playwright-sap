@@ -54,7 +54,7 @@ import type * as api from '../../types/types';
 import type { ByRoleOptions } from '../utils/isomorphic/locatorUtils';
 import type { URLMatch } from '../utils/isomorphic/urlMatch';
 import type * as channels from '@protocol/channels';
-import type { ByRoleUI5Options } from '@isomorphic/sap/locatorUtils';
+import type { ByRoleUI5Options } from '../utils/isomorphic/sap/locatorUtils';
 
 type PDFOptions = Omit<channels.PagePdfParams, 'width' | 'height' | 'margin'> & {
   width?: string | number,

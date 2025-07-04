@@ -2992,6 +2992,14 @@ export interface Page {
   }): Locator;
 
   /**
+   * Documentation not ready for getByRoleUI5
+   * @param propertyRole Required propertyRole.
+   * @param properties
+   * @param exact
+   */
+  getByRoleUI5(propertyRole: string, properties?: Record<string, string>, exact?: boolean): Locator;
+
+  /**
    * Locate element by the test id.
    *
    * **Usage**
