@@ -54,6 +54,7 @@ import type * as api from '../../types/types';
 import type { ByRoleOptions } from '../utils/isomorphic/locatorUtils';
 import type { URLMatch } from '../utils/isomorphic/urlMatch';
 import type * as channels from '@protocol/channels';
+import type { ByRoleUI5Options } from '@isomorphic/sap/locatorUtils';
 
 type PDFOptions = Omit<channels.PagePdfParams, 'width' | 'height' | 'margin'> & {
   width?: string | number,
@@ -695,6 +696,10 @@ export class Page extends ChannelOwner<channels.PageChannel> implements api.Page
 
   getByRole(role: string, options: ByRoleOptions = {}): Locator {
     return this.mainFrame().getByRole(role, options);
+  }
+
+  getByRoleUI5(role: string, options: ByRoleUI5Options = {}, exact: boolean = false): Locator {
+    return this.mainFrame().getByRoleUI5(role, options, exact);
   }
 
   frameLocator(selector: string): FrameLocator {

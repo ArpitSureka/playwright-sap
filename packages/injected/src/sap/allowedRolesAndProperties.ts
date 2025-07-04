@@ -16,55 +16,83 @@
 
 // This list is case-sensitive and should match the UI5 control properties. UI5 properties follow camelCase. Also this is ordered by priority.
 // All other properties are implicitly denied.
-const implicitlyAllowedProperties = ['text', 'label', 'value', 'title', 'name', 'placeholder', 'ariaLabelledBy', 'icon'];
+const implicitlyAllowedProperties: string[] = ['name', 'label', 'title', 'value', 'text', 'icon', 'description', 'placeholder', 'key'];
 
 // This config is case-sensitive and should match the UI5 control properties. UI5 properties follow camelCase. Also this is ordered by priority.
 const propertiesConfig: PropertiesConfig = {
   'Icon': {
     explicitlyAllowed: ['src'],
-    explicitlyDenied: []
   },
+  'SearchField': {
+    explicitlyAllowed: ['*'], // This means role is allowed without any properties
+  },
+  'PullToRefresh': {
+    explicitlyAllowed: ['*'], // This means role is allowed without any properties
+  },
+  'Select': {
+    explicitlyAllowed: ['selectedKey']
+  },
+  'ComboBox': {
+    explicitlyAllowed: ['selectedKey']
+  },
+  'Switch': {
+    explicitlyAllowed: ['state']
+  },
+  'ObjectNumber': {
+    explicitlyAllowed: ['number']
+  },
+  // 'StandardListItem': {
+  //   explicitlyDenied: ['*'] // This means role is never allowed
+  // },
 };
 
 export function getAllowedProperties(propertyRole: string): string[] {
-  let allowedProperties = implicitlyAllowedProperties;
+  let allowedProperties = structuredClone(implicitlyAllowedProperties);
 
-  if (propertyRole in propertiesConfig){
+  if (propertyRole in propertiesConfig) {
     const { explicitlyAllowed, explicitlyDenied } = propertiesConfig[propertyRole];
 
-    allowedProperties.push(...explicitlyAllowed);
+    if (explicitlyDenied && explicitlyDenied.includes('*'))
+      return [];
 
-    // Remove explicitly denied properties from the allowed list
-    allowedProperties = removeItems(allowedProperties, explicitlyDenied);
+    if (explicitlyAllowed) {
+      allowedProperties.push(...explicitlyAllowed);
+      allowedProperties = removeItems(allowedProperties, ['*']); // Remove '*' in case it is explicitly allowed property
+    }
+
+    if (explicitlyDenied)
+      allowedProperties = removeItems(allowedProperties, explicitlyDenied); // Remove explicitly denied properties from the allowed list
   }
 
   return allowedProperties;
 }
 
-// This list is case-sensitive
-const explicitDeniedRoles = ['StandardListItem'];
-const rolesAllowedWithoutProperties = ['SearchField'];
-
 export function checkIfRoleAllowed(propertyRole: string): boolean {
 
-  if (explicitDeniedRoles.includes(propertyRole))
-    return false;
+  if (propertyRole in propertiesConfig) {
+    const { explicitlyDenied } = propertiesConfig[propertyRole];
+    if (explicitlyDenied && explicitlyDenied.includes('*'))
+      return false;
+  } // If '*' is explicitly denied, then it is not allowed
 
   return true;
 }
 
 export function checkIfRoleAllowedWithoutProperties(propertyRole: string): boolean {
 
-  if (rolesAllowedWithoutProperties.includes(propertyRole))
-    return true;
+  if (propertyRole in propertiesConfig) {
+    const { explicitlyAllowed } = propertiesConfig[propertyRole];
+    if (explicitlyAllowed && explicitlyAllowed.includes('*'))
+      return true; // If '*' is explicitly allowed, then all properties are allowed for this role
+  }
 
   return false;
 }
 
 // Define the shape of a single property config
 type PropertyConfigRules = {
-  explicitlyAllowed: string[];
-  explicitlyDenied: string[];
+  explicitlyAllowed?: string[];
+  explicitlyDenied?: string[];
 };
 
 // Make the outer object type, where keys are strings (like "Icon")

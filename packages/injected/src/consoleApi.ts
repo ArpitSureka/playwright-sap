@@ -17,11 +17,13 @@
 import { asLocator } from '@isomorphic/locatorGenerators';
 import { getByAltTextSelector, getByLabelSelector, getByPlaceholderSelector, getByRoleSelector, getByTestIdSelector, getByTextSelector, getByTitleSelector } from '@isomorphic/locatorUtils';
 import { escapeForTextSelector } from '@isomorphic/stringUtils';
+import { getByRoleUI5Selector } from '@isomorphic/sap/locatorUtils';
 
 import type { InjectedScript } from './injectedScript';
 import type { Language } from '@isomorphic/locatorGenerators';
 import type { ByRoleOptions } from '@isomorphic/locatorUtils';
 import type { SAP } from '@sap/types/sapWindow';
+import type { ByRoleUI5Options } from '@isomorphic/sap/locatorUtils';
 
 const selectorSymbol = Symbol('selector');
 
@@ -65,6 +67,9 @@ class Locator {
     self.nth = (index: number): Locator => self.locator(`nth=${index}`);
     self.and = (locator: Locator): Locator => new Locator(injectedScript, selectorBase + ` >> internal:and=` + JSON.stringify(locator[selectorSymbol]));
     self.or = (locator: Locator): Locator => new Locator(injectedScript, selectorBase + ` >> internal:or=` + JSON.stringify(locator[selectorSymbol]));
+
+    self.getByRoleUI5 = (role: string, options: ByRoleUI5Options = {}, exact: boolean = false): Locator => self.locator(getByRoleUI5Selector(role, options, exact));
+
   }
 }
 

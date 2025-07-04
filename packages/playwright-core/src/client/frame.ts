@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 
+import { getByRoleUI5Selector } from '@isomorphic/sap/locatorUtils';
+
 import { EventEmitter } from './eventEmitter';
 import { ChannelOwner } from './channelOwner';
 import { addSourceUrlToScript } from './clientHelper';
@@ -38,6 +40,7 @@ import type * as api from '../../types/types';
 import type { ByRoleOptions } from '../utils/isomorphic/locatorUtils';
 import type { URLMatch } from '../utils/isomorphic/urlMatch';
 import type * as channels from '@protocol/channels';
+import type { ByRoleUI5Options } from '@isomorphic/sap/locatorUtils';
 
 export type WaitForNavigationOptions = {
   timeout?: number,
@@ -347,6 +350,10 @@ export class Frame extends ChannelOwner<channels.FrameChannel> implements api.Fr
 
   getByRole(role: string, options: ByRoleOptions = {}): Locator {
     return this.locator(getByRoleSelector(role, options));
+  }
+
+  getByRoleUI5(role: string, options: ByRoleUI5Options = {}, exact: boolean = false): Locator {
+    return this.locator(getByRoleUI5Selector(role, options, exact));
   }
 
   frameLocator(selector: string): FrameLocator {

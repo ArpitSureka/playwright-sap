@@ -22,7 +22,7 @@ import { buildUI5TreeModel, checkSAPUI5, getPropertiesUsingControlId, UI5errorMe
 import { checkIfRoleAllowed, checkIfRoleAllowedWithoutProperties, getAllowedProperties } from './allowedRolesAndProperties';
 
 // Score for UI5 selectors
-const UI5idScore = 10;
+const ui5BasicScore = 10;
 
 // Builds UI5 Selectors
 export function buildUI5Selectors(injectedScript: InjectedScript, element: Element): SelectorToken[][] {
@@ -86,8 +86,7 @@ function makeRoleUI5Selectors(ui5Nodes: UI5Node[], win: Window): SelectorToken[]
     selectorTokens.push(...ownPropertySelectors);
   }
 
-  // Currently not making inherited selectors if own property selector is already found.
-  if (properties && properties?.inherited && selectorTokens.length === 0) {
+  if (properties && properties?.inherited) {
     const inheritedPropertySelectors = makeSelectorFromInheritedProperties(properties.inherited);
     selectorTokens.push(...inheritedPropertySelectors);
   }
@@ -97,9 +96,11 @@ function makeRoleUI5Selectors(ui5Nodes: UI5Node[], win: Window): SelectorToken[]
     selectorTokens.push({
       engine: 'ui5:role',
       selector: element.name,
-      score: UI5idScore
+      score: ui5BasicScore
     });
   }
+
+  selectorTokens.sort((a, b) => a.score - b.score);
 
   return selectorTokens;
 }
@@ -107,7 +108,7 @@ function makeRoleUI5Selectors(ui5Nodes: UI5Node[], win: Window): SelectorToken[]
 
 function makeSelectorFromOwnProperties(ownProperties: any): SelectorToken[] {
   // const selectorTokens: SelectorToken[] = [];
-  const selectorTokensData: {propertyRole: string, propertyName: string, propertyValue: string}[] = [];
+  const selectorTokensData: selectorTokensData[] = [];
   const propertyRole: string = ownProperties.meta?.controlName?.split('.').pop();
   if (!propertyRole || propertyRole.length === 0 || !checkIfRoleAllowed(propertyRole))
     return [];
@@ -117,7 +118,7 @@ function makeSelectorFromOwnProperties(ownProperties: any): SelectorToken[] {
       if (allowedProperties.includes(propertyName)) {
         const propertyValue: string = ownProperties.properties[propertyName].value;
         if (propertyValue && propertyValue.length > 0)
-          selectorTokensData.push({ propertyRole, propertyName, propertyValue });
+          selectorTokensData.push({ propertyRole, propertyName, propertyValue, score: allowedProperties.indexOf(propertyName) });
       }
     }
   }
@@ -126,7 +127,7 @@ function makeSelectorFromOwnProperties(ownProperties: any): SelectorToken[] {
 }
 
 function makeSelectorFromInheritedProperties(inheritedProperties: any): SelectorToken[] {
-  const selectorTokensData: {propertyRole: string, propertyName: string, propertyValue: string}[] = [];
+  const selectorTokensData: selectorTokensData[] = [];
   if (!inheritedProperties)
     return [];
   for (const inheritedProperty of inheritedProperties) {
@@ -138,7 +139,7 @@ function makeSelectorFromInheritedProperties(inheritedProperties: any): Selector
       if (allowedProperties.includes(propertyName)){
         const propertyValue: string = inheritedProperty.properties[propertyName].value;
         if (propertyValue && propertyValue.length > 0)
-          selectorTokensData.push({ propertyRole, propertyName, propertyValue });
+          selectorTokensData.push({ propertyRole, propertyName, propertyValue, score: allowedProperties.indexOf(propertyName) });
       }
     }
   }
@@ -146,7 +147,7 @@ function makeSelectorFromInheritedProperties(inheritedProperties: any): Selector
   return checkAndMakeSelectorTokens(selectorTokensData);
 }
 
-function checkAndMakeSelectorTokens(selectorTokens: {propertyRole: string, propertyName: string, propertyValue: string}[]) {
+function checkAndMakeSelectorTokens(selectorTokens: selectorTokensData[]) {
   const result: SelectorToken[] = [];
   selectorTokens.forEach(selectorToken => {
     // Both propertyName and propertyRole shoudnt be text if they are use playwright default getByText Locator
@@ -154,7 +155,7 @@ function checkAndMakeSelectorTokens(selectorTokens: {propertyRole: string, prope
 
       let propertyValue = selectorToken.propertyValue;
 
-      // Changing text if it is too long. Currently dont have {exact: true} support in getByRoleSAP.
+      // Changing text if it is too long. Currently dont have {exact: true} support in getByRoleUI5.
       // This feature needs to be devloped further. Not ready right now.
       if (selectorToken.propertyName.toLowerCase() === 'text' && propertyValue.length > 70)
         propertyValue = suitableTextAlternatives(propertyValue).sort((a, b) => b.scoreBonus - a.scoreBonus)[0].text;
@@ -172,12 +173,14 @@ function checkAndMakeSelectorTokens(selectorTokens: {propertyRole: string, prope
       result.push({
         engine: 'ui5:role',
         selector: `${selectorToken.propertyRole}[${selectorToken.propertyName}=${escapeForAttributeSelector(propertyValue, false)}]`,
-        score: UI5idScore
+        score: ui5BasicScore + (selectorToken.score ? selectorToken.score : 0)
       });
     }
   });
   return result;
 }
+
+type selectorTokensData  = {propertyRole: string, propertyName: string, propertyValue: string, score?: number};
 
 // ----------------------------------------------------
 // Copied fron packages/injected/src/selectorGenerator.ts

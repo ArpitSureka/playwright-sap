@@ -21,7 +21,7 @@ import { parseAttributeSelector, ParsedSelectorPart } from '../selectorParser';
 
 export type LocatorTypeSAP = 'ui5:role';
 
-// Return example for getByRoleSAP('grid', {text: 'My Grid', exact: true})
+// Return example for getByRoleUI5('grid', {text: 'My Grid', exact: true})
 // options = {
 //   name: 'grid',
 //   attrs: [

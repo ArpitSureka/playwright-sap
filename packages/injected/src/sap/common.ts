@@ -20,10 +20,15 @@ import { buildUI5TreeModel, UI5Node } from '@sap/common';
 export function checkSAPSelector(result: Element, targetElement: Element, window: Window): Boolean {
   let currentElement: Element | null = targetElement;
   let ui5TargetTree: UI5Node[] = [];
-  const resultUI5Tree = buildUI5TreeModel(result, window, 1);
   while (ui5TargetTree.length === 0 && currentElement){
     ui5TargetTree = buildUI5TreeModel(currentElement, window, 1);
     currentElement = currentElement.parentElement;
+  }
+  let resultUI5Tree: UI5Node[] = [];
+  let resultElement: Element | null = result;
+  while (resultUI5Tree.length === 0 && resultElement){
+    resultUI5Tree = buildUI5TreeModel(resultElement, window, 1);
+    resultElement = resultElement.parentElement;
   }
   if (currentElement && resultUI5Tree && ui5TargetTree.length === 1 && resultUI5Tree.length === 1 && resultUI5Tree[0].id === ui5TargetTree[0].id && resultUI5Tree[0].name === ui5TargetTree[0].name)
     return true;

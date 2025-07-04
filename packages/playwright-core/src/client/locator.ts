@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { getByRoleUI5Selector } from '@isomorphic/sap/locatorUtils';
 
 import { ElementHandle } from './elementHandle';
 import { parseResult, serializeArgument } from './jsHandle';
@@ -28,6 +29,7 @@ import type * as structs from '../../types/structs';
 import type * as api from '../../types/types';
 import type { ByRoleOptions } from '../utils/isomorphic/locatorUtils';
 import type * as channels from '@protocol/channels';
+import type { ByRoleUI5Options } from '@isomorphic/sap/locatorUtils';
 
 
 export type LocatorOptions = {
@@ -188,6 +190,10 @@ export class Locator implements api.Locator {
 
   getByRole(role: string, options: ByRoleOptions = {}): Locator {
     return this.locator(getByRoleSelector(role, options));
+  }
+
+  getByRoleUI5(role: string, options: ByRoleUI5Options = {}, exact: boolean = false): Locator {
+    return this.locator(getByRoleUI5Selector(role, options, exact));
   }
 
   frameLocator(selector: string): FrameLocator {
@@ -434,6 +440,10 @@ export class FrameLocator implements api.FrameLocator {
 
   getByRole(role: string, options: ByRoleOptions = {}): Locator {
     return this.locator(getByRoleSelector(role, options));
+  }
+
+  getByRoleUI5(role: string, options: ByRoleUI5Options = {}, exact: boolean = false): Locator {
+    return this.locator(getByRoleUI5Selector(role, options, exact));
   }
 
   owner() {

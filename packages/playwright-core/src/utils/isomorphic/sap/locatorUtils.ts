@@ -14,26 +14,18 @@
  * limitations under the License.
  */
 
-import { ByRoleOptions } from '@isomorphic/locatorUtils';
 import { escapeForAttributeSelector } from '@isomorphic/stringUtils';
 
-export function getByRoleSelector(role: string, options: ByRoleOptions = {}): string {
-  const props: string[][] = [];
-  if (options.checked !== undefined)
-    props.push(['checked', String(options.checked)]);
-  if (options.disabled !== undefined)
-    props.push(['disabled', String(options.disabled)]);
-  if (options.selected !== undefined)
-    props.push(['selected', String(options.selected)]);
-  if (options.expanded !== undefined)
-    props.push(['expanded', String(options.expanded)]);
-  if (options.includeHidden !== undefined)
-    props.push(['include-hidden', String(options.includeHidden)]);
-  if (options.level !== undefined)
-    props.push(['level', String(options.level)]);
-  if (options.name !== undefined)
-    props.push(['name', escapeForAttributeSelector(options.name, !!options.exact)]);
-  if (options.pressed !== undefined)
-    props.push(['pressed', String(options.pressed)]);
-  return `internal:role=${role}${props.map(([n, v]) => `[${n}=${v}]`).join('')}`;
+export type ByRoleUI5Options = Record<string, string>;
+
+export function getByRoleUI5Selector(role: string, options: ByRoleUI5Options = {}, exact: boolean = false): string {
+  const optionsString: string[] = [];
+
+  if (Object.entries(options).length > 1)
+    throw new Error('Support for multiple properties have not been added yet.');
+
+  for (const [key, value] of Object.entries(options))
+    optionsString.push(`[${key}=${escapeForAttributeSelector(value, exact)}]`);
+
+  return `internal:role=${role}${optionsString.join('')}`;
 }
