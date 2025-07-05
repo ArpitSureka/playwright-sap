@@ -348,9 +348,9 @@ export class JavaScriptLocatorFactory implements LocatorFactory {
           attrs2.push(`${name}: ${typeof value === 'string' ? this.quote(value) : value}`);
         let attrString2 = attrs2.length ? `, { ${attrs2.join(', ')} }` : '';
         if (options.exact && attrString2.length)
-          attrString2 = attrString2 + ', true';
+          attrString2 = attrString2 + ', { exact: true }';
         else if (options.exact && attrString2.length === 0)
-          attrString2 = ', {}, true';
+          attrString2 = ', {}, { exact: true }';
         return `getByRoleUI5(${this.quote(body as string)}${attrString2})`;
       default:
         throw new Error('Unknown selector kind ' + kind);

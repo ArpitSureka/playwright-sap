@@ -39,7 +39,7 @@ import type * as api from '../../types/types';
 import type { ByRoleOptions } from '../utils/isomorphic/locatorUtils';
 import type { URLMatch } from '../utils/isomorphic/urlMatch';
 import type * as channels from '@protocol/channels';
-import type { ByRoleUI5Options } from '../utils/isomorphic/sap/locatorUtils';
+import type { ByRoleUI5Options, ByRoleUI5Properties } from '../utils/isomorphic/sap/locatorUtils';
 
 export type WaitForNavigationOptions = {
   timeout?: number,
@@ -351,8 +351,8 @@ export class Frame extends ChannelOwner<channels.FrameChannel> implements api.Fr
     return this.locator(getByRoleSelector(role, options));
   }
 
-  getByRoleUI5(role: string, options: ByRoleUI5Options = {}, exact: boolean = false): Locator {
-    return this.locator(getByRoleUI5Selector(role, options, exact));
+  getByRoleUI5(role: string, properties: ByRoleUI5Properties, options: ByRoleUI5Options): Locator {
+    return this.locator(getByRoleUI5Selector(role, properties, options));
   }
 
   frameLocator(selector: string): FrameLocator {

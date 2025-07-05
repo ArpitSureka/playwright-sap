@@ -16,16 +16,19 @@
 
 import { escapeForAttributeSelector } from '../stringUtils';
 
-export type ByRoleUI5Options = Record<string, string>;
+export type ByRoleUI5Properties = Record<string, string>;
+export type ByRoleUI5Options = {
+  exact?: boolean;
+};
 
-export function getByRoleUI5Selector(role: string, options: ByRoleUI5Options = {}, exact: boolean = false): string {
+export function getByRoleUI5Selector(role: string, properties: ByRoleUI5Properties = {}, options: ByRoleUI5Options = {}): string {
   const optionsString: string[] = [];
 
-  if (Object.entries(options).length > 1)
+  if (Object.entries(properties).length > 1)
     throw new Error('Support for multiple properties have not been added yet.');
 
-  for (const [key, value] of Object.entries(options))
-    optionsString.push(`[${key}=${escapeForAttributeSelector(value, exact)}]`);
+  for (const [key, value] of Object.entries(properties))
+    optionsString.push(`[${key}=${escapeForAttributeSelector(value, !!options.exact)}]`);
 
   return `ui5:role=${role}${optionsString.join('')}`;
 }

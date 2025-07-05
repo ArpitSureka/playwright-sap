@@ -23,7 +23,7 @@ import type { InjectedScript } from './injectedScript';
 import type { Language } from '@isomorphic/locatorGenerators';
 import type { ByRoleOptions } from '@isomorphic/locatorUtils';
 import type { SAP } from '@sap/types/sapWindow';
-import type { ByRoleUI5Options } from '@isomorphic/sap/locatorUtils';
+import type { ByRoleUI5Options, ByRoleUI5Properties } from '@isomorphic/sap/locatorUtils';
 
 const selectorSymbol = Symbol('selector');
 
@@ -68,8 +68,7 @@ class Locator {
     self.and = (locator: Locator): Locator => new Locator(injectedScript, selectorBase + ` >> internal:and=` + JSON.stringify(locator[selectorSymbol]));
     self.or = (locator: Locator): Locator => new Locator(injectedScript, selectorBase + ` >> internal:or=` + JSON.stringify(locator[selectorSymbol]));
 
-    self.getByRoleUI5 = (role: string, options: ByRoleUI5Options = {}, exact: boolean = false): Locator => self.locator(getByRoleUI5Selector(role, options, exact));
-
+    self.getByRoleUI5 = (role: string, properties: ByRoleUI5Properties, options: ByRoleUI5Options): Locator => self.locator(getByRoleUI5Selector(role, properties, options));
   }
 }
 

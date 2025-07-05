@@ -2281,7 +2281,7 @@ Attribute name to get the value for.
 * langs: js
 - `properties` ?<[Record<string, string>]>
 
-### param: Page.getByRoleUI5.exact
+### option: Page.getByRoleUI5.exact
 * since: v1.8
 * langs: js
 - `exact` ?<[boolean]>

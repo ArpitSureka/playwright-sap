@@ -14,7 +14,6 @@
   limitations under the License.
 */
 
-import { SAP } from '@sap/types/sapWindow';
 import React from 'react';
 
 import type { EffectCallback } from 'react';
@@ -171,7 +170,6 @@ export function useSetting<S>(name: string | undefined, defaultValue: S): [S, Re
 declare global {
   interface Window {
     saveSettings?(): void;
-    sap: SAP;
   }
 }
 

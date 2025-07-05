@@ -559,6 +559,7 @@ onChanges.push({
     'packages/playwright-core/src/utils/isomorphic/**',
     'packages/playwright-core/src/utils/isomorphic/sap/**',
     'packages/sap/**',
+    'packages/sap/types/**',
     'utils/generate_injected_builtins.js',
     'utils/generate_injected.js',
   ],
