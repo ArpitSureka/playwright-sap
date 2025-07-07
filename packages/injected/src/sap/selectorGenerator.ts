@@ -19,13 +19,19 @@ import { SelectorToken } from '@injected/selectorGenerator';
 
 import { buildUI5Selectors } from './ui5selectorGenerator';
 import { checkSAPSelector } from './common';
+import { sidSelectorGenerator } from './sidSelectorGenerator';
 
 const kNthScoreUI5 = 10;
 
 export function buildSAPSelectors(injectedScript: InjectedScript, element: Element): SelectorToken[][] {
-  return buildUI5Selectors(injectedScript, element);
+  const ui5Selector =  buildUI5Selectors(injectedScript, element);
+  if (ui5Selector)
+    return ui5Selector;
+
+  return sidSelectorGenerator(element);
 }
 
+// Only UI5 Selectors require this function sid based selectors would automatically work with existing chooseFirstSelector function.
 export function chooseFirstSelectorSAP(window: Window, tokens: SelectorToken[], targetElement: Element, result: Element[]): SelectorToken[] | null {
   let sapSelector = false;
   tokens.forEach(selector => sapSelector = selector.engine === 'ui5:role' || sapSelector);

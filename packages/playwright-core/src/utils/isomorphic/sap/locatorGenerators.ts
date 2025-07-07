@@ -19,7 +19,7 @@
 import { LocatorBase, LocatorFactory, LocatorOptions } from '../locatorGenerators';
 import { parseAttributeSelector, ParsedSelectorPart } from '../selectorParser';
 
-export type LocatorTypeSAP = 'ui5:role';
+export type LocatorTypeSAP = 'ui5:role' | 'sid';
 
 // Return example for getByRoleUI5('grid', {text: 'My Grid', exact: true})
 // options = {
@@ -45,5 +45,8 @@ export function innerAsLocatorsSAP(part: ParsedSelectorPart, base: LocatorBase, 
     });
     return [factory.generateLocator(base, 'ui5:role', attrSelector.name, options)];
   }
+  if (part.name === 'sid' && typeof part.body === 'string')
+    return [factory.generateLocator(base, 'sid', part.body as string)];
+
   return null;
 }

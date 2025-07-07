@@ -352,6 +352,8 @@ export class JavaScriptLocatorFactory implements LocatorFactory {
         else if (options.exact && attrString2.length === 0)
           attrString2 = ', {}, { exact: true }';
         return `getByRoleUI5(${this.quote(body as string)}${attrString2})`;
+      case 'sid':
+        return `locateSID(${this.quote(body as string)})`;
       default:
         throw new Error('Unknown selector kind ' + kind);
     }

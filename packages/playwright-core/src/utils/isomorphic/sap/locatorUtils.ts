@@ -32,3 +32,7 @@ export function getByRoleUI5Selector(role: string, properties: ByRoleUI5Properti
 
   return `ui5:role=${role}${optionsString.join('')}`;
 }
+
+export function locateSIDSelector(sid: string): string {
+  return `sid=${sid}`;
+}

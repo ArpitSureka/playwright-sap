@@ -702,6 +702,10 @@ export class Page extends ChannelOwner<channels.PageChannel> implements api.Page
     return this.mainFrame().getByRoleUI5(role, properties, options);
   }
 
+  locateSID(sid: string): Locator {
+    return this.mainFrame().locateSID(sid);
+  }
+
   frameLocator(selector: string): FrameLocator {
     return this.mainFrame().frameLocator(selector);
   }

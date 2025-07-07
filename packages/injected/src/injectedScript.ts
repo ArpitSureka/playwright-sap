@@ -34,6 +34,7 @@ import { XPathEngine } from './xpathSelectorEngine';
 import { ConsoleAPI } from './consoleApi';
 import { UtilityScript } from './utilityScript';
 import { ui5RoleEngine } from './sap/ui5SelectorEngine';
+import { SIDSelectorEngine } from './sap/sidSelectorEngine';
 
 import type { AriaTemplateNode } from '@isomorphic/ariaSnapshot';
 import type { CSSComplexSelectorList } from '@isomorphic/cssParser';
@@ -232,6 +233,7 @@ export class InjectedScript {
     this._engines.set('aria-ref', this._createAriaRefEngine());
 
     this._engines.set('ui5:role', ui5RoleEngine());
+    this._engines.set('sid', SIDSelectorEngine);
 
     for (const { name, source } of options.customEngines)
       this._engines.set(name, this.eval(source));
