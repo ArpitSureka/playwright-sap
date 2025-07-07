@@ -1675,6 +1675,9 @@ await page
     .GetByPlaceholder("name@example.com")
     .FillAsync("playwright@microsoft.com");
 ```
+## template-locator-locateSID
+
+Documentation not ready for locateSID
 
 ## template-locator-get-by-role-UI5
 

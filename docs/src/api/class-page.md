@@ -2267,6 +2267,17 @@ Attribute name to get the value for.
 
 ### option: Page.getByPlaceholder.exact = %%-locator-get-by-text-exact-%%
 
+## method: Page.locateSID
+* since: v1.27
+- returns: <[Locator]>
+
+%%-template-locator-locateSID-%%
+
+### param: Page.locateSID.sid
+* since: v1.27
+* langs: js
+- `sid` <[string]>
+
 ## method: Page.getByRoleUI5
 * since: v1.27
 - returns: <[Locator]>

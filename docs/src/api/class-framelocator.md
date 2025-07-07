@@ -128,6 +128,37 @@ in that iframe.
 
 ### option: FrameLocator.getByPlaceholder.exact = %%-locator-get-by-text-exact-%%
 
+## method: FrameLocator.locateSID
+* since: v1.27
+- returns: <[Locator]>
+
+%%-template-locator-locateSID-%%
+
+### param: FrameLocator.locateSID.sid
+* since: v1.27
+* langs: js
+- `sid` <[string]>
+
+## method: FrameLocator.getByRoleUI5
+* since: v1.27
+- returns: <[Locator]>
+
+%%-template-locator-get-by-role-UI5-%%
+
+### param: FrameLocator.getByRoleUI5.role = %%-get-by-role-UI5-to-have-role-role-%%
+* since: v1.27
+
+### param: FrameLocator.getByRoleUI5.properties
+* since: v1.27
+* langs: js
+- `properties` ?<[Record<string, string>]>
+
+### option: FrameLocator.getByRoleUI5.exact
+* since: v1.8
+* langs: js
+- `exact` ?<[boolean]>
+
+
 ## method: FrameLocator.getByRole
 * since: v1.27
 - returns: <[Locator]>

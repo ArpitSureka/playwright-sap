@@ -3552,6 +3552,12 @@ export interface Page {
   }): Promise<boolean>;
 
   /**
+   * Documentation not ready for locateSID
+   * @param sid
+   */
+  locateSID(sid: string): Locator;
+
+  /**
    * The method returns an element locator that can be used to perform actions on this page / frame. Locator is resolved
    * to the element immediately before performing an action, so a series of actions on the same locator can in fact be
    * performed on different DOM elements. That would happen if the DOM structure between those actions has changed.
@@ -6761,6 +6767,16 @@ export interface Frame {
   }): Locator;
 
   /**
+   * Documentation not ready for getByRoleUI5
+   * @param propertyRole Required propertyRole.
+   * @param properties
+   * @param options
+   */
+  getByRoleUI5(propertyRole: string, properties?: Record<string, string>, options?: {
+    exact?: boolean;
+  }): Locator;
+
+  /**
    * Locate element by the test id.
    *
    * **Usage**
@@ -7244,6 +7260,12 @@ export interface Frame {
      */
     timeout?: number;
   }): Promise<boolean>;
+
+  /**
+   * Documentation not ready for locateSID
+   * @param sid
+   */
+  locateSID(sid: string): Locator;
 
   /**
    * The method returns an element locator that can be used to perform actions on this page / frame. Locator is resolved
@@ -13428,6 +13450,16 @@ export interface Locator {
   }): Locator;
 
   /**
+   * Documentation not ready for getByRoleUI5
+   * @param propertyRole Required propertyRole.
+   * @param properties
+   * @param options
+   */
+  getByRoleUI5(propertyRole: string, properties?: Record<string, string>, options?: {
+    exact?: boolean;
+  }): Locator;
+
+  /**
    * Locate element by the test id.
    *
    * **Usage**
@@ -13850,6 +13882,12 @@ export interface Locator {
    *
    */
   last(): Locator;
+
+  /**
+   * Documentation not ready for locateSID
+   * @param sid
+   */
+  locateSID(sid: string): Locator;
 
   /**
    * The method finds an element matching the specified selector in the locator's subtree. It also accepts filter
@@ -19730,6 +19768,16 @@ export interface FrameLocator {
   }): Locator;
 
   /**
+   * Documentation not ready for getByRoleUI5
+   * @param propertyRole Required propertyRole.
+   * @param properties
+   * @param options
+   */
+  getByRoleUI5(propertyRole: string, properties?: Record<string, string>, options?: {
+    exact?: boolean;
+  }): Locator;
+
+  /**
    * Locate element by the test id.
    *
    * **Usage**
@@ -19853,6 +19901,12 @@ export interface FrameLocator {
    * [locator.contentFrame()](https://playwright.dev/docs/api/class-locator#locator-content-frame) instead.
    */
   last(): FrameLocator;
+
+  /**
+   * Documentation not ready for locateSID
+   * @param sid
+   */
+  locateSID(sid: string): Locator;
 
   /**
    * The method finds an element matching the specified selector in the locator's subtree. It also accepts filter

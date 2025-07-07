@@ -1022,6 +1022,37 @@ Attribute name to get the value for.
 
 ### option: Frame.getByPlaceholder.exact = %%-locator-get-by-text-exact-%%
 
+## method: Frame.locateSID
+* since: v1.27
+- returns: <[Locator]>
+
+%%-template-locator-locateSID-%%
+
+### param: Frame.locateSID.sid
+* since: v1.27
+* langs: js
+- `sid` <[string]>
+
+## method: Frame.getByRoleUI5
+* since: v1.27
+- returns: <[Locator]>
+
+%%-template-locator-get-by-role-UI5-%%
+
+### param: Frame.getByRoleUI5.role = %%-get-by-role-UI5-to-have-role-role-%%
+* since: v1.27
+
+### param: Frame.getByRoleUI5.properties
+* since: v1.27
+* langs: js
+- `properties` ?<[Record<string, string>]>
+
+### option: Frame.getByRoleUI5.exact
+* since: v1.8
+* langs: js
+- `exact` ?<[boolean]>
+
+
 ## method: Frame.getByRole
 * since: v1.27
 - returns: <[Locator]>

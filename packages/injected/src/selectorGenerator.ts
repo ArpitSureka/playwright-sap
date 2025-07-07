@@ -180,7 +180,7 @@ function generateSelectorFor(cache: Cache, injectedScript: InjectedScript, targe
       // Use the deepest possible text selector - works pretty good and saves on compute time.
       const allowParentText = allowText && !textCandidatesToUse.length;
 
-      const candidates = [...textCandidatesToUse, ...noTextCandidates].filter(c => {
+      const candidates = [...textCandidatesToUse, ...noTextCandidates, ...sapCandidates].filter(c => {
         if (!result)
           return true;
         return combineScores(c) < combineScores(result);

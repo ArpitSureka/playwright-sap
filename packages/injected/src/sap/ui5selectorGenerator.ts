@@ -25,6 +25,7 @@ import { checkIfRoleAllowed, checkIfRoleAllowedWithoutProperties, getAllowedProp
 const ui5BasicScore = 10;
 
 // Builds UI5 Selectors
+// Add no text option in buildUI5Selectors to work with expect text feature.
 export function buildUI5Selectors(injectedScript: InjectedScript, element: Element): SelectorToken[][] {
 
   const candidates: SelectorToken[][] = [];
