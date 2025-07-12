@@ -115,6 +115,11 @@ export class Frame extends ChannelOwner<channels.FrameChannel> implements api.Fr
     return network.Response.fromNullable((await this._channel.goto({ url, ...options, waitUntil, timeout: this._navigationTimeout(options) })).response);
   }
 
+  // async SAPLogin(url: string, username: string, password: string): Promise<network.Response | null> {
+  //   const waitUntil = verifyLoadState('waitUntil', 'load');
+  //   // return network.Response.fromNullable((await this._channel.goto({ url, ...options, waitUntil, timeout: this._navigationTimeout(options) })).response);
+  // }
+
   private _setupNavigationWaiter(options: { timeout?: number }): Waiter {
     const waiter = new Waiter(this._page!, '');
     if (this._page!.isClosed())
@@ -351,7 +356,7 @@ export class Frame extends ChannelOwner<channels.FrameChannel> implements api.Fr
     return this.locator(getByRoleSelector(role, options));
   }
 
-  getByRoleUI5(role: string, properties: ByRoleUI5Properties, options: ByRoleUI5Options): Locator {
+  getByRoleUI5(role: string, properties?: ByRoleUI5Properties, options?: ByRoleUI5Options): Locator {
     return this.locator(getByRoleUI5Selector(role, properties, options));
   }
 

@@ -1576,6 +1576,26 @@ interface TestConfig<TestArgs = {}, WorkerArgs = {}> {
   retries?: number;
 
   /**
+   * Automatic login in every test and during codegen recording.
+   */
+  sapConfig?: {
+    /**
+     * SAP login page URL. currently supports only Fiori.
+     */
+    url: string;
+
+    /**
+     * Username which should be used for login.
+     */
+    username: string;
+
+    /**
+     * Password which should be used for login.
+     */
+    password: string;
+  };
+
+  /**
    * Shard tests and execute only the selected shard. Specify in the one-based form like `{ total: 5, current: 2 }`.
    *
    * Learn more about [parallelism and sharding](https://playwright.dev/docs/test-parallel) with Playwright Test.

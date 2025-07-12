@@ -4081,6 +4081,14 @@ export interface Page {
   routeWebSocket(url: string|RegExp|((url: URL) => boolean), handler: ((websocketroute: WebSocketRoute) => Promise<any>|any)): Promise<void>;
 
   /**
+   * Goes to SAP Login page and logs in using username and password.
+   * @param username username to be used for login.
+   * @param password password to be used for login.
+   * @param url optional: URL to navigate to SAP Login Page.
+   */
+  SAPLogin(username: string, password: string, url?: string): Promise<null|Response>;
+
+  /**
    * Returns the buffer with the captured screenshot.
    * @param options
    */

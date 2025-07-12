@@ -19,13 +19,13 @@ import { SelectorToken } from '@injected/selectorGenerator';
 
 import { buildUI5Selectors } from './ui5selectorGenerator';
 import { checkSAPSelector } from './common';
-import { sidSelectorGenerator } from './sidSelectorGenerator';
+import { getSIDandElementFromElement, sidSelectorGenerator } from './sidSelectorGenerator';
 
 const kNthScoreUI5 = 10;
 
 export function buildSAPSelectors(injectedScript: InjectedScript, element: Element): SelectorToken[][] {
   const ui5Selector =  buildUI5Selectors(injectedScript, element);
-  if (ui5Selector)
+  if (ui5Selector.length)
     return ui5Selector;
 
   return sidSelectorGenerator(element);
@@ -33,13 +33,13 @@ export function buildSAPSelectors(injectedScript: InjectedScript, element: Eleme
 
 // Only UI5 Selectors require this function sid based selectors would automatically work with existing chooseFirstSelector function.
 export function chooseFirstSelectorSAP(window: Window, tokens: SelectorToken[], targetElement: Element, result: Element[]): SelectorToken[] | null {
-  let sapSelector = false;
-  tokens.forEach(selector => sapSelector = selector.engine === 'ui5:role' || sapSelector);
+  let ui5Selector = false;
+  tokens.forEach(selector => ui5Selector = selector.engine === 'ui5:role' || ui5Selector);
   // Not written case for nth selector
-  if (sapSelector && result.length === 1) {
+  if (ui5Selector && result.length === 1) {
     if (checkSAPSelector(result[0], targetElement, window))
       return tokens;
-  } else if (sapSelector && result.length > 1) {
+  } else if (ui5Selector && result.length > 1) {
     for (let index = 0; index < result.length; index++) {
       if (checkSAPSelector(result[index], targetElement, window)){
         const nth: SelectorToken = { engine: 'nth', selector: String(index), score: kNthScoreUI5 };
@@ -47,5 +47,24 @@ export function chooseFirstSelectorSAP(window: Window, tokens: SelectorToken[], 
       }
     }
   }
+
+  let sidSelector = false;
+  tokens.forEach(selector => sidSelector = selector.engine === 'sid' || sidSelector);
+  if (sidSelector) {
+    const sidAndElementFromElement = getSIDandElementFromElement(targetElement);
+    if (result.length === 1 && sidAndElementFromElement) {
+      if (result[0] === sidAndElementFromElement.element)
+        return tokens;
+    } else if (result.length > 1 && sidAndElementFromElement) {
+      for (let index = 0; index < result.length; index++) {
+        if (result[index] === sidAndElementFromElement.element) {
+          const nth: SelectorToken = { engine: 'nth', selector: String(index), score: kNthScoreUI5 };
+          return [...tokens, nth];
+        }
+      }
+    }
+  }
+
+
   return [];
 }

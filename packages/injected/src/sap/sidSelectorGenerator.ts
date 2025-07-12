@@ -16,8 +16,20 @@
 
 import { SelectorToken } from '@injected/selectorGenerator';
 
-
 export function sidSelectorGenerator(targetNode: Node): SelectorToken[][] {
+  const sidAndElementFromElement = getSIDandElementFromElement(targetNode);
+  const selectorToken: SelectorToken[][] = [];
+  if (sidAndElementFromElement){
+    selectorToken.push([{
+      engine: 'sid',
+      selector: `${sidAndElementFromElement.sid}`,
+      score: 1
+    }]);
+  }
+  return selectorToken;
+}
+
+export function getSIDandElementFromElement(targetNode: Node): { sid: string, element: Element } | null {
   let searchRootElement: Element | null;
 
   // Determine the effective starting element for the search
@@ -27,25 +39,19 @@ export function sidSelectorGenerator(targetNode: Node): SelectorToken[][] {
     searchRootElement = targetNode.parentElement;
 
   if (!searchRootElement)
-    return []; // No valid starting point for the search
+    return null; // No valid starting point for the search
 
   let sid = undefined;
   let currentAncestor: Element | null = searchRootElement;
   let count = 0;
-  const selectorToken: SelectorToken[][] = [];
 
   // Loop outward, level by level (distance 1, then 2, and so on)
-  while (currentAncestor && count < 4) {
+  while (currentAncestor && count < 3) {
     // Check ancestor at the current distance
     if (currentAncestor) {
       sid = getSIDfromElement(currentAncestor);
-      if (sid !== undefined){
-        selectorToken.push([{
-          engine: 'sid',
-          selector: `sid=${sid}`,
-          score: 1
-        }]);
-      }
+      if (sid)
+        return { sid, element: currentAncestor };
 
       // If sid is null there is a problem. either that node has lsData and it dosnt have sid or an error has been caught
       if (sid === null)
@@ -59,7 +65,7 @@ export function sidSelectorGenerator(targetNode: Node): SelectorToken[][] {
 
   }
 
-  return selectorToken; // No matching element found
+  return null; // No matching element found
 }
 
 function getSIDfromElement(element: Element): string | null | undefined {

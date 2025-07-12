@@ -16,7 +16,7 @@
 
 // This list is case-sensitive and should match the UI5 control properties. UI5 properties follow camelCase. Also this is ordered by priority.
 // All other properties are implicitly denied.
-const implicitlyAllowedProperties: string[] = ['name', 'label', 'title', 'value', 'text', 'icon', 'description', 'placeholder', 'key'];
+const implicitlyAllowedProperties: string[] = ['name', 'label', 'title', 'text', 'icon', 'placeholder', 'subTitle', 'value', 'description', 'header', 'key'];
 
 // This config is case-sensitive and should match the UI5 control properties. UI5 properties follow camelCase. Also this is ordered by priority.
 const propertiesConfig: PropertiesConfig = {
@@ -41,6 +41,9 @@ const propertiesConfig: PropertiesConfig = {
   'ObjectNumber': {
     explicitlyAllowed: ['number']
   },
+  'Illustration': {
+    explicitlyAllowed: ['media', 'type', 'set']
+  }
   // 'StandardListItem': {
   //   explicitlyDenied: ['*'] // This means role is never allowed
   // },

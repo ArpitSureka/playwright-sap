@@ -2482,6 +2482,30 @@ it gets merged via the [`new URL()`](https://developer.mozilla.org/en-US/docs/We
 Referer header value. If provided it will take preference over the referer header value set by
 [`method: Page.setExtraHTTPHeaders`].
 
+## async method: Page.SAPLogin
+* since: v1.8
+- returns: <[null]|[Response]>
+
+Goes to SAP Login page and logs in using username and password.
+
+### param: Page.SAPLogin.username
+* since: v1.8
+- `username` <[string]>
+
+username to be used for login.
+
+### param: Page.SAPLogin.password
+* since: v1.8
+- `password` <[string]>
+
+password to be used for login.
+
+### param: Page.SAPLogin.url
+* since: v1.8
+- `url` ?<[string]>
+
+optional: URL to navigate to SAP Login Page.
+
 ## async method: Page.hover
 * since: v1.8
 * discouraged: Use locator-based [`method: Locator.hover`] instead. Read more about [locators](../locators.md).

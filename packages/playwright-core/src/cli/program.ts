@@ -67,6 +67,7 @@ Examples:
 
 commandWithOpenOptions('codegen [url]', 'open page and generate code for user actions',
     [
+      ['-s, --sap-login <credentials...>', 'SAP credentials for login'],
       ['-o, --output <file name>', 'saves the generated script to a file'],
       ['--target <language>', `language to generate, one of javascript, playwright-test, python, python-async, python-pytest, csharp, csharp-mstest, csharp-nunit, java, java-junit`, codegenId()],
       ['--test-id-attribute <attributeName>', 'use the specified attribute to generate data test ID selectors'],
@@ -423,6 +424,7 @@ type Options = {
   timezone?: string;
   viewportSize?: string;
   userAgent?: string;
+  sapLogin?: string[];
 };
 
 type CaptureOptions = {
@@ -649,6 +651,18 @@ async function codegen(options: Options & { target: string, output?: string, tes
     tracesDir,
   });
   dotenv.config({ path: 'playwright.env' });
+  if (options.sapLogin) {
+    if (!url)
+      throw new Error('SAP login requires a URL to be specified');
+    if (options.sapLogin.length !== 2)
+      throw new Error('SAP login requires 2 arguments - username and password, got ' + options.sapLogin.length + ' arguments');
+    const [username, password] = options.sapLogin;
+    const page = await openPage(context, undefined);
+    await page.SAPLogin(username, password, url);
+    // Dont want to record the login page navigation in the codegen.
+    await page.waitForNavigation();
+    await page.waitForLoadState();
+  }
   await context._enableRecorder({
     language,
     launchOptions,
@@ -660,7 +674,8 @@ async function codegen(options: Options & { target: string, output?: string, tes
     outputFile: outputFile ? path.resolve(outputFile) : undefined,
     handleSIGINT: false,
   });
-  await openPage(context, 'ui5.sap.com');
+  if (!options.sapLogin)
+    await openPage(context, url);
 }
 
 async function waitForPage(page: Page, captureOptions: CaptureOptions) {

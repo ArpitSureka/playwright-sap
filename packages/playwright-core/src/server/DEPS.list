@@ -12,6 +12,7 @@
 ./registry/
 ./trace/recorder/tracing.ts
 ./utils/
+./sap/
 
 [playwright.ts]
 ./android/

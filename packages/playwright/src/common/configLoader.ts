@@ -137,6 +137,41 @@ export async function loadConfig(location: ConfigLocation, overrides?: ConfigCLI
   return fullConfig;
 }
 
+// Copied from loadConfig - packages/playwright/src/common/configLoader.ts.
+export async function loadSAPConfig(): Promise<{ url: string, username: string, password: string } | null> {
+
+
+  const location = resolveConfigLocation(undefined);
+
+  if (!registerESMLoader()) {
+    // In Node.js < 18, complain if the config file is ESM. Historically, we would restart
+    // the process with --loader, but now we require newer Node.js.
+    if (location.resolvedConfigFile && fileIsModule(location.resolvedConfigFile))
+      throw errorWithFile(location.resolvedConfigFile, `Playwright requires Node.js 18.19 or higher to load esm modules. Please update your version of Node.js.`);
+  }
+
+  // 1. Setup tsconfig; configure ESM loader with tsconfig and compilation cache.
+  await configureESMLoader();
+
+  // 2. Load and validate playwright config.
+  const userConfig = await loadUserConfig(location);
+
+  let sapConfig: { url: string, username: string, password: string } | null = null;
+
+  if (userConfig && userConfig.sapConfig) {
+    if (!userConfig.sapConfig.username || !userConfig.sapConfig.password || !userConfig.sapConfig.url)
+      throw new Error('Missing SAP config values. Please define SAP Config correctly.');
+    sapConfig = { url: userConfig.sapConfig.url, username: userConfig.sapConfig.username, password: userConfig.sapConfig.password };
+  }
+
+  // This function is not completely done. currently sapConfig dosnt work when running tests.
+  // if (!codegen) {
+
+  // }
+
+  return sapConfig;
+}
+
 function validateConfig(file: string, config: Config) {
   if (typeof config !== 'object' || !config)
     throw errorWithFile(file, `Configuration file must export a single object`);

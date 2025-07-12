@@ -191,7 +191,7 @@ export class Locator implements api.Locator {
     return this.locator(getByRoleSelector(role, options));
   }
 
-  getByRoleUI5(role: string, properties: ByRoleUI5Properties, options: ByRoleUI5Options): Locator {
+  getByRoleUI5(role: string, properties?: ByRoleUI5Properties, options?: ByRoleUI5Options): Locator {
     return this.locator(getByRoleUI5Selector(role, properties, options));
   }
 
@@ -445,7 +445,7 @@ export class FrameLocator implements api.FrameLocator {
     return this.locator(getByRoleSelector(role, options));
   }
 
-  getByRoleUI5(role: string, properties: ByRoleUI5Properties, options: ByRoleUI5Options): Locator {
+  getByRoleUI5(role: string, properties?: ByRoleUI5Properties, options?: ByRoleUI5Options): Locator {
     return this.locator(getByRoleUI5Selector(role, properties, options));
   }
 
