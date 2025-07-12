@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { getByRoleUI5Selector, locateSIDSelector } from '../utils/isomorphic/sap/locatorUtils';
+import { getByRoleSIDSelector, getByRoleUI5Selector, locateSIDSelector } from '../utils/isomorphic/sap/locatorUtils';
 import { ElementHandle } from './elementHandle';
 import { parseResult, serializeArgument } from './jsHandle';
 import { asLocator } from '../utils/isomorphic/locatorGenerators';
@@ -28,7 +28,7 @@ import type * as structs from '../../types/structs';
 import type * as api from '../../types/types';
 import type { ByRoleOptions } from '../utils/isomorphic/locatorUtils';
 import type * as channels from '@protocol/channels';
-import type { ByRoleUI5Options, ByRoleUI5Properties } from '../utils/isomorphic/sap/locatorUtils';
+import type { ByRoleSIDOptions, ByRoleUI5Options, ByRoleUI5Properties } from '../utils/isomorphic/sap/locatorUtils';
 
 
 export type LocatorOptions = {
@@ -197,6 +197,10 @@ export class Locator implements api.Locator {
 
   locateSID(sid: string): Locator {
     return this.locator(locateSIDSelector(sid));
+  }
+
+  getByRoleSID(role: string, options: ByRoleSIDOptions): Locator {
+    return this.locator(getByRoleSIDSelector(role, options));
   }
 
   frameLocator(selector: string): FrameLocator {
@@ -451,6 +455,10 @@ export class FrameLocator implements api.FrameLocator {
 
   locateSID(sid: string): Locator {
     return this.locator(locateSIDSelector(sid));
+  }
+
+  getByRoleSID(role: string, options: ByRoleSIDOptions): Locator {
+    return this.locator(getByRoleSIDSelector(role, options));
   }
 
   owner() {

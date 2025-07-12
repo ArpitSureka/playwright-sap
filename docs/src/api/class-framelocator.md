@@ -139,6 +139,27 @@ in that iframe.
 * langs: js
 - `sid` <[string]>
 
+
+## method: FrameLocator.getByRoleSID
+* since: v1.27
+- returns: <[Locator]>
+
+%%-template-locator-getByRoleSID-%%
+
+### param: FrameLocator.getByRoleSID.role 
+* since: v1.27
+* langs: js
+- `role` <[string]>
+
+### param: FrameLocator.getByRoleSID.options
+* since: v1.27
+* langs: js
+- `options` <[Object]>
+  - `name` <[string]> name of the clicked object.
+  - `wnd` ?<[int]> window number in the sid. default 0.
+
+
+
 ## method: FrameLocator.getByRoleUI5
 * since: v1.27
 - returns: <[Locator]>

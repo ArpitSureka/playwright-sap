@@ -175,23 +175,23 @@ class Workspace {
 const ROOT_PATH = path.join(__dirname, '../publish/clean');
 const LICENCE_FILES = ['NOTICE', 'LICENSE'];
 const workspace = new Workspace(ROOT_PATH, [
-  // new PWPackage({
-  //   name: 'playwright-sap',
-  //   path: path.join(ROOT_PATH, 'playwright-sap'),
-  //   // We copy README.md additionally for playwright so that it looks nice on NPM.
-  //   files: [...LICENCE_FILES, 'README.md'],
-  // }),
-  // new PWPackage({
-  //   name: 'playwright-sap-core',
-  //   path: path.join(ROOT_PATH, 'playwright-sap-core'),
-  //   files: LICENCE_FILES,
-  // }),
-  // new PWPackage({
-  //   name: '@playwright-sap/test',
-  //   path: path.join(ROOT_PATH, 'playwright-sap-test'),
-  //   // We copy README.md additionally for @playwright/test so that it looks nice on NPM.
-  //   files: [...LICENCE_FILES, 'README.md'],
-  // })
+  new PWPackage({
+    name: 'playwright-sap',
+    path: path.join(ROOT_PATH, 'playwright-sap'),
+    // We copy README.md additionally for playwright so that it looks nice on NPM.
+    files: [...LICENCE_FILES, 'README.md'],
+  }),
+  new PWPackage({
+    name: 'playwright-sap-core',
+    path: path.join(ROOT_PATH, 'playwright-sap-core'),
+    files: LICENCE_FILES,
+  }),
+  new PWPackage({
+    name: '@playwright-sap/test',
+    path: path.join(ROOT_PATH, 'playwright-sap-test'),
+    // We copy README.md additionally for @playwright/test so that it looks nice on NPM.
+    files: [...LICENCE_FILES, 'README.md'],
+  })
 ]);
 
 if (require.main === module) {

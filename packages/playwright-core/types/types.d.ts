@@ -2992,6 +2992,23 @@ export interface Page {
   }): Locator;
 
   /**
+   * Documentation not ready for getByRoleSID
+   * @param role
+   * @param options
+   */
+  getByRoleSID(role: string, options: {
+    /**
+     * name of the clicked object.
+     */
+    name: string;
+
+    /**
+     * window number in the sid. default 0.
+     */
+    wnd?: number;
+  }): Locator;
+
+  /**
    * Documentation not ready for getByRoleUI5
    * @param propertyRole Required propertyRole.
    * @param properties
@@ -6772,6 +6789,23 @@ export interface Frame {
      * Learn more about [`aria-selected`](https://www.w3.org/TR/wai-aria-1.2/#aria-selected).
      */
     selected?: boolean;
+  }): Locator;
+
+  /**
+   * Documentation not ready for getByRoleSID
+   * @param role
+   * @param options
+   */
+  getByRoleSID(role: string, options: {
+    /**
+     * name of the clicked object.
+     */
+    name: string;
+
+    /**
+     * window number in the sid. default 0.
+     */
+    wnd?: number;
   }): Locator;
 
   /**
@@ -13458,6 +13492,23 @@ export interface Locator {
   }): Locator;
 
   /**
+   * Documentation not ready for getByRoleSID
+   * @param role
+   * @param options
+   */
+  getByRoleSID(role: string, options: {
+    /**
+     * name of the clicked object.
+     */
+    name: string;
+
+    /**
+     * window number in the sid. default 0.
+     */
+    wnd?: number;
+  }): Locator;
+
+  /**
    * Documentation not ready for getByRoleUI5
    * @param propertyRole Required propertyRole.
    * @param properties
@@ -19773,6 +19824,23 @@ export interface FrameLocator {
      * Learn more about [`aria-selected`](https://www.w3.org/TR/wai-aria-1.2/#aria-selected).
      */
     selected?: boolean;
+  }): Locator;
+
+  /**
+   * Documentation not ready for getByRoleSID
+   * @param role
+   * @param options
+   */
+  getByRoleSID(role: string, options: {
+    /**
+     * name of the clicked object.
+     */
+    name: string;
+
+    /**
+     * window number in the sid. default 0.
+     */
+    wnd?: number;
   }): Locator;
 
   /**

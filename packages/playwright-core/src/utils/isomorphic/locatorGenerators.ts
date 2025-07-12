@@ -16,13 +16,13 @@
 
 import {  parseAttributeSelector, parseSelector, stringifySelector } from './selectorParser';
 import { escapeWithQuotes, normalizeEscapedRegexQuotes, toSnakeCase, toTitleCase } from './stringUtils';
-import { innerAsLocatorsSAP } from './sap/locatorGenerators';
+import { innerAsLocatorsSAP, javascriptSIDLocatorGenerator } from './sap/locatorGenerators';
 
 import type { NestedSelectorBody } from './selectorParser';
 import type { ParsedSelector } from './selectorParser';
 import type { LocatorTypeSAP } from './sap/locatorGenerators';
 
-export type Language = 'javascript' | 'python' | 'java' | 'csharp' | 'jsonl';
+export type Language = 'javascript';
 export type LocatorType = 'default' | 'role' | 'text' | 'label' | 'placeholder' | 'alt' | 'title' | 'test-id' | 'nth' | 'first' | 'last' | 'visible' | 'has-text' | 'has-not-text' | 'has' | 'hasNot' | 'frame' | 'frame-locator' | 'and' | 'or' | 'chain' | LocatorTypeSAP;
 export type LocatorBase = 'page' | 'locator' | 'frame-locator';
 export type Quote = '\'' | '"' | '`';
@@ -353,7 +353,7 @@ export class JavaScriptLocatorFactory implements LocatorFactory {
           attrString2 = ', {}, { exact: true }';
         return `getByRoleUI5(${this.quote(body as string)}${attrString2})`;
       case 'sid':
-        return `locateSID(${this.quote(body as string)})`;
+        return javascriptSIDLocatorGenerator(this.quote(body as string));
       default:
         throw new Error('Unknown selector kind ' + kind);
     }
@@ -722,10 +722,10 @@ export class JsonlLocatorFactory implements LocatorFactory {
 
 const generators: Record<Language, new (preferredQuote?: Quote) => LocatorFactory> = {
   javascript: JavaScriptLocatorFactory,
-  python: PythonLocatorFactory,
-  java: JavaLocatorFactory,
-  csharp: CSharpLocatorFactory,
-  jsonl: JsonlLocatorFactory,
+  // python: PythonLocatorFactory,
+  // java: JavaLocatorFactory,
+  // csharp: CSharpLocatorFactory,
+  // jsonl: JsonlLocatorFactory,
 };
 
 function isRegExp(obj: any): obj is RegExp {

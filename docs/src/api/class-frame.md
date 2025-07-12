@@ -1033,6 +1033,29 @@ Attribute name to get the value for.
 * langs: js
 - `sid` <[string]>
 
+
+
+## method: Frame.getByRoleSID
+* since: v1.27
+- returns: <[Locator]>
+
+%%-template-locator-getByRoleSID-%%
+
+### param: Frame.getByRoleSID.role 
+* since: v1.27
+* langs: js
+- `role` <[string]>
+
+### param: Frame.getByRoleSID.options
+* since: v1.27
+* langs: js
+- `options` <[Object]>
+  - `name` <[string]> name of the clicked object.
+  - `wnd` ?<[int]> window number in the sid. default 0.
+
+
+
+
 ## method: Frame.getByRoleUI5
 * since: v1.27
 - returns: <[Locator]>

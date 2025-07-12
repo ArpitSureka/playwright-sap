@@ -1297,6 +1297,25 @@ Attribute name to get the value for.
 * langs: js
 - `sid` <[string]>
 
+## method: Locator.getByRoleSID
+* since: v1.27
+- returns: <[Locator]>
+
+%%-template-locator-getByRoleSID-%%
+
+### param: Locator.getByRoleSID.role 
+* since: v1.27
+* langs: js
+- `role` <[string]>
+
+### param: Locator.getByRoleSID.options
+* since: v1.27
+* langs: js
+- `options` <[Object]>
+  - `name` <[string]> name of the clicked object.
+  - `wnd` ?<[int]> window number in the sid. default 0.
+
+
 ## method: Locator.getByRoleUI5
 * since: v1.27
 - returns: <[Locator]>

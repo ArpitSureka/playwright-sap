@@ -1679,6 +1679,10 @@ await page
 
 Documentation not ready for locateSID
 
+## template-locator-getByRoleSID
+
+Documentation not ready for getByRoleSID
+
 ## template-locator-get-by-role-UI5
 
 Documentation not ready for getByRoleUI5

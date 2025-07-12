@@ -18,6 +18,7 @@
 
 import { LocatorBase, LocatorFactory, LocatorOptions } from '../locatorGenerators';
 import { parseAttributeSelector, ParsedSelectorPart } from '../selectorParser';
+import { sidPrefixMapping } from './sidPrefixMapping';
 
 export type LocatorTypeSAP = 'ui5:role' | 'sid';
 
@@ -49,4 +50,24 @@ export function innerAsLocatorsSAP(part: ParsedSelectorPart, base: LocatorBase, 
     return [factory.generateLocator(base, 'sid', part.body as string)];
 
   return null;
+}
+
+export function javascriptSIDLocatorGenerator(sid: string): string {
+
+  // Add code to handle the SID Role locator generation
+  if (sid.split('/').length === 3) {
+    const [wnd, usr, type] = sid.split('/');
+    if (wnd.split('[')[0] === 'wnd' && usr === 'usr' && type.split(/(?=[A-Z])/).length === 2) {
+      const [prefix, suffix] = type.split(/(?=[A-Z])/);
+      const wndNum = wnd.split('[')[1].split(']');
+      if (Object.keys(sidPrefixMapping).includes(prefix) && wndNum.length === 1 && Number.isInteger(Number(wndNum))) {
+        if (Number(wndNum) === 0)
+          return `getByRoleSID('${sidPrefixMapping[prefix]}', { name: '${suffix}' })`;
+        else
+          return `getByRoleSID('${sidPrefixMapping[prefix]}', { name: '${suffix}', wnd: ${wndNum[0]} })`;
+      }
+    }
+  }
+
+  return `locateSID(${sid})`;
 }

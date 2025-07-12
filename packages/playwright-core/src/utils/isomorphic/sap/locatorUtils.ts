@@ -15,10 +15,16 @@
  */
 
 import { escapeForAttributeSelector } from '../stringUtils';
+import { sidPrefixMapping } from './sidPrefixMapping';
 
 export type ByRoleUI5Properties = Record<string, string>;
 export type ByRoleUI5Options = {
-  exact?: boolean;
+  exact?: boolean,
+};
+
+export type ByRoleSIDOptions = {
+  name: string,
+  wnd?: number | undefined
 };
 
 export function getByRoleUI5Selector(role: string, properties: ByRoleUI5Properties = {}, options: ByRoleUI5Options = {}): string {
@@ -35,4 +41,17 @@ export function getByRoleUI5Selector(role: string, properties: ByRoleUI5Properti
 
 export function locateSIDSelector(sid: string): string {
   return `sid=${sid}`;
+}
+
+export function getByRoleSIDSelector(role: string, options: ByRoleSIDOptions): string {
+  if (!Object.values(sidPrefixMapping).includes(role))
+    throw new Error('Invalid SID role name provided.');
+
+  const prefix = Object.entries(sidPrefixMapping).find(([k, v]) => v === role)?.[0];
+  if (!prefix)
+    throw new Error(`Invalid SID role name provided: ${role}`);
+
+  const wndPart = options.wnd ? `wnd[${options.wnd}]` : 'wnd[0]';
+  return `sid=${wndPart}/usr/${prefix}${options.name}`;
+
 }

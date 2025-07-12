@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import { getByRoleUI5Selector, locateSIDSelector } from '../utils/isomorphic/sap/locatorUtils';
+import { getByRoleSIDSelector, getByRoleUI5Selector, locateSIDSelector } from '../utils/isomorphic/sap/locatorUtils';
 import { EventEmitter } from './eventEmitter';
 import { ChannelOwner } from './channelOwner';
 import { addSourceUrlToScript } from './clientHelper';
@@ -39,7 +39,7 @@ import type * as api from '../../types/types';
 import type { ByRoleOptions } from '../utils/isomorphic/locatorUtils';
 import type { URLMatch } from '../utils/isomorphic/urlMatch';
 import type * as channels from '@protocol/channels';
-import type { ByRoleUI5Options, ByRoleUI5Properties } from '../utils/isomorphic/sap/locatorUtils';
+import type { ByRoleSIDOptions, ByRoleUI5Options, ByRoleUI5Properties } from '../utils/isomorphic/sap/locatorUtils';
 
 export type WaitForNavigationOptions = {
   timeout?: number,
@@ -362,6 +362,10 @@ export class Frame extends ChannelOwner<channels.FrameChannel> implements api.Fr
 
   locateSID(sid: string): Locator {
     return this.locator(locateSIDSelector(sid));
+  }
+
+  getByRoleSID(role: string, options: ByRoleSIDOptions): Locator {
+    return this.locator(getByRoleSIDSelector(role, options));
   }
 
   frameLocator(selector: string): FrameLocator {
