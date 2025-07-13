@@ -2293,7 +2293,8 @@ Attribute name to get the value for.
 * since: v1.27
 * langs: js
 - `options` <[Object]>
-  - `name` <[string]> name of the clicked object.
+  - `name` ?<[string]> name of the clicked object.
+  - `pos` ?<[int]> number of role.
   - `wnd` ?<[int]> window number in the sid. default 0.
 
 

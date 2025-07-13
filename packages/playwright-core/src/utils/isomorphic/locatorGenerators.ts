@@ -22,7 +22,7 @@ import type { NestedSelectorBody } from './selectorParser';
 import type { ParsedSelector } from './selectorParser';
 import type { LocatorTypeSAP } from './sap/locatorGenerators';
 
-export type Language = 'javascript';
+export type Language = 'javascript' | 'python' | 'java' | 'csharp' | 'jsonl';
 export type LocatorType = 'default' | 'role' | 'text' | 'label' | 'placeholder' | 'alt' | 'title' | 'test-id' | 'nth' | 'first' | 'last' | 'visible' | 'has-text' | 'has-not-text' | 'has' | 'hasNot' | 'frame' | 'frame-locator' | 'and' | 'or' | 'chain' | LocatorTypeSAP;
 export type LocatorBase = 'page' | 'locator' | 'frame-locator';
 export type Quote = '\'' | '"' | '`';
@@ -722,10 +722,10 @@ export class JsonlLocatorFactory implements LocatorFactory {
 
 const generators: Record<Language, new (preferredQuote?: Quote) => LocatorFactory> = {
   javascript: JavaScriptLocatorFactory,
-  // python: PythonLocatorFactory,
-  // java: JavaLocatorFactory,
-  // csharp: CSharpLocatorFactory,
-  // jsonl: JsonlLocatorFactory,
+  python: PythonLocatorFactory,
+  java: JavaLocatorFactory,
+  csharp: CSharpLocatorFactory,
+  jsonl: JsonlLocatorFactory,
 };
 
 function isRegExp(obj: any): obj is RegExp {

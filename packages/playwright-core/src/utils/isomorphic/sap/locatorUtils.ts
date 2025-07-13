@@ -23,7 +23,8 @@ export type ByRoleUI5Options = {
 };
 
 export type ByRoleSIDOptions = {
-  name: string,
+  name?: string,
+  pos?: number,
   wnd?: number | undefined
 };
 
@@ -47,11 +48,22 @@ export function getByRoleSIDSelector(role: string, options: ByRoleSIDOptions): s
   if (!Object.values(sidPrefixMapping).includes(role))
     throw new Error('Invalid SID role name provided.');
 
+  if (!(options.name || options.pos))
+    throw new Error('Both name and pos are missing');
+
+  if (options.name && options.pos)
+    throw new Error('Both name and pos provided. Only one allowed');
+
   const prefix = Object.entries(sidPrefixMapping).find(([k, v]) => v === role)?.[0];
   if (!prefix)
     throw new Error(`Invalid SID role name provided: ${role}`);
 
   const wndPart = options.wnd ? `wnd[${options.wnd}]` : 'wnd[0]';
-  return `sid=${wndPart}/usr/${prefix}${options.name}`;
 
+  if (options.name)
+    return `sid=${wndPart}/usr/${prefix}${options.name}`;
+  if (options.pos)
+    return `sid=${wndPart}/usr/${prefix}[${options.pos}]`;
+
+  throw new Error('Both name and pos are missing');
 }

@@ -16,14 +16,16 @@
 
 import { SelectorToken } from '@injected/selectorGenerator';
 
+const sidBasicScore = 50;
+
 export function sidSelectorGenerator(targetNode: Node): SelectorToken[][] {
   const sidAndElementFromElement = getSIDandElementFromElement(targetNode);
   const selectorToken: SelectorToken[][] = [];
-  if (sidAndElementFromElement){
+  if (sidAndElementFromElement && sidAndElementFromElement.sid.split('/').length > 2){
     selectorToken.push([{
       engine: 'sid',
       selector: `${sidAndElementFromElement.sid}`,
-      score: 1
+      score: sidBasicScore
     }]);
   }
   return selectorToken;
@@ -47,6 +49,11 @@ export function getSIDandElementFromElement(targetNode: Node): { sid: string, el
 
   // Loop outward, level by level (distance 1, then 2, and so on)
   while (currentAncestor && count < 3) {
+
+    // Help Button issue that comes when the user is zse16 page and clicks on help button for an input field.
+    if (currentAncestor.id && currentAncestor.id.includes('helpbutton'))
+      break;
+
     // Check ancestor at the current distance
     if (currentAncestor) {
       sid = getSIDfromElement(currentAncestor);

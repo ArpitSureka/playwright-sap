@@ -56,15 +56,33 @@ export function javascriptSIDLocatorGenerator(sid: string): string {
 
   // Add code to handle the SID Role locator generation
   if (sid.split('/').length === 3) {
-    const [wnd, usr, type] = sid.split('/');
-    if (wnd.split('[')[0] === 'wnd' && usr === 'usr' && type.split(/(?=[A-Z])/).length === 2) {
-      const [prefix, suffix] = type.split(/(?=[A-Z])/);
-      const wndNum = wnd.split('[')[1].split(']');
-      if (Object.keys(sidPrefixMapping).includes(prefix) && wndNum.length === 1 && Number.isInteger(Number(wndNum))) {
+    const [wnd, usr, type] = sid.replace("'", '').replace('"', '').split('/');
+    if (!wnd.includes('[') || !wnd.includes(']') || usr !== 'usr')
+      return `locateSID(${sid})`;
+
+    // wndNum = '1'
+    const wndNum = wnd.split('[')[1].split(']').filter(val => val !== '');
+
+    // for cases like type = btn[12]
+    if (type.replace("'", '').replace('"', '').includes('[') && type.replace("'", '').replace('"', '').includes(']') && type.replace("'", '').replace('"', '').split(']').filter(val => val !== '').length === 1) {
+      const typeName = type.replace("'", '').replace('"', '').split('[')[0];
+      const typeIndex = type.replace("'", '').replace('"', '').match(/\[(.*?)\]/);
+      if (Object.keys(sidPrefixMapping).includes(typeName) && typeIndex && typeIndex.length === 2 && typeIndex[1] &&  Number.isInteger(Number(typeIndex[1]))) {
         if (Number(wndNum) === 0)
-          return `getByRoleSID('${sidPrefixMapping[prefix]}', { name: '${suffix}' })`;
+          return `getByRoleSID('${sidPrefixMapping[typeName]}', { pos: ${Number(typeIndex[1])} })`;
         else
-          return `getByRoleSID('${sidPrefixMapping[prefix]}', { name: '${suffix}', wnd: ${wndNum[0]} })`;
+          return `getByRoleSID('${sidPrefixMapping[typeName]}', { pos: ${Number(typeIndex[1])}, wnd: ${wndNum[0]} })`;
+      }
+    }
+
+    // for cases like type = lblCOCD
+    const typeSplit = type.replace("'", '').replace('"', '').match(/^([^A-Z]*)(.*)$/);
+    if (wnd.split('[')[0] === 'wnd' && typeSplit && typeSplit.length === 3 && !typeSplit.includes(':') && !typeSplit.includes('/')) {
+      if (Object.keys(sidPrefixMapping).includes(typeSplit[1]) && wndNum.length === 1 && Number.isInteger(Number(wndNum))) {
+        if (Number(wndNum) === 0)
+          return `getByRoleSID('${sidPrefixMapping[typeSplit[1]]}', { name: '${typeSplit[2]}' })`;
+        else
+          return `getByRoleSID('${sidPrefixMapping[typeSplit[1]]}', { name: '${typeSplit[2]}', wnd: ${wndNum[0]} })`;
       }
     }
   }

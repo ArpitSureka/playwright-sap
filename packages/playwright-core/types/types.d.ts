@@ -3000,7 +3000,12 @@ export interface Page {
     /**
      * name of the clicked object.
      */
-    name: string;
+    name?: string;
+
+    /**
+     * number of role.
+     */
+    pos?: number;
 
     /**
      * window number in the sid. default 0.
@@ -6800,7 +6805,12 @@ export interface Frame {
     /**
      * name of the clicked object.
      */
-    name: string;
+    name?: string;
+
+    /**
+     * number of role.
+     */
+    pos?: number;
 
     /**
      * window number in the sid. default 0.
@@ -13500,7 +13510,12 @@ export interface Locator {
     /**
      * name of the clicked object.
      */
-    name: string;
+    name?: string;
+
+    /**
+     * number of role.
+     */
+    pos?: number;
 
     /**
      * window number in the sid. default 0.
@@ -19835,7 +19850,12 @@ export interface FrameLocator {
     /**
      * name of the clicked object.
      */
-    name: string;
+    name?: string;
+
+    /**
+     * number of role.
+     */
+    pos?: number;
 
     /**
      * window number in the sid. default 0.
