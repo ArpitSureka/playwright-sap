@@ -47,6 +47,7 @@ import type { SelectorEngine, SelectorRoot } from './selectorEngine';
 import type { GenerateSelectorOptions } from './selectorGenerator';
 import type { ElementText, TextMatcher } from './selectorUtils';
 import type { Builtins } from './utilityScript';
+import type { SAP } from '@sap/types/sapWindow';
 
 
 export type FrameExpectParams = Omit<channels.FrameExpectParams, 'expectedValue'> & { expectedValue?: any };
@@ -123,7 +124,7 @@ export class InjectedScript {
   private _allHitTargetInterceptorEvents: Set<string>;
 
   // eslint-disable-next-line no-restricted-globals
-  constructor(window: Window & typeof globalThis, options: InjectedScriptOptions) {
+  constructor(window: Window & typeof globalThis & { sap: SAP }, options: InjectedScriptOptions) {
     this.window = window;
     this.document = window.document;
     this.isUnderTest = options.isUnderTest;
@@ -1591,7 +1592,6 @@ function cssUnquote(s: string): string {
 }
 
 function createTextMatcher(selector: string, internal: boolean): { matcher: TextMatcher, kind: 'regex' | 'strict' | 'lax' } {
-  console.log('createTextMatcher');
   if (selector[0] === '/' && selector.lastIndexOf('/') > 0) {
     const lastSlash = selector.lastIndexOf('/');
     const re = new RegExp(selector.substring(1, lastSlash), selector.substring(lastSlash + 1));

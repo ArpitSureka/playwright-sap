@@ -16,7 +16,7 @@
 
 // This list is case-sensitive and should match the UI5 control properties. UI5 properties follow camelCase. Also this is ordered by priority.
 // All other properties are implicitly denied.
-const implicitlyAllowedProperties: string[] = ['name', 'label', 'title', 'text', 'icon', 'placeholder', 'subTitle', 'value', 'description', 'header', 'key'];
+const implicitlyAllowedProperties: string[] = ['name', 'label', 'title', 'text', 'icon', 'placeholder', 'subTitle', 'value', 'description', 'header', 'key', 'alt', 'type'];
 
 // This config is case-sensitive and should match the UI5 control properties. UI5 properties follow camelCase. Also this is ordered by priority.
 const propertiesConfig: PropertiesConfig = {
@@ -43,6 +43,17 @@ const propertiesConfig: PropertiesConfig = {
   },
   'Illustration': {
     explicitlyAllowed: ['media', 'type', 'set']
+  },
+  'FormattedText': {
+    explicitlyAllowed: ['htmlText']
+  },
+  'Column': { // want to allow this with getByRoleUI5('Column').nth(3)
+    explicitlyAllowed: ['*'], // This combination together insures that the role can be used but has to be used without properties.
+    explicitlyDenied: ['*'],  // see the getAllowedProperties, checkIfRoleAllowed, checkIfRoleAllowedWithoutProperties functions to understand its usage.
+  },
+  'ColumnListItem': { // want to allow this with getByRoleUI5('ColumnListItem').nth(3)
+    explicitlyAllowed: ['*'], // This combination together insures that the role can be used but has to be used without properties.
+    explicitlyDenied: ['*'],  // see the getAllowedProperties, checkIfRoleAllowed, checkIfRoleAllowedWithoutProperties functions to understand its usage.
   }
   // 'StandardListItem': {
   //   explicitlyDenied: ['*'] // This means role is never allowed

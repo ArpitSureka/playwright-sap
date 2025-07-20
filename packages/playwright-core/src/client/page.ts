@@ -369,7 +369,9 @@ export class Page extends ChannelOwner<channels.PageChannel> implements api.Page
   }
 
   async goto(url: string, options?: channels.FrameGotoOptions & TimeoutOptions): Promise<Response | null> {
-    return await this._mainFrame.goto(url, options);
+    const res =  await this._mainFrame.goto(url, options);
+    await this.waitForLoadState();
+    return res;
   }
 
   async SAPLogin(username: string, password: string, url?: string): Promise<Response | null> {
@@ -378,14 +380,17 @@ export class Page extends ChannelOwner<channels.PageChannel> implements api.Page
       if (url)
         res = await this.goto(url);
       await this.getByRole('textbox', { name: 'User' }).click();
-      await this.waitForTimeout(100);
+      await this.waitForTimeout(50);
       await this.getByRole('textbox', { name: 'User' }).fill(username);
-      await this.waitForTimeout(300);
-      await this.getByRole('textbox', { name: 'Password' }).click();
       await this.waitForTimeout(100);
+      await this.getByRole('textbox', { name: 'Password' }).click();
+      await this.waitForTimeout(50);
       await this.getByRole('textbox', { name: 'Password' }).fill(password);
-      await this.waitForTimeout(300);
+      await this.waitForTimeout(100);
       await this.getByRole('button', { name: 'Log On' }).click();
+      // Dont want to record the login page navigation in the codegen and also in case of ui5 wait for sap scripts to load.
+      await this.waitForNavigation();
+      await this.waitForLoadState();
     } catch {
       throw Error('Automatic SAP Login Failed. Currently SAP Login Works only for Fiori Launchpad. If the login page is Fiori login and still you are seeing this error. Please raise this error issue.');
     }

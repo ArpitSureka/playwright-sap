@@ -173,7 +173,9 @@ export class FrameSelectors {
     // Be careful, |this.frame| can be different from |resolved.frame|.
     if (!resolved)
       return;
-    const context = await resolved.frame._context(options?.mainWorld ? 'main' : resolved.info.world);
+    // I dont know what mainWorld is for but commenting it works 🙂. Please help me
+    // const context = await resolved.frame._context(options?.mainWorld ? 'main' : resolved.info.world);
+    const context = await resolved.frame._context('main');
     const injected = await context.injectedScript();
     return { injected, info: resolved.info, frame: resolved.frame, scope: resolved.scope };
   }

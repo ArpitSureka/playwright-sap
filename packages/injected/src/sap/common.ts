@@ -30,15 +30,17 @@ export function checkSAPSelector(result: Element, targetElement: Element, window
     resultUI5Tree = buildUI5TreeModel(resultElement, window, 1);
     resultElement = resultElement.parentElement;
   }
-  if (currentElement && resultUI5Tree && ui5TargetTree.length === 1 && resultUI5Tree.length === 1 && resultUI5Tree[0].id === ui5TargetTree[0].id && resultUI5Tree[0].name === ui5TargetTree[0].name)
+  if (currentElement && resultUI5Tree && ui5TargetTree.length === 1 && resultUI5Tree.length === 1 && resultUI5Tree[0].id === ui5TargetTree[0].id && resultUI5Tree[0].role === ui5TargetTree[0].role)
     return true;
 
   return false;
 }
 
 // Inspired from packages/injected/src/injectedScript.ts - createTextMatcher
-export function createPropertyValueMatcher(propertyValue: string, propertyName: string, propertyRole: string, exact: boolean = false): (text: string) => boolean {
+export function createPropertyValueMatcher(propertyRole: string, propertyValue?: string, propertyName?: string,  exact: boolean = false): ((elementValue: string) => boolean) | undefined {
 
+  if (!(propertyValue && propertyName))
+    return;
 
   // Cases added corresponding to the code in checkAndMakeSelectorTokens - packages/injected/src/sap/common.ts
   if (propertyName.toLowerCase() === 'icon' || (propertyRole.toLowerCase() === 'icon' && propertyName.toLowerCase() === 'src'))

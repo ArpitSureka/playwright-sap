@@ -21,6 +21,8 @@ import { buildUI5TreeModel, checkSAPUI5, getPropertiesUsingControlId, UI5errorMe
 
 import { checkIfRoleAllowed, checkIfRoleAllowedWithoutProperties, getAllowedProperties } from './allowedRolesAndProperties';
 
+import type { UI5Property } from '@sap/types/properties';
+
 // Score for UI5 selectors
 const ui5BasicScore = 10;
 
@@ -72,31 +74,24 @@ function makeRoleUI5Selectors(ui5Nodes: UI5Node[], win: Window): SelectorToken[]
 
   const element = ui5Nodes[0];
 
-  // If role is not allowed or element is not valid, return null
-  if (!element || !element.id || !element.name || !checkIfRoleAllowed(element.name))
-    return null;
-
   const properties = getPropertiesUsingControlId(element.id, win);
-  if (!properties)
-    return null;
-
   const selectorTokens: SelectorToken[] = [];
 
-  if (properties && properties?.own) {
-    const ownPropertySelectors = makeSelectorFromOwnProperties(properties.own);
+  if (properties && checkIfRoleAllowed(element.role)) {
+    const ownPropertySelectors = makeSelectorFromOwnProperties(properties.own, element.role);
     selectorTokens.push(...ownPropertySelectors);
   }
 
-  if (properties && properties?.inherited) {
-    const inheritedPropertySelectors = makeSelectorFromInheritedProperties(properties.inherited);
+  if (properties && properties.inherited.length && checkIfRoleAllowed(element.role)) {
+    const inheritedPropertySelectors = makeSelectorFromInheritedProperties(properties.inherited, element.role);
     selectorTokens.push(...inheritedPropertySelectors);
   }
 
   // Some UI5 controls like SearchField, StandardListItem, etc. dont have any properties but still can be selected by their role.
-  if (selectorTokens.length === 0 && checkIfRoleAllowedWithoutProperties(element.name)) {
+  if (selectorTokens.length === 0 && checkIfRoleAllowedWithoutProperties(element.role)) {
     selectorTokens.push({
       engine: 'ui5:role',
-      selector: element.name,
+      selector: element.role,
       score: ui5BasicScore
     });
   }
@@ -107,11 +102,11 @@ function makeRoleUI5Selectors(ui5Nodes: UI5Node[], win: Window): SelectorToken[]
 }
 
 
-function makeSelectorFromOwnProperties(ownProperties: any): SelectorToken[] {
+function makeSelectorFromOwnProperties(ownProperties: UI5Property, elementRole: string): SelectorToken[] {
   // const selectorTokens: SelectorToken[] = [];
   const selectorTokensData: selectorTokensData[] = [];
-  const propertyRole: string = ownProperties.meta?.controlName?.split('.').pop();
-  if (!propertyRole || propertyRole.length === 0 || !checkIfRoleAllowed(propertyRole))
+  const propertyRole: string | undefined = ownProperties.meta?.controlName?.split('.').pop();
+  if (!propertyRole || propertyRole !== elementRole || !checkIfRoleAllowed(propertyRole))
     return [];
   const allowedProperties = getAllowedProperties(propertyRole);
   if (ownProperties && ownProperties.properties && propertyRole.length > 0) {
@@ -127,20 +122,19 @@ function makeSelectorFromOwnProperties(ownProperties: any): SelectorToken[] {
   return checkAndMakeSelectorTokens(selectorTokensData);
 }
 
-function makeSelectorFromInheritedProperties(inheritedProperties: any): SelectorToken[] {
+function makeSelectorFromInheritedProperties(inheritedProperties: UI5Property[], elementRole: string): SelectorToken[] {
   const selectorTokensData: selectorTokensData[] = [];
   if (!inheritedProperties)
     return [];
   for (const inheritedProperty of inheritedProperties) {
-    const propertyRole: string = inheritedProperty.meta?.controlName?.split('.').pop();
-    if (!propertyRole || propertyRole.length === 0 || !checkIfRoleAllowed(propertyRole))
+    if (!elementRole || elementRole.length === 0 || !checkIfRoleAllowed(elementRole))
       continue;
-    const allowedProperties = getAllowedProperties(propertyRole);
+    const allowedProperties = getAllowedProperties(elementRole);
     for (const propertyName in inheritedProperty.properties) {
       if (allowedProperties.includes(propertyName)){
         const propertyValue: string = inheritedProperty.properties[propertyName].value;
         if (propertyValue && propertyValue.length > 0)
-          selectorTokensData.push({ propertyRole, propertyName, propertyValue, score: allowedProperties.indexOf(propertyName) });
+          selectorTokensData.push({ propertyRole: elementRole, propertyName, propertyValue, score: allowedProperties.indexOf(propertyName) });
       }
     }
   }

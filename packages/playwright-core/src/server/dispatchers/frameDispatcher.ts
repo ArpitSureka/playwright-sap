@@ -65,6 +65,25 @@ export class FrameDispatcher extends Dispatcher<Frame, channels.FrameChannel, Br
     this.addObjectListener(Frame.Events.RemoveLifecycle, lifecycleEvent => {
       this._dispatchEvent('loadstate', { remove: lifecycleEvent });
     });
+    // this._frame.evaluateExpression(`
+    //   new Promise(resolve => {
+    //     if (window.sap) {
+    //       resolve();
+    //     } else {
+    //       const observer = new MutationObserver(() => {
+    //         if (window.sap) {
+    //           observer.disconnect();
+    //           console.log('yoyoyoyoyoyoyoyoyoyoyoyoyoyoyoyoyoyoyoyoyoyoyoyoyoyoyoyoyoyoyoyoyoyoyoyoyoyoyoyoyoyoyoyoyoyoyoyoyoyoyo')
+    //           resolve();
+    //         }
+    //       });
+    //       observer.observe(document, { childList: true, subtree: true });
+    //     }
+    //   })
+    // `).then(() => {
+    //   console.log('sapReadysapReadysapReadysapReadysapReadysapReadysapReadysapReadysapReadysapReadysapReadysapReadysapReady')
+    //   // this._dispatchEvent('sapReady', {});
+    // });
     this.addObjectListener(Frame.Events.InternalNavigation, (event: NavigationEvent) => {
       if (!event.isPublic)
         return;

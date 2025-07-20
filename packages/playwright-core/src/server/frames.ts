@@ -1096,7 +1096,8 @@ export class Frame extends SdkObject {
         await this._page.performActionPreChecks(progress);
       // SAP Support Change: Added mainWorld : true inside resolveInjectedForSelector
       // Because without it querySelectorAll was not working as document.defaultView didnt contain sap object.
-      const resolved = await this.selectors.resolveInjectedForSelector(selector, { strict, mainWorld: true });
+      // Later Update removed mainWord from here and directly added at resolveInjectedForSelector function.
+      const resolved = await this.selectors.resolveInjectedForSelector(selector, { strict });
       progress.throwIfAborted();
       if (!resolved)
         return continuePolling;

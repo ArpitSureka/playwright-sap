@@ -659,9 +659,6 @@ async function codegen(options: Options & { target: string, output?: string, tes
     const [username, password] = options.sapLogin;
     const page = await openPage(context, undefined);
     await page.SAPLogin(username, password, url);
-    // Dont want to record the login page navigation in the codegen.
-    await page.waitForNavigation();
-    await page.waitForLoadState();
   }
   await context._enableRecorder({
     language,

@@ -1,22 +1,24 @@
 /**
  * Copyright (c) Arpit Sureka.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the 'License');
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
+ * distributed under the License is distributed on an 'AS IS' BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
 
+import { UI5properties } from './types/properties';
+
 export type UI5Node = {
   id: string;
-  name: string;
+  role: string;
   type: string;
   content: UI5Node[];
 };
@@ -85,7 +87,7 @@ const _createUI5TreeModel = function(nodeElement: Element, resultArray: UI5Node[
 
     results.push({
       id: control.getId(),
-      name: control.getMetadata().getName().split('.').pop(),
+      role: control.getMetadata().getName().split('.').pop(),
       type: 'sap-ui-control',
       content: [],
     });
@@ -96,7 +98,7 @@ const _createUI5TreeModel = function(nodeElement: Element, resultArray: UI5Node[
 
     results.push({
       id: node.id,
-      name: 'sap-ui-area',
+      role: 'sap-ui-area',
       type: 'data-sap-ui',
       content: [],
     });
@@ -125,16 +127,24 @@ const _createUI5TreeModel = function(nodeElement: Element, resultArray: UI5Node[
  * @private
  */
 // Caching is not implemented yet, so this function will always return fresh data. -- Need to implement.
-export const getPropertiesUsingControlId = function(controlId: string, win: Window): any {
+export const getPropertiesUsingControlId = function(controlId: string, win: Window): UI5properties | undefined {
   const control = _getElementById(controlId, win);
-  const properties = Object.create(null);
+  let properties: UI5properties | undefined;
 
-  if (control) {
-    properties.own = _getOwnProperties(control);
-    properties.inherited = _getInheritedProperties(control, win);
-    properties.isPropertiesData = true;
+  try {
+    if (control) {
+      const inheritedProperties = _getInheritedProperties(control, win) || [];
+      const ownProperties = _getOwnProperties(control);
+      if (inheritedProperties && ownProperties) {
+        properties = {
+          own: ownProperties,
+          inherited: inheritedProperties,
+        };
+      }
+    }
+  } catch (error) {
+    throw new Error(`Error in getPropertiesUsingControlId: ${error}`);
   }
-
   return properties;
 };
 
