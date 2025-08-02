@@ -148,6 +148,19 @@ export const getPropertiesUsingControlId = function(controlId: string, win: Wind
   return properties;
 };
 
+export const checkOverlap = function(ui5SelectorMap_element: UI5Node[], targetElement: Element): UI5Node | null {
+
+  for (const item of ui5SelectorMap_element) {
+    const container = document.getElementById(item.id);
+    if (!container || !targetElement)
+      continue;
+
+    if (container.contains(targetElement))
+      return item;
+  }
+  return null;
+};
+
 /**
  * Creates an object with the control properties that are not inherited.
  * @param {Object} control - UI5 control.

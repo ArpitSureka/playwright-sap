@@ -14,23 +14,28 @@
  * limitations under the License.
  */
 
-import { buildUI5TreeModel, UI5Node } from '@sap/common';
+import { buildUI5TreeModel, checkOverlap, UI5Node } from '@sap/common';
 
 // This function is used to check sap selectror, wether result and target element has the same ui5 parent element
 export function checkSAPSelector(result: Element, targetElement: Element, window: Window): Boolean {
   let currentElement: Element | null = targetElement;
   let ui5TargetTree: UI5Node[] = [];
-  while (ui5TargetTree.length === 0 && currentElement){
+  while (currentElement && (ui5TargetTree.length === 0 || !checkOverlap(ui5TargetTree, targetElement))){
     ui5TargetTree = buildUI5TreeModel(currentElement, window, 1);
     currentElement = currentElement.parentElement;
   }
   let resultUI5Tree: UI5Node[] = [];
-  let resultElement: Element | null = result;
-  while (resultUI5Tree.length === 0 && resultElement){
+  let resultElement: Element = result;
+  while ((resultUI5Tree.length === 0 || !checkOverlap(resultUI5Tree, result)) && resultElement){
     resultUI5Tree = buildUI5TreeModel(resultElement, window, 1);
-    resultElement = resultElement.parentElement;
+    if (resultElement.parentElement)
+      resultElement = resultElement.parentElement;
+    else
+      return false;
   }
-  if (currentElement && resultUI5Tree && ui5TargetTree.length === 1 && resultUI5Tree.length === 1 && resultUI5Tree[0].id === ui5TargetTree[0].id && resultUI5Tree[0].role === ui5TargetTree[0].role)
+
+  //
+  if (ui5TargetTree.length && resultUI5Tree.length &&  resultUI5Tree[0].id === ui5TargetTree[0].id && resultUI5Tree[0].role === ui5TargetTree[0].role)
     return true;
 
   return false;
@@ -43,8 +48,8 @@ export function createPropertyValueMatcher(propertyRole: string, propertyValue?:
     return;
 
   // Cases added corresponding to the code in checkAndMakeSelectorTokens - packages/injected/src/sap/common.ts
-  if (propertyName.toLowerCase() === 'icon' || (propertyRole.toLowerCase() === 'icon' && propertyName.toLowerCase() === 'src'))
-    return (elementValue: string) => elementValue.includes(propertyValue);
+  // if (propertyName.toLowerCase() === 'icon' || (propertyRole.toLowerCase() === 'icon' && propertyName.toLowerCase() === 'src'))
+  //   return (elementValue: string) => elementValue.includes(propertyValue);
 
   if (propertyName.toLowerCase() !== 'text') {
     if (exact)

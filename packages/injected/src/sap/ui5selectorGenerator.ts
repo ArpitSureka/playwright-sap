@@ -17,14 +17,14 @@
 import { InjectedScript } from '@injected/injectedScript';
 import { SelectorToken } from '@injected/selectorGenerator';
 import { escapeForAttributeSelector } from '@isomorphic/stringUtils';
-import { buildUI5TreeModel, checkSAPUI5, getPropertiesUsingControlId, UI5errorMessage, UI5Node } from '@sap/common';
+import { buildUI5TreeModel, checkOverlap, checkSAPUI5, getPropertiesUsingControlId, UI5errorMessage, UI5Node } from '@sap/common';
 
 import { checkIfRoleAllowed, checkIfRoleAllowedWithoutProperties, getAllowedProperties } from './allowedRolesAndProperties';
 
 import type { UI5Property } from '@sap/types/properties';
 
 // Score for UI5 selectors
-const ui5BasicScore = 10;
+const ui5BasicScore = 30;
 
 // Builds UI5 Selectors
 // Add no text option in buildUI5Selectors to work with expect text feature.
@@ -39,26 +39,27 @@ export function buildUI5Selectors(injectedScript: InjectedScript, element: Eleme
       let ui5SelectorMap_element: UI5Node[] = [];
       let currentElement: Element | null = element;
 
-      while (ui5SelectorMap_element.length === 0 || ui5SelectorMap_element.length > 1) {
+      while (currentElement && (ui5SelectorMap_element.length === 0 || !checkOverlap(ui5SelectorMap_element, element))) {
         if (currentElement === element.getRootNode() || currentElement === element.ownerDocument.body)
           return [];
         ui5SelectorMap_element = buildUI5TreeModel(currentElement, win, 1);
-        if (ui5SelectorMap_element.length === 0 || ui5SelectorMap_element.length > 1) {
-          currentElement = currentElement.parentElement;
-          if (!currentElement)
-            return [];
-        }
+        currentElement = currentElement.parentElement;
       }
 
-      if (ui5SelectorMap_element.length === 1 && ui5SelectorMap_element[0].id) {
-        const roleSelectors = makeRoleUI5Selectors(ui5SelectorMap_element, win);
+      if (!currentElement || currentElement === (injectedScript.document.body as Element))
+        return [];
+
+      const ui5_element = checkOverlap(ui5SelectorMap_element, element);
+
+      if (ui5_element) {
+        const roleSelectors = makeRoleUI5Selectors(ui5_element, win);
         if (roleSelectors && roleSelectors.length)
           // Currently directly taking first role selector randomly can improve this by giving each propertyRole and PropertyName different scores.
           candidates.push([roleSelectors[0]]);
       } else {
+        // console.log('error is here');
         UI5errorMessage(win, 'Error in makeUI5XpathSelector: ');
       }
-
       return candidates;
     }
   } catch (error) {
@@ -68,11 +69,11 @@ export function buildUI5Selectors(injectedScript: InjectedScript, element: Eleme
   return candidates;
 }
 
-function makeRoleUI5Selectors(ui5Nodes: UI5Node[], win: Window): SelectorToken[] | null {
-  if (!ui5Nodes || ui5Nodes.length === 0)
+function makeRoleUI5Selectors(ui5Node: UI5Node, win: Window): SelectorToken[] | null {
+  if (!ui5Node)
     return null;
 
-  const element = ui5Nodes[0];
+  const element = ui5Node;
 
   const properties = getPropertiesUsingControlId(element.id, win);
   const selectorTokens: SelectorToken[] = [];
@@ -156,19 +157,19 @@ function checkAndMakeSelectorTokens(selectorTokens: selectorTokensData[]) {
         propertyValue = suitableTextAlternatives(propertyValue).sort((a, b) => b.scoreBonus - a.scoreBonus)[0].text;
 
       // sometimes button(propertyRole) dont have text and have icon(propertyName) in that case
-      if (selectorToken.propertyName.toLowerCase() === 'icon' && propertyValue.includes('sap-icon://') && propertyValue.indexOf('sap-icon://') === 0)
-        propertyValue = propertyValue.replace('sap-icon://', '');
+      // if (selectorToken.propertyName.toLowerCase() === 'icon' && propertyValue.includes('sap-icon://') && propertyValue.indexOf('sap-icon://') === 0)
+      //   propertyValue = propertyValue.replace('sap-icon://', '');
 
-      // sometimes icon(propertyRole) have src(propertyName) which is an icon
-      if (selectorToken.propertyRole.toLowerCase() === 'icon' && selectorToken.propertyName.toLowerCase() === 'src' && propertyValue.includes('sap-icon://') && propertyValue.indexOf('sap-icon://') === 0)
-        propertyValue = propertyValue.replace('sap-icon://', '');
+      // // sometimes icon(propertyRole) have src(propertyName) which is an icon
+      // if (selectorToken.propertyRole.toLowerCase() === 'icon' && selectorToken.propertyName.toLowerCase() === 'src' && propertyValue.includes('sap-icon://') && propertyValue.indexOf('sap-icon://') === 0)
+      //   propertyValue = propertyValue.replace('sap-icon://', '');
 
       // Incase any more edge cases are added here add the corresponding code in createPropertyValueMatcher - packages/injected/src/sap/common.ts
 
       result.push({
         engine: 'ui5:role',
         selector: `${selectorToken.propertyRole}[${selectorToken.propertyName}=${escapeForAttributeSelector(propertyValue, false)}]`,
-        score: ui5BasicScore + (selectorToken.score ? selectorToken.score : 0)
+        score: ui5BasicScore + Math.trunc((selectorToken.score ? selectorToken.score : 0) / 10)
       });
     }
   });

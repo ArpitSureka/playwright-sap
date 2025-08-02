@@ -365,7 +365,6 @@ class RecordActionTool implements RecorderTool {
 
   onInput(event: Event) {
     const target = this._recorder.deepEventTarget(event);
-
     if (target.nodeName === 'INPUT' && (target as HTMLInputElement).type.toLowerCase() === 'file') {
       this._recorder.recordAction({
         name: 'setInputFiles',

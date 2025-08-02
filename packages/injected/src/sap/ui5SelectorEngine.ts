@@ -19,6 +19,7 @@ import { parseAttributeSelector } from '@isomorphic/selectorParser';
 import { buildUI5TreeModel, checkSAPUI5, getElementFromUI5Id, getPropertiesUsingControlId, UI5Node } from '@sap/common';
 
 import { createPropertyValueMatcher } from './common';
+import { isElementVisible } from './domUtils';
 
 export function ui5RoleEngine(): SelectorEngine {
   return {
@@ -51,12 +52,12 @@ export function ui5RoleEngine(): SelectorEngine {
       result.forEach(ele => {
         // If the element is not a direct child of the scope, we can ignore it.
         const match = ele.querySelector('button,select,input,[role=button],[role=checkbox],[role=radio],a,[role=link]');
-        if (match)
+        if (match && isElementVisible(match))
           resultSet.add(match);
         else
           resultSet.add(ele);
+        // resultSet.add(ele);
       });
-
       return Array.from(resultSet);
     }
   };

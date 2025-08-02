@@ -34,6 +34,28 @@ if (!fs.existsSync(path.join(__dirname, '../publish/clean'))) {
   fs.mkdirSync(path.join(__dirname, '../publish/clean'), { recursive: true });
 }
 
+if (!fs.existsSync(path.join(__dirname, '../publish/clean/playwright-sap'))) {
+  fs.mkdirSync(path.join(__dirname, '../publish/clean/playwright-sap'), { recursive: true });
+}
+
+if (!fs.existsSync(path.join(__dirname, '../publish/clean/playwright-sap-core'))) {
+  fs.mkdirSync(path.join(__dirname, '../publish/clean/playwright-sap-core'), { recursive: true });
+}
+
+if (!fs.existsSync(path.join(__dirname, '../publish/clean/playwright-sap-test'))) {
+  fs.mkdirSync(path.join(__dirname, '../publish/clean/playwright-sap-test'), { recursive: true });
+}
+const ROOT_PATH_Temp = path.join(__dirname, '../publish/clean');
+
+fs.copyFileSync(path.join(ROOT_PATH_Temp, '../../package.json'), path.join(ROOT_PATH_Temp, 'package.json'));
+fs.copyFileSync(path.join(ROOT_PATH_Temp, '../../package-lock.json'), path.join(ROOT_PATH_Temp, 'package-lock.json'));
+fs.copyFileSync(path.join(ROOT_PATH_Temp, '../../NOTICE'), path.join(ROOT_PATH_Temp, 'NOTICE'));
+fs.copyFileSync(path.join(ROOT_PATH_Temp, '../../LICENSE'), path.join(ROOT_PATH_Temp, 'LICENSE'));
+fs.copyFileSync(path.join(ROOT_PATH_Temp, '../../README.md'), path.join(ROOT_PATH_Temp, 'README.md'));
+fs.copyFileSync(path.join(ROOT_PATH_Temp, '../../packages/playwright/package.json'), path.join(ROOT_PATH_Temp, 'playwright-sap/package.json'));
+fs.copyFileSync(path.join(ROOT_PATH_Temp, '../../packages/playwright-core/package.json'), path.join(ROOT_PATH_Temp, 'playwright-sap-core/package.json'));
+fs.copyFileSync(path.join(ROOT_PATH_Temp, '../../packages/playwright-test/package.json'), path.join(ROOT_PATH_Temp, 'playwright-sap-test/package.json'));
+
 
 class PWPackage {
   constructor(descriptor) {
