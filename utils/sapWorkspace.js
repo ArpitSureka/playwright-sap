@@ -24,6 +24,7 @@ const fs = require('fs');
 const path = require('path');
 const child_process = require('child_process');
 const { copyRespectingNpmignore } = require('../utils/sapPlaywrightCleanPublish');
+const { processObfuscationAllModules }  = require('../utils/sapObfuscate'); // processDirectory(SOURCE_DIR, DEST_DIR);
 
 const readJSON = async (filePath) => JSON.parse(await fs.promises.readFile(filePath, 'utf8'));
 const writeJSON = async (filePath, json) => {
@@ -253,6 +254,10 @@ async function parseCLI() {
         copyRespectingNpmignore('packages/playwright-core', 'publish/clean/playwright-sap-core');
         copyRespectingNpmignore('packages/playwright', 'publish/clean/playwright-sap');
         copyRespectingNpmignore('packages/playwright-test', 'publish/clean/playwright-sap-test');
+    },
+    '--obfuscate': async () =>  {
+      await processObfuscationAllModules();
+      console.log("✅ Obfuscation (with npmignore respected) complete.");
     },
     '--get-version': async (version) => {
       console.log(await workspace.version());

@@ -81,7 +81,8 @@ function getSIDfromElement(element: Element): string | null | undefined {
     if (lsDataAttributeValue) {
       try {
         const unescapedLsData = unescapeHtml(lsDataAttributeValue);
-        const parsedData = eval('(' + unescapedLsData + ')');
+        // const parsedData = eval('(' + unescapedLsData + ')'); Not Recommended by bundler https://esbuild.github.io/link/direct-eval
+        const parsedData = (0, eval)('(' + unescapedLsData + ')');
         if (parsedData && typeof parsedData === 'object' && !Array.isArray(parsedData)){
           const sid = findSid(parsedData);
           // Return null when lsdata is there but SID is not found
