@@ -1305,7 +1305,7 @@ Required aria role.
 ## get-by-role-UI5-to-have-role-role
 - `propertyRole` <[string]>
 
-Required propertyRole.
+Required
 
 ## locator-get-by-role-option-checked
 * since: v1.27
@@ -1677,15 +1677,38 @@ await page
 ```
 ## template-locator-locateSID
 
-Documentation not ready for locateSID
+Locate elements using SID in HTML SAP GUI Type Locators (SID), these kind of locators were commonly used in SAP GUI automation scripts (SAP Scripting) and are highly stable.
+
+SID is the identifier you see in lsdata attribute of html element, for example:  wnd[0]/tbar[1]/btn[8]
+
+**Examples**
+```js
+await page.locateSID('wnd[0]/tbar[1]/btn[8]').click();
+```
 
 ## template-locator-getByRoleSID
 
-Documentation not ready for getByRoleSID
+Using locateSID locator is a little difficult as it is hard to read that why we created getByRoleSID locator. this locator internally uses locateSID locator. This makes reading and debugging the code easier.
+
+Note : This can only be used when sid is of the format wnd[<x>]/usr/.
+
+**Example**
+```js
+await page.getByRoleSID('label', { name: 'FEEDBACK' }).click();
+```
 
 ## template-locator-get-by-role-UI5
 
-Documentation not ready for getByRoleUI5
+Locate SAP UI5 elements via their UI5 DOM and properties 
+
+
+**Examples**
+
+```js
+await page.getByRoleUI5('Item', { text: 'Samples' }).click();
+await page.getByRoleUI5('Dialog', { title: 'Confirmation' }).press('Enter');
+```
+
 
 ## template-locator-get-by-role
 

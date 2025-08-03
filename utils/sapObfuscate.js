@@ -104,6 +104,7 @@ function copyFile(inputPath, outputPath) {
 async function processModule(modulePath, outputPath) {
   // console.log(1, modulePath);
   //   const files = await packlist({ path: modulePath });
+  const ends = new Set();
   const arborist = new Arborist({ path: modulePath });
   await arborist.loadActual().then((tree) => {
     packlist(tree).then((files) => {
@@ -112,6 +113,7 @@ async function processModule(modulePath, outputPath) {
         const srcFile = path.join(modulePath, fileRelPath);
         const destFile = path.join(outputPath, fileRelPath);
         
+        ends.add(fileRelPath.split('.').slice(1).join("."));
         if (fileRelPath.endsWith(".js")) {
           obfuscateFile(srcFile, destFile);
         } else if ( fileRelPath.endsWith(".js.map") ) {
@@ -126,7 +128,7 @@ async function processModule(modulePath, outputPath) {
       }
     });
   });
-  // console.log('3224567ytrfdsfvbghjk')
+  console.log(ends);
 }
 
 // Example: For all modules in custom-modules/

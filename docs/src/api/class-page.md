@@ -2508,6 +2508,12 @@ Referer header value. If provided it will take preference over the referer heade
 
 Goes to SAP Login page and logs in using username and password.
 
+**Example**
+
+```js
+await page.SAPLogin(SAP_USER_ID, SAP_PASSWORD, 'https://sap.example.com');
+```
+
 ### param: Page.SAPLogin.username
 * since: v1.8
 - `username` <[string]>

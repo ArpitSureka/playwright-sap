@@ -379,20 +379,41 @@ export class Page extends ChannelOwner<channels.PageChannel> implements api.Page
     try {
       if (url)
         res = await this.goto(url);
-      await this.getByRole('textbox', { name: 'User' }).click();
-      await this.waitForTimeout(50);
-      await this.getByRole('textbox', { name: 'User' }).fill(username);
-      await this.waitForTimeout(100);
-      await this.getByRole('textbox', { name: 'Password' }).click();
-      await this.waitForTimeout(50);
-      await this.getByRole('textbox', { name: 'Password' }).fill(password);
-      await this.waitForTimeout(100);
-      await this.getByRole('button', { name: 'Log On' }).click();
+
+      const result = await Promise.race([
+        await this.getByRole('textbox', { name: 'User Required' }).waitFor({ timeout: 30000 }).then(() => 'NETWEAVER').catch(() => null),
+        await this.getByRole('textbox', { name: 'User' }).waitFor({ timeout: 30000 }).then(() => 'FIORI').catch(() => null),
+      ]);
+
+      if (result === 'FIORI') {
+        await this.getByRole('textbox', { name: 'User' }).click();
+        await this.waitForTimeout(50);
+        await this.getByRole('textbox', { name: 'User' }).fill(username);
+        await this.waitForTimeout(100);
+        await this.getByRole('textbox', { name: 'Password' }).click();
+        await this.waitForTimeout(50);
+        await this.getByRole('textbox', { name: 'Password' }).fill(password);
+        await this.waitForTimeout(100);
+        await this.getByRole('button', { name: 'Log On' }).click();
+      } else if (result === 'NETWEAVER') {
+        await this.getByRole('textbox', { name: 'User Required' }).click();
+        await this.waitForTimeout(50);
+        await this.getByRole('textbox', { name: 'User Required' }).fill(username);
+        await this.waitForTimeout(100);
+        await this.getByRole('textbox', { name: 'Password Required' }).click();
+        await this.waitForTimeout(50);
+        await this.getByRole('textbox', { name: 'Password Required' }).fill(password);
+        await this.waitForTimeout(100);
+        await this.getByRole('button', { name: 'Log On Emphasized' }).click();
+      } else {
+        throw new Error('Unknown SAP Login Page. Please raise an issue with the page url and the error message.');
+      }
+
       // Dont want to record the login page navigation in the codegen and also in case of ui5 wait for sap scripts to load.
       await this.waitForNavigation();
       await this.waitForLoadState();
     } catch {
-      throw Error('Automatic SAP Login Failed. Currently SAP Login Works only for Fiori Launchpad. If the login page is Fiori login and still you are seeing this error. Please raise this error issue.');
+      throw Error('Automatic SAP Login Failed. Currently SAP Login Works only for Fiori Launchpad and Netweaver Page. If the login page is Fiori/Netweaver login and still you are seeing this error. Please raise this error issue.');
     }
     return res;
   }

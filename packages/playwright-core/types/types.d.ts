@@ -2992,7 +2992,17 @@ export interface Page {
   }): Locator;
 
   /**
-   * Documentation not ready for getByRoleSID
+   * Using locateSID locator is a little difficult as it is hard to read that why we created getByRoleSID locator. this
+   * locator internally uses locateSID locator. This makes reading and debugging the code easier.
+   *
+   * Note : This can only be used when sid is of the format wnd[<x>]/usr/.
+   *
+   * **Example**
+   *
+   * ```js
+   * await page.getByRoleSID('label', { name: 'FEEDBACK' }).click();
+   * ```
+   *
    * @param role
    * @param options
    */
@@ -3014,8 +3024,16 @@ export interface Page {
   }): Locator;
 
   /**
-   * Documentation not ready for getByRoleUI5
-   * @param propertyRole Required propertyRole.
+   * Locate SAP UI5 elements via their UI5 DOM and properties
+   *
+   * **Examples**
+   *
+   * ```js
+   * await page.getByRoleUI5('Item', { text: 'Samples' }).click();
+   * await page.getByRoleUI5('Dialog', { title: 'Confirmation' }).press('Enter');
+   * ```
+   *
+   * @param propertyRole Required
    * @param properties
    * @param options
    */
@@ -3574,7 +3592,17 @@ export interface Page {
   }): Promise<boolean>;
 
   /**
-   * Documentation not ready for locateSID
+   * Locate elements using SID in HTML SAP GUI Type Locators (SID), these kind of locators were commonly used in SAP GUI
+   * automation scripts (SAP Scripting) and are highly stable.
+   *
+   * SID is the identifier you see in lsdata attribute of html element, for example:  wnd[0]/tbar[1]/btn[8]
+   *
+   * **Examples**
+   *
+   * ```js
+   * await page.locateSID('wnd[0]/tbar[1]/btn[8]').click();
+   * ```
+   *
    * @param sid
    */
   locateSID(sid: string): Locator;
@@ -4104,6 +4132,13 @@ export interface Page {
 
   /**
    * Goes to SAP Login page and logs in using username and password.
+   *
+   * **Example**
+   *
+   * ```js
+   * await page.SAPLogin(SAP_USER_ID, SAP_PASSWORD, 'https://sap.example.com');
+   * ```
+   *
    * @param username username to be used for login.
    * @param password password to be used for login.
    * @param url optional: URL to navigate to SAP Login Page.
@@ -6797,7 +6832,17 @@ export interface Frame {
   }): Locator;
 
   /**
-   * Documentation not ready for getByRoleSID
+   * Using locateSID locator is a little difficult as it is hard to read that why we created getByRoleSID locator. this
+   * locator internally uses locateSID locator. This makes reading and debugging the code easier.
+   *
+   * Note : This can only be used when sid is of the format wnd[<x>]/usr/.
+   *
+   * **Example**
+   *
+   * ```js
+   * await page.getByRoleSID('label', { name: 'FEEDBACK' }).click();
+   * ```
+   *
    * @param role
    * @param options
    */
@@ -6819,8 +6864,16 @@ export interface Frame {
   }): Locator;
 
   /**
-   * Documentation not ready for getByRoleUI5
-   * @param propertyRole Required propertyRole.
+   * Locate SAP UI5 elements via their UI5 DOM and properties
+   *
+   * **Examples**
+   *
+   * ```js
+   * await page.getByRoleUI5('Item', { text: 'Samples' }).click();
+   * await page.getByRoleUI5('Dialog', { title: 'Confirmation' }).press('Enter');
+   * ```
+   *
+   * @param propertyRole Required
    * @param properties
    * @param options
    */
@@ -7314,7 +7367,17 @@ export interface Frame {
   }): Promise<boolean>;
 
   /**
-   * Documentation not ready for locateSID
+   * Locate elements using SID in HTML SAP GUI Type Locators (SID), these kind of locators were commonly used in SAP GUI
+   * automation scripts (SAP Scripting) and are highly stable.
+   *
+   * SID is the identifier you see in lsdata attribute of html element, for example:  wnd[0]/tbar[1]/btn[8]
+   *
+   * **Examples**
+   *
+   * ```js
+   * await page.locateSID('wnd[0]/tbar[1]/btn[8]').click();
+   * ```
+   *
    * @param sid
    */
   locateSID(sid: string): Locator;
@@ -13502,7 +13565,17 @@ export interface Locator {
   }): Locator;
 
   /**
-   * Documentation not ready for getByRoleSID
+   * Using locateSID locator is a little difficult as it is hard to read that why we created getByRoleSID locator. this
+   * locator internally uses locateSID locator. This makes reading and debugging the code easier.
+   *
+   * Note : This can only be used when sid is of the format wnd[<x>]/usr/.
+   *
+   * **Example**
+   *
+   * ```js
+   * await page.getByRoleSID('label', { name: 'FEEDBACK' }).click();
+   * ```
+   *
    * @param role
    * @param options
    */
@@ -13524,8 +13597,16 @@ export interface Locator {
   }): Locator;
 
   /**
-   * Documentation not ready for getByRoleUI5
-   * @param propertyRole Required propertyRole.
+   * Locate SAP UI5 elements via their UI5 DOM and properties
+   *
+   * **Examples**
+   *
+   * ```js
+   * await page.getByRoleUI5('Item', { text: 'Samples' }).click();
+   * await page.getByRoleUI5('Dialog', { title: 'Confirmation' }).press('Enter');
+   * ```
+   *
+   * @param propertyRole Required
    * @param properties
    * @param options
    */
@@ -13958,7 +14039,17 @@ export interface Locator {
   last(): Locator;
 
   /**
-   * Documentation not ready for locateSID
+   * Locate elements using SID in HTML SAP GUI Type Locators (SID), these kind of locators were commonly used in SAP GUI
+   * automation scripts (SAP Scripting) and are highly stable.
+   *
+   * SID is the identifier you see in lsdata attribute of html element, for example:  wnd[0]/tbar[1]/btn[8]
+   *
+   * **Examples**
+   *
+   * ```js
+   * await page.locateSID('wnd[0]/tbar[1]/btn[8]').click();
+   * ```
+   *
    * @param sid
    */
   locateSID(sid: string): Locator;
@@ -19842,7 +19933,17 @@ export interface FrameLocator {
   }): Locator;
 
   /**
-   * Documentation not ready for getByRoleSID
+   * Using locateSID locator is a little difficult as it is hard to read that why we created getByRoleSID locator. this
+   * locator internally uses locateSID locator. This makes reading and debugging the code easier.
+   *
+   * Note : This can only be used when sid is of the format wnd[<x>]/usr/.
+   *
+   * **Example**
+   *
+   * ```js
+   * await page.getByRoleSID('label', { name: 'FEEDBACK' }).click();
+   * ```
+   *
    * @param role
    * @param options
    */
@@ -19864,8 +19965,16 @@ export interface FrameLocator {
   }): Locator;
 
   /**
-   * Documentation not ready for getByRoleUI5
-   * @param propertyRole Required propertyRole.
+   * Locate SAP UI5 elements via their UI5 DOM and properties
+   *
+   * **Examples**
+   *
+   * ```js
+   * await page.getByRoleUI5('Item', { text: 'Samples' }).click();
+   * await page.getByRoleUI5('Dialog', { title: 'Confirmation' }).press('Enter');
+   * ```
+   *
+   * @param propertyRole Required
    * @param properties
    * @param options
    */
@@ -19999,7 +20108,17 @@ export interface FrameLocator {
   last(): FrameLocator;
 
   /**
-   * Documentation not ready for locateSID
+   * Locate elements using SID in HTML SAP GUI Type Locators (SID), these kind of locators were commonly used in SAP GUI
+   * automation scripts (SAP Scripting) and are highly stable.
+   *
+   * SID is the identifier you see in lsdata attribute of html element, for example:  wnd[0]/tbar[1]/btn[8]
+   *
+   * **Examples**
+   *
+   * ```js
+   * await page.locateSID('wnd[0]/tbar[1]/btn[8]').click();
+   * ```
+   *
    * @param sid
    */
   locateSID(sid: string): Locator;
