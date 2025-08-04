@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 /**
  * Copyright (c) Arpit Sureka.
+ * Orignal Copyright (c) Microsoft Corporation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,38 +25,35 @@ const fs = require('fs');
 const path = require('path');
 const child_process = require('child_process');
 const { copyRespectingNpmignore } = require('../utils/sapPlaywrightCleanPublish');
-const { processObfuscationAllModules }  = require('../utils/sapObfuscate'); // processDirectory(SOURCE_DIR, DEST_DIR);
+// const { processObfuscationAllModules }  = require('../utils/sapObfuscate'); // processDirectory(SOURCE_DIR, DEST_DIR);
 
 const readJSON = async (filePath) => JSON.parse(await fs.promises.readFile(filePath, 'utf8'));
 const writeJSON = async (filePath, json) => {
   await fs.promises.writeFile(filePath, JSON.stringify(json, null, 2) + '\n');
 }
 
-if (!fs.existsSync(path.join(__dirname, '../publish/clean'))) {
-  fs.mkdirSync(path.join(__dirname, '../publish/clean'), { recursive: true });
+
+if (!fs.existsSync(path.join(__dirname, '../publish/playwright-sap'))) {
+  fs.mkdirSync(path.join(__dirname, '../publish/playwright-sap'), { recursive: true });
 }
 
-if (!fs.existsSync(path.join(__dirname, '../publish/clean/playwright-sap'))) {
-  fs.mkdirSync(path.join(__dirname, '../publish/clean/playwright-sap'), { recursive: true });
+if (!fs.existsSync(path.join(__dirname, '../publish/playwright-sap-core'))) {
+  fs.mkdirSync(path.join(__dirname, '../publish/playwright-sap-core'), { recursive: true });
 }
 
-if (!fs.existsSync(path.join(__dirname, '../publish/clean/playwright-sap-core'))) {
-  fs.mkdirSync(path.join(__dirname, '../publish/clean/playwright-sap-core'), { recursive: true });
+if (!fs.existsSync(path.join(__dirname, '../publish/playwright-sap-test'))) {
+  fs.mkdirSync(path.join(__dirname, '../publish/playwright-sap-test'), { recursive: true });
 }
+const ROOT_PATH_Temp = path.join(__dirname, '../publish/');
 
-if (!fs.existsSync(path.join(__dirname, '../publish/clean/playwright-sap-test'))) {
-  fs.mkdirSync(path.join(__dirname, '../publish/clean/playwright-sap-test'), { recursive: true });
-}
-const ROOT_PATH_Temp = path.join(__dirname, '../publish/clean');
-
-fs.copyFileSync(path.join(ROOT_PATH_Temp, '../../package.json'), path.join(ROOT_PATH_Temp, 'package.json'));
-fs.copyFileSync(path.join(ROOT_PATH_Temp, '../../package-lock.json'), path.join(ROOT_PATH_Temp, 'package-lock.json'));
-fs.copyFileSync(path.join(ROOT_PATH_Temp, '../../NOTICE'), path.join(ROOT_PATH_Temp, 'NOTICE'));
-fs.copyFileSync(path.join(ROOT_PATH_Temp, '../../LICENSE'), path.join(ROOT_PATH_Temp, 'LICENSE'));
-fs.copyFileSync(path.join(ROOT_PATH_Temp, '../../README.md'), path.join(ROOT_PATH_Temp, 'README.md'));
-fs.copyFileSync(path.join(ROOT_PATH_Temp, '../../packages/playwright/package.json'), path.join(ROOT_PATH_Temp, 'playwright-sap/package.json'));
-fs.copyFileSync(path.join(ROOT_PATH_Temp, '../../packages/playwright-core/package.json'), path.join(ROOT_PATH_Temp, 'playwright-sap-core/package.json'));
-fs.copyFileSync(path.join(ROOT_PATH_Temp, '../../packages/playwright-test/package.json'), path.join(ROOT_PATH_Temp, 'playwright-sap-test/package.json'));
+fs.copyFileSync(path.join(ROOT_PATH_Temp, '../package.json'), path.join(ROOT_PATH_Temp, 'package.json'));
+fs.copyFileSync(path.join(ROOT_PATH_Temp, '../package-lock.json'), path.join(ROOT_PATH_Temp, 'package-lock.json'));
+fs.copyFileSync(path.join(ROOT_PATH_Temp, '../NOTICE'), path.join(ROOT_PATH_Temp, 'NOTICE'));
+fs.copyFileSync(path.join(ROOT_PATH_Temp, '../LICENSE'), path.join(ROOT_PATH_Temp, 'LICENSE'));
+fs.copyFileSync(path.join(ROOT_PATH_Temp, '../README.md'), path.join(ROOT_PATH_Temp, 'README.md'));
+fs.copyFileSync(path.join(ROOT_PATH_Temp, '../packages/playwright/package.json'), path.join(ROOT_PATH_Temp, 'playwright-sap/package.json'));
+fs.copyFileSync(path.join(ROOT_PATH_Temp, '../packages/playwright-core/package.json'), path.join(ROOT_PATH_Temp, 'playwright-sap-core/package.json'));
+fs.copyFileSync(path.join(ROOT_PATH_Temp, '../packages/playwright-test/package.json'), path.join(ROOT_PATH_Temp, 'playwright-sap-test/package.json'));
 
 
 class PWPackage {
@@ -195,7 +193,7 @@ class Workspace {
   }
 }
 
-const ROOT_PATH = path.join(__dirname, '../publish/clean');
+const ROOT_PATH = path.join(__dirname, '../publish');
 const LICENCE_FILES = ['NOTICE', 'LICENSE'];
 const workspace = new Workspace(ROOT_PATH, [
   new PWPackage({
@@ -246,19 +244,33 @@ async function parseCLI() {
       }
     },
     '--copy-respecting-npmignore': async () => {
-        fs.copyFileSync(path.join(ROOT_PATH, '../../package.json'), path.join(ROOT_PATH, 'package.json'));
-        fs.copyFileSync(path.join(ROOT_PATH, '../../package-lock.json'), path.join(ROOT_PATH, 'package-lock.json'));
-        fs.copyFileSync(path.join(ROOT_PATH, '../../NOTICE'), path.join(ROOT_PATH, 'NOTICE'));
-        fs.copyFileSync(path.join(ROOT_PATH, '../../LICENSE'), path.join(ROOT_PATH, 'LICENSE'));
-        fs.copyFileSync(path.join(ROOT_PATH, '../../README.md'), path.join(ROOT_PATH, 'README.md'));
-        copyRespectingNpmignore('packages/playwright-core', 'publish/clean/playwright-sap-core');
-        copyRespectingNpmignore('packages/playwright', 'publish/clean/playwright-sap');
-        copyRespectingNpmignore('packages/playwright-test', 'publish/clean/playwright-sap-test');
+        fs.rmSync(ROOT_PATH, { recursive: true, force: true });
+        if (!fs.existsSync(path.join(__dirname, '../publish/playwright-sap'))) {
+          fs.mkdirSync(path.join(__dirname, '../publish/playwright-sap'), { recursive: true });
+        }
+        if (!fs.existsSync(path.join(__dirname, '../publish/playwright-sap-core'))) {
+          fs.mkdirSync(path.join(__dirname, '../publish/playwright-sap-core'), { recursive: true });
+        }
+        if (!fs.existsSync(path.join(__dirname, '../publish/playwright-sap-test'))) {
+          fs.mkdirSync(path.join(__dirname, '../publish/playwright-sap-test'), { recursive: true });
+        }
+        fs.copyFileSync(path.join(ROOT_PATH_Temp, '../package.json'), path.join(ROOT_PATH_Temp, 'package.json'));
+        fs.copyFileSync(path.join(ROOT_PATH_Temp, '../package-lock.json'), path.join(ROOT_PATH_Temp, 'package-lock.json'));
+        fs.copyFileSync(path.join(ROOT_PATH_Temp, '../NOTICE'), path.join(ROOT_PATH_Temp, 'NOTICE'));
+        fs.copyFileSync(path.join(ROOT_PATH_Temp, '../LICENSE'), path.join(ROOT_PATH_Temp, 'LICENSE'));
+        fs.copyFileSync(path.join(ROOT_PATH_Temp, '../README.md'), path.join(ROOT_PATH_Temp, 'README.md'));
+        fs.copyFileSync(path.join(ROOT_PATH_Temp, '../packages/playwright/package.json'), path.join(ROOT_PATH_Temp, 'playwright-sap/package.json'));
+        fs.copyFileSync(path.join(ROOT_PATH_Temp, '../packages/playwright-core/package.json'), path.join(ROOT_PATH_Temp, 'playwright-sap-core/package.json'));
+        fs.copyFileSync(path.join(ROOT_PATH_Temp, '../packages/playwright-test/package.json'), path.join(ROOT_PATH_Temp, 'playwright-sap-test/package.json'));
+        copyRespectingNpmignore('packages/playwright-core', 'publish/playwright-sap-core');
+        copyRespectingNpmignore('packages/playwright', 'publish/playwright-sap');
+        copyRespectingNpmignore('packages/playwright-test', 'publish/playwright-sap-test');
     },
-    '--obfuscate': async () =>  {
-      await processObfuscationAllModules();
-      console.log("✅ Obfuscation (with npmignore respected) complete.");
-    },
+    // Stopping this.
+    // '--obfuscate': async () =>  {
+    //   await processObfuscationAllModules();
+    //   console.log("✅ Obfuscation (with npmignore respected) complete.");
+    // },
     '--get-version': async (version) => {
       console.log(await workspace.version());
     },

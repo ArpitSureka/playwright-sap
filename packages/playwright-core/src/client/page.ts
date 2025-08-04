@@ -29,7 +29,7 @@ import { Frame, verifyLoadState } from './frame';
 import { HarRouter } from './harRouter';
 import { Keyboard, Mouse, Touchscreen } from './input';
 import { JSHandle, assertMaxArguments, parseResult, serializeArgument } from './jsHandle';
-import { Response, Route, RouteHandler, WebSocket,  WebSocketRoute, WebSocketRouteHandler, validateHeaders } from './network';
+import { Response, Route, RouteHandler, WebSocket, WebSocketRoute, WebSocketRouteHandler, validateHeaders } from './network';
 import { Video } from './video';
 import { Waiter } from './waiter';
 import { Worker } from './worker';
@@ -37,7 +37,7 @@ import { TimeoutSettings } from './timeoutSettings';
 import { assert } from '../utils/isomorphic/assert';
 import { mkdirIfNeeded } from './fileUtils';
 import { headersObjectToArray } from '../utils/isomorphic/headers';
-import { trimStringWithEllipsis  } from '../utils/isomorphic/stringUtils';
+import { trimStringWithEllipsis } from '../utils/isomorphic/stringUtils';
 import { urlMatches, urlMatchesEqual } from '../utils/isomorphic/urlMatch';
 import { LongStandingScope } from '../utils/isomorphic/manualPromise';
 import { isObject, isRegExp, isString } from '../utils/isomorphic/rtti';
@@ -204,7 +204,7 @@ export class Page extends ChannelOwner<channels.PageChannel> implements api.Page
         this._routes.splice(index, 1);
       const handled = await routeHandler.handle(route);
       if (!this._routes.length)
-        this._wrapApiCall(() => this._updateInterceptionPatterns(), { internal: true }).catch(() => {});
+        this._wrapApiCall(() => this._updateInterceptionPatterns(), { internal: true }).catch(() => { });
       if (handled)
         return;
     }
@@ -369,7 +369,7 @@ export class Page extends ChannelOwner<channels.PageChannel> implements api.Page
   }
 
   async goto(url: string, options?: channels.FrameGotoOptions & TimeoutOptions): Promise<Response | null> {
-    const res =  await this._mainFrame.goto(url, options);
+    const res = await this._mainFrame.goto(url, options);
     await this.waitForLoadState();
     return res;
   }
@@ -381,8 +381,8 @@ export class Page extends ChannelOwner<channels.PageChannel> implements api.Page
         res = await this.goto(url);
 
       const result = await Promise.race([
-        await this.getByRole('textbox', { name: 'User Required' }).waitFor({ timeout: 30000 }).then(() => 'NETWEAVER').catch(() => null),
-        await this.getByRole('textbox', { name: 'User' }).waitFor({ timeout: 30000 }).then(() => 'FIORI').catch(() => null),
+        this.getByRole('textbox', { name: 'User Required' }).waitFor({ timeout: 30000 }).then(() => 'NETWEAVER').catch(() => null),
+        this.getByRole('textbox', { name: 'User' }).waitFor({ timeout: 30000 }).then(() => 'FIORI').catch(() => null),
       ]);
 
       if (result === 'FIORI') {
@@ -445,7 +445,7 @@ export class Page extends ChannelOwner<channels.PageChannel> implements api.Page
     } finally {
       if (remove)
         this._locatorHandlers.delete(uid);
-      this._wrapApiCall(() => this._channel.resolveLocatorHandlerNoReply({ uid, remove }), { internal: true }).catch(() => {});
+      this._wrapApiCall(() => this._channel.resolveLocatorHandlerNoReply({ uid, remove }), { internal: true }).catch(() => { });
     }
   }
 
@@ -453,7 +453,7 @@ export class Page extends ChannelOwner<channels.PageChannel> implements api.Page
     for (const [uid, data] of this._locatorHandlers) {
       if (data.locator._equals(locator)) {
         this._locatorHandlers.delete(uid);
-        await this._channel.unregisterLocatorHandler({ uid }).catch(() => {});
+        await this._channel.unregisterLocatorHandler({ uid }).catch(() => { });
       }
     }
   }
@@ -566,7 +566,7 @@ export class Page extends ChannelOwner<channels.PageChannel> implements api.Page
     await this._updateInterceptionPatterns();
   }
 
-  async routeFromHAR(har: string, options: { url?: string | RegExp, notFound?: 'abort' | 'fallback', update?: boolean, updateContent?: 'attach' | 'embed', updateMode?: 'minimal' | 'full'} = {}): Promise<void> {
+  async routeFromHAR(har: string, options: { url?: string | RegExp, notFound?: 'abort' | 'fallback', update?: boolean, updateContent?: 'attach' | 'embed', updateMode?: 'minimal' | 'full' } = {}): Promise<void> {
     const localUtils = this._connection.localUtils();
     if (!localUtils)
       throw new Error('Route from har is not supported in thin clients');
@@ -589,7 +589,7 @@ export class Page extends ChannelOwner<channels.PageChannel> implements api.Page
     this._harRouters = [];
   }
 
-  async unrouteAll(options?: { behavior?: 'wait'|'ignoreErrors'|'default' }): Promise<void> {
+  async unrouteAll(options?: { behavior?: 'wait' | 'ignoreErrors' | 'default' }): Promise<void> {
     await this._unrouteInternal(this._routes, [], options?.behavior);
     this._disposeHarRouters();
   }
@@ -606,7 +606,7 @@ export class Page extends ChannelOwner<channels.PageChannel> implements api.Page
     await this._unrouteInternal(removed, remaining, 'default');
   }
 
-  private async _unrouteInternal(removed: RouteHandler[], remaining: RouteHandler[], behavior?: 'wait'|'ignoreErrors'|'default'): Promise<void> {
+  private async _unrouteInternal(removed: RouteHandler[], remaining: RouteHandler[], behavior?: 'wait' | 'ignoreErrors' | 'default'): Promise<void> {
     this._routes = remaining;
     await this._updateInterceptionPatterns();
     if (!behavior || behavior === 'default')
@@ -644,7 +644,7 @@ export class Page extends ChannelOwner<channels.PageChannel> implements api.Page
     return result.binary;
   }
 
-  async _expectScreenshot(options: ExpectScreenshotOptions): Promise<{ actual?: Buffer, previous?: Buffer, diff?: Buffer, errorMessage?: string, log?: string[], timedOut?: boolean}> {
+  async _expectScreenshot(options: ExpectScreenshotOptions): Promise<{ actual?: Buffer, previous?: Buffer, diff?: Buffer, errorMessage?: string, log?: string[], timedOut?: boolean }> {
     const mask = options?.mask ? options?.mask.map(locator => ({
       frame: (locator as Locator)._frame._channel,
       selector: (locator as Locator)._selector,
@@ -764,7 +764,7 @@ export class Page extends ChannelOwner<channels.PageChannel> implements api.Page
     return await this._mainFrame.focus(selector, options);
   }
 
-  async textContent(selector: string, options?: channels.FrameTextContentOptions & TimeoutOptions): Promise<null|string> {
+  async textContent(selector: string, options?: channels.FrameTextContentOptions & TimeoutOptions): Promise<null | string> {
     return await this._mainFrame.textContent(selector, options);
   }
 
@@ -872,7 +872,7 @@ export class Page extends ChannelOwner<channels.PageChannel> implements api.Page
     if (typeof options.width === 'number')
       transportOptions.width = options.width + 'px';
     if (typeof options.height === 'number')
-      transportOptions.height  = options.height + 'px';
+      transportOptions.height = options.height + 'px';
     for (const margin of ['top', 'right', 'bottom', 'left']) {
       const index = margin as 'top' | 'right' | 'bottom' | 'left';
       if (options.margin && typeof options.margin[index] === 'number')
@@ -915,9 +915,9 @@ export class BindingCall extends ChannelOwner<channels.BindingCallChannel> {
         result = await func(source, JSHandle.from(this._initializer.handle));
       else
         result = await func(source, ...this._initializer.args!.map(parseResult));
-      this._channel.resolve({ result: serializeArgument(result) }).catch(() => {});
+      this._channel.resolve({ result: serializeArgument(result) }).catch(() => { });
     } catch (e) {
-      this._channel.reject({ error: serializeError(e) }).catch(() => {});
+      this._channel.reject({ error: serializeError(e) }).catch(() => { });
     }
   }
 }
