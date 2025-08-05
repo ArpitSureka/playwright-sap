@@ -99,24 +99,14 @@ class Workspace {
     // 1. update workspace's package.json (playwright-internal) with the new version
     const workspacePackageJSON = await readJSON(path.join(this._rootDir, 'package.json'));
     workspacePackageJSON.version = version;
-    workspacePackageJSON.repository = {};
+    // workspacePackageJSON.repository = {};
     // Upate this url to point to the documentation.
-    workspacePackageJSON.homepage = 'documentation';
-    workspacePackageJSON.author = {name: 'Arpit Sureka'};
+    // workspacePackageJSON.homepage = 'https://github.com/microsoft/playwright/graphs/contributors';
+    // workspacePackageJSON.author = {name: 'Arpit Sureka'};
     await writeJSON(path.join(this._rootDir, 'package.json'), workspacePackageJSON);
     // 2. make workspace consistent.
     await this.ensureConsistent();
   }
-
-  // async updatePackageName() {
-  //   for (const pkg of this._packages) {
-  //       const packageJSON = await readJSON(pkg.packageJSONPath);
-  //       // console.log(`Updating package name for ${packageJSON.name} to ${packageJSON.name.replace('playwright', 'playwright-sap')}`);
-  //       packageJSON.name = packageJSON.name.replace('playwright', 'playwright-sap');
-  //       // console.log(pkg.packageJSONPath, packageJSON.name);
-  //       await writeJSON(pkg.packageJSONPath, packageJSON);
-  //   }
-  // }
 
   async ensureConsistent() {
     let hasChanges = false;
@@ -208,7 +198,7 @@ const workspace = new Workspace(ROOT_PATH, [
     files: LICENCE_FILES,
   }),
   new PWPackage({
-    name: '@playwright-sap/test',
+    name: 'playwright-sap-test',
     path: path.join(ROOT_PATH, 'playwright-sap-test'),
     // We copy README.md additionally for @playwright/test so that it looks nice on NPM.
     files: [...LICENCE_FILES, 'README.md'],
