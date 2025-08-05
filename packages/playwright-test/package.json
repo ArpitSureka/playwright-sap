@@ -4,14 +4,14 @@
   "description": "A high-level API to automate web browsers",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/microsoft/playwright.git"
+    "url": "git+https://github.com/ArpitSureka/playwright-sap.git"
   },
-  "homepage": "https://playwright.dev",
+  "homepage": "https://arpitsureka.github.io/playwright-sap/",
   "engines": {
     "node": ">=18"
   },
   "author": {
-    "name": "Microsoft Corporation"
+    "name": "Arpit Sureka"
   },
   "license": "Apache-2.0",
   "exports": {
