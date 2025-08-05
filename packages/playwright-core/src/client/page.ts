@@ -410,8 +410,12 @@ export class Page extends ChannelOwner<channels.PageChannel> implements api.Page
       }
 
       // Dont want to record the login page navigation in the codegen and also in case of ui5 wait for sap scripts to load.
-      await this.waitForNavigation();
-      await this.waitForLoadState();
+      try {
+        await this.waitForNavigation();
+        await this.waitForLoadState();
+      } catch (error) {
+        // Do nothing, as we are not interested in the navigation.
+      }
     } catch {
       throw Error('Automatic SAP Login Failed. Currently SAP Login Works only for Fiori Launchpad and Netweaver Page. If the login page is Fiori/Netweaver login and still you are seeing this error. Please raise this error issue.');
     }

@@ -1,10 +1,3 @@
-// const fs = require('fs');
-// const path = require('path');
-// const packlist = require("npm-packlist");
-// const { fileURLToPath }  = require("url");
-// const { Arborist }  = require("@npmcli/arborist");
-
-
 import fs from "fs";
 import path from "path";
 import packlist from "npm-packlist";
@@ -37,6 +30,9 @@ export async function copyRespectingNpmignore(modulePath, outputPath) {
         
         copyFile(srcFile, destFile);
       }
+      const srcFile = path.join(modulePath, '.npmignore');
+      const destFile = path.join(outputPath, '.npmignore');
+      copyFile(srcFile, destFile);
     });
   });
 }

@@ -437,6 +437,7 @@ for (const pkg of workspace.packages()) {
     sourcemap: withSourceMaps ? 'linked' : false,
     platform: 'node',
     format: 'cjs',
+    minify: !watchMode,
   }));
 }
 
