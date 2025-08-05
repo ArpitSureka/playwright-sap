@@ -1,5 +1,6 @@
 /**
  * Copyright (c) Arpit Sureka.
+ * Orignal Copyright (c) Microsoft Corporation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,11 +20,13 @@ import { assert } from '../../utils';
 import type { CRPage } from './crPage';
 import type * as types from '../types';
 import type { Protocol } from './protocol';
+import type { SAP } from '@sap/types/sapWindow';
 
 
 declare global {
   interface Window {
     __cleanupDrag?: () => Promise<boolean>;
+    sap: SAP;
   }
 }
 

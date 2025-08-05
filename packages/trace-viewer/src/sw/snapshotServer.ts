@@ -1,5 +1,6 @@
 /**
  * Copyright (c) Arpit Sureka.
+ * Orignal Copyright (c) Microsoft Corporation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +19,7 @@ import type { URLSearchParams } from 'url';
 import type { SnapshotRenderer } from './snapshotRenderer';
 import type { SnapshotStorage } from './snapshotStorage';
 import type { ResourceSnapshot } from '@trace/snapshot';
+import type { SAP } from '@sap/types/sapWindow';
 
 type Point = { x: number, y: number };
 
@@ -120,6 +122,7 @@ export class SnapshotServer {
 declare global {
   interface Window {
     showSnapshot: (url: string, point?: Point) => Promise<void>;
+    sap: SAP;
   }
 }
 

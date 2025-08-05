@@ -18,6 +18,7 @@
       "@testIsomorphic/*": ["./packages/playwright/src/isomorphic/*"],
       "@trace/*": ["./packages/trace/src/*"],
       "@web/*": ["./packages/web/src/*"],
+      "@sap/*": ["./packages/sap/*"],
       "playwright-core/lib/*": ["./packages/playwright-core/src/*"],
       "playwright/lib/*": ["./packages/playwright/src/*"],
     },

@@ -44,6 +44,7 @@ async function checkDeps() {
   await innerCheckDeps(path.join(packagesDir, 'trace'));
   await innerCheckDeps(path.join(packagesDir, 'web'));
   await innerCheckDeps(path.join(packagesDir, 'injected'));
+  await innerCheckDeps(path.join(packagesDir, 'sap'));
 
   const corePackageJson = await innerCheckDeps(path.join(packagesDir, 'playwright-core'));
   const playwrightPackageJson = await innerCheckDeps(path.join(packagesDir, 'playwright'));

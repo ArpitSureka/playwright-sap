@@ -1,5 +1,6 @@
 /**
  * Copyright (c) Arpit Sureka.
+ * Orignal Copyright (c) Microsoft Corporation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -238,7 +239,6 @@ class RecordActionTool implements RecorderTool {
     }
 
     this._cancelPendingClickAction();
-
     // Stall click in case we are observing double-click.
     if (event.detail === 1) {
       this._pendingClickAction = {
@@ -366,7 +366,6 @@ class RecordActionTool implements RecorderTool {
 
   onInput(event: Event) {
     const target = this._recorder.deepEventTarget(event);
-
     if (target.nodeName === 'INPUT' && (target as HTMLInputElement).type.toLowerCase() === 'file') {
       this._recorder.recordAction({
         name: 'setInputFiles',

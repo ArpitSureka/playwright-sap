@@ -1,5 +1,6 @@
 /**
  * Copyright (c) Arpit Sureka.
+ * Orignal Copyright (c) Microsoft Corporation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,6 +36,7 @@ export default defineConfig({
       '@testIsomorphic': path.resolve(__dirname, '../playwright-core/src/utils/testIsomorphic'),
       '@trace': path.resolve(__dirname, '../trace/src'),
       '@web': path.resolve(__dirname, '../web/src'),
+      '@sap': path.resolve(__dirname, '../sap/'),
     },
   },
   publicDir: false,

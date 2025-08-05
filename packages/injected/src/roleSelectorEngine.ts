@@ -1,5 +1,6 @@
 /**
  * Copyright (c) Arpit Sureka.
+ * Orignal Copyright (c) Microsoft Corporation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,7 +56,7 @@ function validateSupportedOp(attr: AttributeSelectorPart, ops: AttributeSelector
     throw new Error(`"${attr.name}" does not support "${attr.op}" matcher`);
 }
 
-function validateAttributes(attrs: AttributeSelectorPart[], role: string): RoleEngineOptions {
+export function validateAttributes(attrs: AttributeSelectorPart[], role: string): RoleEngineOptions {
   const options: RoleEngineOptions = { role };
   for (const attr of attrs) {
     switch (attr.name) {

@@ -1,5 +1,6 @@
 /**
  * Copyright (c) Arpit Sureka.
+ * Orignal Copyright (c) Microsoft Corporation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -436,6 +437,7 @@ for (const pkg of workspace.packages()) {
     sourcemap: withSourceMaps ? 'linked' : false,
     platform: 'node',
     format: 'cjs',
+    minify: !watchMode,
   }));
 }
 
@@ -557,6 +559,9 @@ onChanges.push({
     'packages/playwright-core/src/third_party/**',
     'packages/playwright-ct-core/src/injected/**',
     'packages/playwright-core/src/utils/isomorphic/**',
+    'packages/playwright-core/src/utils/isomorphic/sap/**',
+    'packages/sap/**',
+    'packages/sap/types/**',
     'utils/generate_injected_builtins.js',
     'utils/generate_injected.js',
   ],

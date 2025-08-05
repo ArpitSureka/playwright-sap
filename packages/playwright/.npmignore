@@ -1,2 +1,3 @@
 src
 bundles
+*.js.map

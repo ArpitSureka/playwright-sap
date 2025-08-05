@@ -1,5 +1,6 @@
 /**
  * Copyright (c) Arpit Sureka.
+ * Orignal Copyright (c) Microsoft Corporation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,10 +20,11 @@ import { escapeForAttributeSelector, escapeForTextSelector, escapeRegExp, quoteC
 import { closestCrossShadow, isElementVisible, isInsideScope, parentElementOrShadowHost } from './domUtils';
 import { beginAriaCaches, endAriaCaches, getAriaRole, getElementAccessibleName } from './roleUtils';
 import { elementText, getElementLabels } from './selectorUtils';
+import { buildSAPSelectors, chooseFirstSelectorSAP } from './sap/selectorGenerator';
 
 import type { InjectedScript } from './injectedScript';
 
-type SelectorToken = {
+export type SelectorToken = {
   engine: string;
   selector: string;
   score: number;  // Lower is better.
@@ -160,6 +162,11 @@ function generateSelectorFor(cache: Cache, injectedScript: InjectedScript, targe
     const allowNthMatch = element === targetElement;
 
     let textCandidates = allowText ? buildTextCandidates(injectedScript, element, element === targetElement) : [];
+    let sapCandidates: SelectorToken[][] = [];
+    // This if else stops concating sap selectors with other selectors. Quality of the concat was not good.
+    // Problem example - ui5 samples - toggle button page- https://ui5.sap.com/#/entity/sap.m.ToggleButton at the list toggle button page.
+    if (element === targetElement)
+      sapCandidates = buildSAPSelectors(injectedScript, element);
     if (element !== targetElement) {
       // Do not use regex for parent elements (for performance).
       textCandidates = filterRegexTokens(textCandidates);
@@ -169,7 +176,7 @@ function generateSelectorFor(cache: Cache, injectedScript: InjectedScript, targe
         .map(token => [token]);
 
     // First check all text and non-text candidates for the element.
-    let result = chooseFirstSelector(injectedScript, options.root ?? targetElement.ownerDocument, element, [...textCandidates, ...noTextCandidates], allowNthMatch);
+    let result = chooseFirstSelector(injectedScript, options.root ?? targetElement.ownerDocument, element, [...textCandidates, ...noTextCandidates, ...sapCandidates], allowNthMatch);
 
     // Do not use regex for chained selectors (for performance).
     textCandidates = filterRegexTokens(textCandidates);
@@ -178,7 +185,7 @@ function generateSelectorFor(cache: Cache, injectedScript: InjectedScript, targe
       // Use the deepest possible text selector - works pretty good and saves on compute time.
       const allowParentText = allowText && !textCandidatesToUse.length;
 
-      const candidates = [...textCandidatesToUse, ...noTextCandidates].filter(c => {
+      const candidates = [...textCandidatesToUse, ...noTextCandidates, ...sapCandidates].filter(c => {
         if (!result)
           return true;
         return combineScores(c) < combineScores(result);
@@ -227,6 +234,7 @@ function generateSelectorFor(cache: Cache, injectedScript: InjectedScript, targe
   };
 
   return calculate(targetElement, !options.noText);
+
 }
 
 function buildNoTextCandidates(injectedScript: InjectedScript, element: Element, options: InternalOptions): SelectorToken[] {
@@ -485,6 +493,11 @@ function chooseFirstSelector(injectedScript: InjectedScript, scope: Element | Do
       // We are the only match - found the best selector.
       return tokens;
     }
+
+    // SAP Selector Token
+    const sapSelectorToken = chooseFirstSelectorSAP(injectedScript.window, tokens, targetElement, result);
+    if (sapSelectorToken && sapSelectorToken.length)
+      return sapSelectorToken;
 
     // Otherwise, perhaps we can use nth=?
     const index = result.indexOf(targetElement);

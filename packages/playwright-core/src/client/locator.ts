@@ -1,5 +1,6 @@
 /**
  * Copyright (c) Arpit Sureka.
+ * Orignal Copyright (c) Microsoft Corporation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+import { getByRoleSIDSelector, getByRoleUI5Selector, locateSIDSelector } from '../utils/isomorphic/sap/locatorUtils';
 import { ElementHandle } from './elementHandle';
 import { parseResult, serializeArgument } from './jsHandle';
 import { asLocator } from '../utils/isomorphic/locatorGenerators';
@@ -28,6 +29,7 @@ import type * as structs from '../../types/structs';
 import type * as api from '../../types/types';
 import type { ByRoleOptions } from '../utils/isomorphic/locatorUtils';
 import type * as channels from '@protocol/channels';
+import type { ByRoleSIDOptions, ByRoleUI5Options, ByRoleUI5Properties } from '../utils/isomorphic/sap/locatorUtils';
 
 
 export type LocatorOptions = {
@@ -188,6 +190,18 @@ export class Locator implements api.Locator {
 
   getByRole(role: string, options: ByRoleOptions = {}): Locator {
     return this.locator(getByRoleSelector(role, options));
+  }
+
+  getByRoleUI5(role: string, properties?: ByRoleUI5Properties, options?: ByRoleUI5Options): Locator {
+    return this.locator(getByRoleUI5Selector(role, properties, options));
+  }
+
+  locateSID(sid: string): Locator {
+    return this.locator(locateSIDSelector(sid));
+  }
+
+  getByRoleSID(role: string, options: ByRoleSIDOptions): Locator {
+    return this.locator(getByRoleSIDSelector(role, options));
   }
 
   frameLocator(selector: string): FrameLocator {
@@ -434,6 +448,18 @@ export class FrameLocator implements api.FrameLocator {
 
   getByRole(role: string, options: ByRoleOptions = {}): Locator {
     return this.locator(getByRoleSelector(role, options));
+  }
+
+  getByRoleUI5(role: string, properties?: ByRoleUI5Properties, options?: ByRoleUI5Options): Locator {
+    return this.locator(getByRoleUI5Selector(role, properties, options));
+  }
+
+  locateSID(sid: string): Locator {
+    return this.locator(locateSIDSelector(sid));
+  }
+
+  getByRoleSID(role: string, options: ByRoleSIDOptions): Locator {
+    return this.locator(getByRoleSIDSelector(role, options));
   }
 
   owner() {

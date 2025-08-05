@@ -1,5 +1,6 @@
 /**
  * Copyright (c) Arpit Sureka.
+ * Orignal Copyright (c) Microsoft Corporation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,24 +15,24 @@
  * limitations under the License.
  */
 
-import { CSharpLanguageGenerator } from './csharp';
-import { JavaLanguageGenerator } from './java';
+// import { CSharpLanguageGenerator } from './csharp';
+// import { JavaLanguageGenerator } from './java';
 import { JavaScriptLanguageGenerator } from './javascript';
-import { JsonlLanguageGenerator } from './jsonl';
-import { PythonLanguageGenerator } from './python';
+// import { JsonlLanguageGenerator } from './jsonl';
+// import { PythonLanguageGenerator } from './python';
 
 export function languageSet() {
   return new Set([
-    new JavaLanguageGenerator('junit'),
-    new JavaLanguageGenerator('library'),
+    // new JavaLanguageGenerator('junit'),
+    // new JavaLanguageGenerator('library'),
     new JavaScriptLanguageGenerator(/* isPlaywrightTest */false),
     new JavaScriptLanguageGenerator(/* isPlaywrightTest */true),
-    new PythonLanguageGenerator(/* isAsync */false, /* isPytest */true),
-    new PythonLanguageGenerator(/* isAsync */false, /* isPytest */false),
-    new PythonLanguageGenerator(/* isAsync */true,  /* isPytest */false),
-    new CSharpLanguageGenerator('mstest'),
-    new CSharpLanguageGenerator('nunit'),
-    new CSharpLanguageGenerator('library'),
-    new JsonlLanguageGenerator(),
+    // new PythonLanguageGenerator(/* isAsync */false, /* isPytest */true),
+    // new PythonLanguageGenerator(/* isAsync */false, /* isPytest */false),
+    // new PythonLanguageGenerator(/* isAsync */true,  /* isPytest */false),
+    // new CSharpLanguageGenerator('mstest'),
+    // new CSharpLanguageGenerator('nunit'),
+    // new CSharpLanguageGenerator('library'),
+    // new JsonlLanguageGenerator(),
   ]);
 }

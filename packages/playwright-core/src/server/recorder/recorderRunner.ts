@@ -1,5 +1,6 @@
 /**
  * Copyright (c) Arpit Sureka.
+ * Orignal Copyright (c) Microsoft Corporation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +28,6 @@ export async function performAction(pageAliases: Map<Page, string>, actionInCont
   const callMetadata = serverSideCallMetadata();
   const mainFrame = mainFrameForAction(pageAliases, actionInContext);
   const { action } = actionInContext;
-
   const kActionTimeout = 5000;
 
   if (action.name === 'navigate') {

@@ -23,6 +23,7 @@
       "@testIsomorphic/*": ["../playwright/src/isomorphic/*"],
       "@trace/*": ["../trace/src/*"],
       "@web/*": ["../web/src/*"],
+      "@sap/*": ["../sap/*"],
       // Resolving type dependencies will start processing types in @playwright/test
       // which in turn will start parsing the files and hence stumble upon the core
       // imports.

@@ -1,5 +1,6 @@
 /**
  * Copyright (c) Arpit Sureka.
+ * Orignal Copyright (c) Microsoft Corporation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,6 +35,7 @@ export default defineConfig({
       resolve: {
         alias: {
           '@web': path.resolve(path.dirname(url.fileURLToPath(import.meta.url)), '../web/src'),
+          '@sap': path.resolve(path.dirname(url.fileURLToPath(import.meta.url)), '../sap'),
         },
       }
     },

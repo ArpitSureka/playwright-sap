@@ -21,6 +21,7 @@
       "@protocol/*": ["../protocol/src/*"],
       "@recorder/*": ["../recorder/src/*"],
       "@web/*": ["../web/src/*"],
+      "@sap/*": ["../sap/*"],
     }
   },
   "include": ["src", "../web/src"],

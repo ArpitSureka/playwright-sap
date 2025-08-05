@@ -1,5 +1,6 @@
 /**
  * Copyright (c) Arpit Sureka.
+ * Orignal Copyright (c) Microsoft Corporation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,10 +18,13 @@
 import { asLocator } from '@isomorphic/locatorGenerators';
 import { getByAltTextSelector, getByLabelSelector, getByPlaceholderSelector, getByRoleSelector, getByTestIdSelector, getByTextSelector, getByTitleSelector } from '@isomorphic/locatorUtils';
 import { escapeForTextSelector } from '@isomorphic/stringUtils';
+import { getByRoleUI5Selector } from '@isomorphic/sap/locatorUtils';
 
 import type { InjectedScript } from './injectedScript';
 import type { Language } from '@isomorphic/locatorGenerators';
 import type { ByRoleOptions } from '@isomorphic/locatorUtils';
+import type { SAP } from '@sap/types/sapWindow';
+import type { ByRoleUI5Options, ByRoleUI5Properties } from '@isomorphic/sap/locatorUtils';
 
 const selectorSymbol = Symbol('selector');
 
@@ -64,6 +68,8 @@ class Locator {
     self.nth = (index: number): Locator => self.locator(`nth=${index}`);
     self.and = (locator: Locator): Locator => new Locator(injectedScript, selectorBase + ` >> internal:and=` + JSON.stringify(locator[selectorSymbol]));
     self.or = (locator: Locator): Locator => new Locator(injectedScript, selectorBase + ` >> internal:or=` + JSON.stringify(locator[selectorSymbol]));
+
+    self.getByRoleUI5 = (role: string, properties: ByRoleUI5Properties, options: ByRoleUI5Options): Locator => self.locator(getByRoleUI5Selector(role, properties, options));
   }
 }
 
@@ -72,6 +78,7 @@ declare global {
     playwright?: any;
     inspect: (element: Element | undefined) => void;
     __pw_resume: () => Promise<void>;
+    sap: SAP;
   }
 }
 

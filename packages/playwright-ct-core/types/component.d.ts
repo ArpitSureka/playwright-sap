@@ -1,5 +1,6 @@
 /**
  * Copyright (c) Arpit Sureka.
+ * Orignal Copyright (c) Microsoft Corporation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import type { SAP } from '@sap/types/sapWindow';
 
 export type JsxComponent = {
   __pw_type: 'jsx',
@@ -52,5 +54,6 @@ declare global {
     __ctDispatchFunction: (ordinal: number, args: any[]) => void;
     __pwUnwrapObject: (value: any) => Promise<any>;
     __pwTransformObject: (value: any, mapping: (v: any) => { result: any } | undefined) => any;
+    sap: SAP;
   }
 }

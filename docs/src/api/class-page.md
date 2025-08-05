@@ -2267,6 +2267,56 @@ Attribute name to get the value for.
 
 ### option: Page.getByPlaceholder.exact = %%-locator-get-by-text-exact-%%
 
+## method: Page.locateSID
+* since: v1.27
+- returns: <[Locator]>
+
+%%-template-locator-locateSID-%%
+
+### param: Page.locateSID.sid
+* since: v1.27
+* langs: js
+- `sid` <[string]>
+
+## method: Page.getByRoleSID
+* since: v1.27
+- returns: <[Locator]>
+
+%%-template-locator-getByRoleSID-%%
+
+### param: Page.getByRoleSID.role 
+* since: v1.27
+* langs: js
+- `role` <[string]>
+
+### param: Page.getByRoleSID.options
+* since: v1.27
+* langs: js
+- `options` <[Object]>
+  - `name` ?<[string]> name of the clicked object.
+  - `pos` ?<[int]> number of role.
+  - `wnd` ?<[int]> window number in the sid. default 0.
+
+
+## method: Page.getByRoleUI5
+* since: v1.27
+- returns: <[Locator]>
+
+%%-template-locator-get-by-role-UI5-%%
+
+### param: Page.getByRoleUI5.role = %%-get-by-role-UI5-to-have-role-role-%%
+* since: v1.27
+
+### param: Page.getByRoleUI5.properties
+* since: v1.27
+* langs: js
+- `properties` ?<[Record<string, string>]>
+
+### option: Page.getByRoleUI5.exact
+* since: v1.8
+* langs: js
+- `exact` ?<[boolean]>
+
 ## method: Page.getByRole
 * since: v1.27
 - returns: <[Locator]>
@@ -2451,6 +2501,36 @@ it gets merged via the [`new URL()`](https://developer.mozilla.org/en-US/docs/We
 
 Referer header value. If provided it will take preference over the referer header value set by
 [`method: Page.setExtraHTTPHeaders`].
+
+## async method: Page.SAPLogin
+* since: v1.8
+- returns: <[null]|[Response]>
+
+Goes to SAP Login page and logs in using username and password.
+
+**Example**
+
+```js
+await page.SAPLogin(SAP_USER_ID, SAP_PASSWORD, 'https://sap.example.com');
+```
+
+### param: Page.SAPLogin.username
+* since: v1.8
+- `username` <[string]>
+
+username to be used for login.
+
+### param: Page.SAPLogin.password
+* since: v1.8
+- `password` <[string]>
+
+password to be used for login.
+
+### param: Page.SAPLogin.url
+* since: v1.8
+- `url` ?<[string]>
+
+optional: URL to navigate to SAP Login Page.
 
 ## async method: Page.hover
 * since: v1.8

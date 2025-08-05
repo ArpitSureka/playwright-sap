@@ -128,6 +128,59 @@ in that iframe.
 
 ### option: FrameLocator.getByPlaceholder.exact = %%-locator-get-by-text-exact-%%
 
+## method: FrameLocator.locateSID
+* since: v1.27
+- returns: <[Locator]>
+
+%%-template-locator-locateSID-%%
+
+### param: FrameLocator.locateSID.sid
+* since: v1.27
+* langs: js
+- `sid` <[string]>
+
+
+## method: FrameLocator.getByRoleSID
+* since: v1.27
+- returns: <[Locator]>
+
+%%-template-locator-getByRoleSID-%%
+
+### param: FrameLocator.getByRoleSID.role 
+* since: v1.27
+* langs: js
+- `role` <[string]>
+
+### param: FrameLocator.getByRoleSID.options
+* since: v1.27
+* langs: js
+- `options` <[Object]>
+  - `name` ?<[string]> name of the clicked object.
+  - `pos` ?<[int]> number of role.
+  - `wnd` ?<[int]> window number in the sid. default 0.
+
+
+
+## method: FrameLocator.getByRoleUI5
+* since: v1.27
+- returns: <[Locator]>
+
+%%-template-locator-get-by-role-UI5-%%
+
+### param: FrameLocator.getByRoleUI5.role = %%-get-by-role-UI5-to-have-role-role-%%
+* since: v1.27
+
+### param: FrameLocator.getByRoleUI5.properties
+* since: v1.27
+* langs: js
+- `properties` ?<[Record<string, string>]>
+
+### option: FrameLocator.getByRoleUI5.exact
+* since: v1.8
+* langs: js
+- `exact` ?<[boolean]>
+
+
 ## method: FrameLocator.getByRole
 * since: v1.27
 - returns: <[Locator]>

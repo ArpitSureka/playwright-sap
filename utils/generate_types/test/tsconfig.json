@@ -4,6 +4,9 @@
     "target": "ESNext",
     "noEmit": true,
     "moduleResolution": "node",
+    "paths": {
+      "@sap/*": ["../../packages/sap/*"]
+    },
   },
   "include": [
     "test.ts"

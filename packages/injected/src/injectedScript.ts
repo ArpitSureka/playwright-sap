@@ -1,5 +1,6 @@
 /**
  * Copyright (c) Arpit Sureka.
+ * Orignal Copyright (c) Microsoft Corporation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,6 +34,8 @@ import { createVueEngine } from './vueSelectorEngine';
 import { XPathEngine } from './xpathSelectorEngine';
 import { ConsoleAPI } from './consoleApi';
 import { UtilityScript } from './utilityScript';
+import { ui5RoleEngine } from './sap/ui5SelectorEngine';
+import { SIDSelectorEngine } from './sap/sidSelectorEngine';
 
 import type { AriaTemplateNode } from '@isomorphic/ariaSnapshot';
 import type { CSSComplexSelectorList } from '@isomorphic/cssParser';
@@ -45,6 +48,7 @@ import type { SelectorEngine, SelectorRoot } from './selectorEngine';
 import type { GenerateSelectorOptions } from './selectorGenerator';
 import type { ElementText, TextMatcher } from './selectorUtils';
 import type { Builtins } from './utilityScript';
+import type { SAP } from '@sap/types/sapWindow';
 
 
 export type FrameExpectParams = Omit<channels.FrameExpectParams, 'expectedValue'> & { expectedValue?: any };
@@ -121,7 +125,7 @@ export class InjectedScript {
   private _allHitTargetInterceptorEvents: Set<string>;
 
   // eslint-disable-next-line no-restricted-globals
-  constructor(window: Window & typeof globalThis, options: InjectedScriptOptions) {
+  constructor(window: Window & typeof globalThis & { sap: SAP }, options: InjectedScriptOptions) {
     this.window = window;
     this.document = window.document;
     this.isUnderTest = options.isUnderTest;
@@ -230,6 +234,9 @@ export class InjectedScript {
     this._engines.set('internal:describe', this._createDescribeEngine());
     this._engines.set('aria-ref', this._createAriaRefEngine());
 
+    this._engines.set('ui5:role', ui5RoleEngine());
+    this._engines.set('sid', SIDSelectorEngine);
+
     for (const { name, source } of options.customEngines)
       this._engines.set(name, this.eval(source));
 
@@ -310,6 +317,7 @@ export class InjectedScript {
   }
 
   querySelectorAll(selector: ParsedSelector, root: Node): Element[] {
+
     if (selector.capture !== undefined) {
       if (selector.parts.some(part => part.name === 'nth'))
         throw this.createStacklessError(`Can't query n-th element in a request with the capture.`);
@@ -324,12 +332,10 @@ export class InjectedScript {
 
     if (!(root as any)['querySelectorAll'])
       throw this.createStacklessError('Node is not queryable.');
-
     if (selector.capture !== undefined) {
       // We should have handled the capture above.
       throw this.createStacklessError('Internal error: there should not be a capture in the selector.');
     }
-
     // Workaround so that ":scope" matches the ShadowRoot.
     // This is, unfortunately, because an ElementHandle can point to any Node (including ShadowRoot/Document/etc),
     // and not just to an Element, and we support various APIs on ElementHandle like "textContent()".

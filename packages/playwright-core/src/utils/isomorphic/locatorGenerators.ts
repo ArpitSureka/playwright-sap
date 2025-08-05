@@ -1,5 +1,6 @@
 /**
  * Copyright (c) Arpit Sureka.
+ * Orignal Copyright (c) Microsoft Corporation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +17,18 @@
 
 import {  parseAttributeSelector, parseSelector, stringifySelector } from './selectorParser';
 import { escapeWithQuotes, normalizeEscapedRegexQuotes, toSnakeCase, toTitleCase } from './stringUtils';
+import { innerAsLocatorsSAP, javascriptSIDLocatorGenerator } from './sap/locatorGenerators';
 
 import type { NestedSelectorBody } from './selectorParser';
 import type { ParsedSelector } from './selectorParser';
+import type { LocatorTypeSAP } from './sap/locatorGenerators';
 
 export type Language = 'javascript' | 'python' | 'java' | 'csharp' | 'jsonl';
-export type LocatorType = 'default' | 'role' | 'text' | 'label' | 'placeholder' | 'alt' | 'title' | 'test-id' | 'nth' | 'first' | 'last' | 'visible' | 'has-text' | 'has-not-text' | 'has' | 'hasNot' | 'frame' | 'frame-locator' | 'and' | 'or' | 'chain';
+export type LocatorType = 'default' | 'role' | 'text' | 'label' | 'placeholder' | 'alt' | 'title' | 'test-id' | 'nth' | 'first' | 'last' | 'visible' | 'has-text' | 'has-not-text' | 'has' | 'hasNot' | 'frame' | 'frame-locator' | 'and' | 'or' | 'chain' | LocatorTypeSAP;
 export type LocatorBase = 'page' | 'locator' | 'frame-locator';
 export type Quote = '\'' | '"' | '`';
 
-type LocatorOptions = {
+export type LocatorOptions = {
   attrs?: { name: string, value: string | boolean | number }[],
   exact?: boolean,
   name?: string | RegExp,
@@ -216,6 +219,12 @@ function innerAsLocators(factory: LocatorFactory, parsed: ParsedSelector, isFram
       }
     }
 
+    const innerTokensSAP = innerAsLocatorsSAP(part, base, factory);
+    if (innerTokensSAP) {
+      tokens.push(innerTokensSAP);
+      continue;
+    }
+
     // Selectors can be prefixed with engine name, e.g. xpath=//foo
     let locatorPartWithEngine: string | undefined;
     if (['xpath', 'css'].includes(part.name)) {
@@ -330,6 +339,22 @@ export class JavaScriptLocatorFactory implements LocatorFactory {
         return this.toCallWithExact('getByLabel', body, !!options.exact);
       case 'title':
         return this.toCallWithExact('getByTitle', body, !!options.exact);
+      case 'ui5:role':
+        const attrs2: string[] = [];
+        // Add Regex support for UI5 roles. -- Need to Implement this. - Commemented code is wrong.
+        // if (isRegExp(options.name)) {
+        //   attrs2.push(`name: ${this.regexToSourceString(options.name)}`);
+        // }
+        for (const { name, value } of options.attrs!)
+          attrs2.push(`${name}: ${typeof value === 'string' ? this.quote(value) : value}`);
+        let attrString2 = attrs2.length ? `, { ${attrs2.join(', ')} }` : '';
+        if (options.exact && attrString2.length)
+          attrString2 = attrString2 + ', { exact: true }';
+        else if (options.exact && attrString2.length === 0)
+          attrString2 = ', {}, { exact: true }';
+        return `getByRoleUI5(${this.quote(body as string)}${attrString2})`;
+      case 'sid':
+        return javascriptSIDLocatorGenerator(this.quote(body as string));
       default:
         throw new Error('Unknown selector kind ' + kind);
     }

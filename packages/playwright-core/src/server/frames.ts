@@ -1094,7 +1094,9 @@ export class Frame extends SdkObject {
     return this.retryWithProgressAndTimeouts(progress, [0, 20, 50, 100, 100, 500], async continuePolling => {
       if (performActionPreChecks)
         await this._page.performActionPreChecks(progress);
-
+      // SAP Support Change: Added mainWorld : true inside resolveInjectedForSelector
+      // Because without it querySelectorAll was not working as document.defaultView didnt contain sap object.
+      // Later Update removed mainWord from here and directly added at resolveInjectedForSelector function.
       const resolved = await this.selectors.resolveInjectedForSelector(selector, { strict });
       progress.throwIfAborted();
       if (!resolved)

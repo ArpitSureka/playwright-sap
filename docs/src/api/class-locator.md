@@ -1286,6 +1286,57 @@ Attribute name to get the value for.
 
 ### option: Locator.getByPlaceholder.exact = %%-locator-get-by-text-exact-%%
 
+## method: Locator.locateSID
+* since: v1.27
+- returns: <[Locator]>
+
+%%-template-locator-locateSID-%%
+
+### param: Locator.locateSID.sid
+* since: v1.27
+* langs: js
+- `sid` <[string]>
+
+## method: Locator.getByRoleSID
+* since: v1.27
+- returns: <[Locator]>
+
+%%-template-locator-getByRoleSID-%%
+
+### param: Locator.getByRoleSID.role 
+* since: v1.27
+* langs: js
+- `role` <[string]>
+
+### param: Locator.getByRoleSID.options
+* since: v1.27
+* langs: js
+- `options` <[Object]>
+  - `name` ?<[string]> name of the clicked object.
+  - `pos` ?<[int]> number of role.
+  - `wnd` ?<[int]> window number in the sid. default 0.
+
+
+## method: Locator.getByRoleUI5
+* since: v1.27
+- returns: <[Locator]>
+
+%%-template-locator-get-by-role-UI5-%%
+
+### param: Locator.getByRoleUI5.role = %%-get-by-role-UI5-to-have-role-role-%%
+* since: v1.27
+
+### param: Locator.getByRoleUI5.properties
+* since: v1.27
+* langs: js
+- `properties` ?<[Record<string, string>]>
+
+### option: Locator.getByRoleUI5.exact
+* since: v1.8
+* langs: js
+- `exact` ?<[boolean]>
+
+
 ## method: Locator.getByRole
 * since: v1.27
 - returns: <[Locator]>
