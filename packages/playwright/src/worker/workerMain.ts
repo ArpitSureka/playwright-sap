@@ -348,7 +348,7 @@ export class WorkerMain extends ProcessRunner {
 
       await removeFolders([testInfo.outputDir]);
 
-      let testFunctionParams: object | null = null;
+      let testFunctionParams: any | null = null;
       await testInfo._runAsStep({ title: 'Before Hooks', category: 'hook' }, async () => {
         // Run "beforeAll" hooks, unless already run during previous tests.
         for (const suite of suites)
@@ -365,6 +365,18 @@ export class WorkerMain extends ProcessRunner {
       if (testFunctionParams === null) {
         // Fixture setup failed or was skipped, we should not run the test now.
         return;
+      }
+
+
+      if (testInfo.config.sapConfig && testInfo.config.sapConfig.url && testInfo.config.sapConfig.username && testInfo.config.sapConfig.password && testFunctionParams && testFunctionParams.page && typeof testFunctionParams.page.SAPLogin === 'function'){
+        try {
+          await testInfo._runWithTimeout({ type: 'test' }, async () => {
+            if (testInfo.config.sapConfig && testInfo.config.sapConfig.url && testInfo.config.sapConfig.username && testInfo.config.sapConfig.password && testFunctionParams && testFunctionParams.page && typeof testFunctionParams.page.SAPLogin === 'function')
+              await testFunctionParams.page.SAPLogin(testInfo.config.sapConfig.username, testInfo.config.sapConfig.password, testInfo.config.sapConfig.url);
+          });
+        } catch (error){
+          throw Error(error);
+        }
       }
 
       await testInfo._runWithTimeout({ type: 'test' }, async () => {

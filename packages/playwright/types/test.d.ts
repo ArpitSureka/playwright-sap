@@ -1577,11 +1577,11 @@ interface TestConfig<TestArgs = {}, WorkerArgs = {}> {
   retries?: number;
 
   /**
-   * Automatic login in every test and during codegen recording.
+   * Automatic login in every test.
    */
   sapConfig?: {
     /**
-     * SAP login page URL. currently supports only Fiori.
+     * SAP login page URL.
      */
     url: string;
 
@@ -2031,6 +2031,26 @@ export interface FullConfig<TestArgs = {}, WorkerArgs = {}> {
    * Base directory for all relative paths used in the reporters.
    */
   rootDir: string;
+
+  /**
+   * Automatic login in every test.
+   */
+  sapConfig?: {
+    /**
+     * SAP login page URL.
+     */
+    url: string;
+
+    /**
+     * Username which should be used for login.
+     */
+    username: string;
+
+    /**
+     * Password which should be used for login.
+     */
+    password: string;
+  };
 
   /**
    * See [testConfig.shard](https://playwright.dev/docs/api/class-testconfig#test-config-shard).

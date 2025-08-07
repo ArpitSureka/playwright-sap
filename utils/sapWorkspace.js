@@ -167,6 +167,13 @@ class Workspace {
         if (pkg.packageJSON.devDependencies && pkg.packageJSON.devDependencies[otherPackage.name])
           pkg.packageJSON.devDependencies[otherPackage.name] = version;
       }
+      for (const [dependency, version] of Object.entries(pkg.packageJSON.dependencies || {})) {
+        if (dependency.includes('playwright-sap')) {
+          pkg.packageJSON.dependencies[dependency.replace('playwright-sap', 'playwright')] = `npm:${dependency}@${version}`;
+          delete pkg.packageJSON.dependencies[dependency];
+        }
+      }
+
       await maybeWriteJSON(pkg.packageJSONPath, pkg.packageJSON);
     }
 

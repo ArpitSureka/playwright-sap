@@ -31,5 +31,7 @@
   "scripts": {},
   "dependencies": {
     "playwright": "1.53.1"
-  }
+  },
+  "keywords": ["playwright", "playwright-sap", "SAP Automation", "SAP Testing", "SAP E2E Testing"]
+
 }
