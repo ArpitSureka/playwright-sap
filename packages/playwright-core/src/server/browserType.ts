@@ -30,7 +30,7 @@ import { SdkObject } from './instrumentation';
 import { PipeTransport } from './pipeTransport';
 import { envArrayToObject, launchProcess } from './utils/processLauncher';
 import { ProgressController } from './progress';
-import {  isProtocolError } from './protocolError';
+import { isProtocolError } from './protocolError';
 import { registry } from './registry';
 import { ClientCertificatesProxy } from './socksClientCertificatesInterceptor';
 import { WebSocketTransport } from './transport';
@@ -52,7 +52,7 @@ export const kNoXServerRunningError = 'Looks like you launched a headed browser 
 
 
 export abstract class BrowserReadyState {
-  protected readonly _wsEndpoint = new ManualPromise<string|undefined>();
+  protected readonly _wsEndpoint = new ManualPromise<string | undefined>();
 
   onBrowserExit(): void {
     // Unblock launch when browser prematurely exits.
@@ -84,6 +84,40 @@ export abstract class BrowserType extends SdkObject {
   }
 
   async launch(metadata: CallMetadata, options: types.LaunchOptions, protocolLogger?: types.ProtocolLogger): Promise<Browser> {
+    const ui5ExtensionPath = path.resolve(__filename, '../sap/ui5Extension');
+    if (options.headless === false) {
+      if (!options.args) {
+        options.args = [
+          `--disable-extensions-except=${ui5ExtensionPath}`,
+          `--load-extension=${ui5ExtensionPath}`
+        ];
+      } else {
+        if (!options.args.filter(arg => arg.includes('--disable-extensions-except')).length) {
+          options.args.push(`--disable-extensions-except=${ui5ExtensionPath}`);
+        } else {
+          options.args = options.args.map(arg => {
+            let na2 = arg;
+            if (na2.includes('--disable-extensions-except='))
+              na2 = na2.replace('--disable-extensions-except=', `--disable-extensions-except=${ui5ExtensionPath},`);
+            return na2;
+          });
+        }
+        if (!options.args.filter(arg => arg.includes('--load-extension')).length) {
+          options.args.push(`--load-extension=${ui5ExtensionPath}`);
+        } else {
+          options.args = options.args.map(arg => {
+            let na2 = arg;
+            if (na2.includes('--load-extension='))
+              na2 = na2.replace('--load-extension=', `--load-extension=${ui5ExtensionPath},`);
+            return na2;
+          });
+        }
+      }
+      options.devtools = true;
+      if (options.args.includes('--app=data:text/html,'))
+        options.args = options.args.filter(value => value !== '--app=data:text/html,');
+    }
+    // console.log(options);
     options = this._validateLaunchOptions(options);
     const controller = new ProgressController(metadata, this);
     controller.setLogName('browser');
@@ -97,6 +131,40 @@ export abstract class BrowserType extends SdkObject {
   }
 
   async launchPersistentContext(metadata: CallMetadata, userDataDir: string, options: channels.BrowserTypeLaunchPersistentContextOptions & { timeout: number, cdpPort?: number, internalIgnoreHTTPSErrors?: boolean }): Promise<BrowserContext> {
+    const ui5ExtensionPath = path.resolve(__filename, '../sap/ui5Extension');
+    // console.log("yoyoyooyoy");
+    if (options.headless === false) {
+      if (!options.args) {
+        options.args = [
+          `--disable-extensions-except=${ui5ExtensionPath}`,
+          `--load-extension=${ui5ExtensionPath}`
+        ];
+      } else {
+        if (!options.args.filter(arg => arg.includes('--disable-extensions-except')).length) {
+          options.args.push(`--disable-extensions-except=${ui5ExtensionPath}`);
+        } else {
+          options.args = options.args.map(arg => {
+            let na2 = arg;
+            if (na2.includes('--disable-extensions-except='))
+              na2 = na2.replace('--disable-extensions-except=', `--disable-extensions-except=${ui5ExtensionPath},`);
+            return na2;
+          });
+        }
+        if (!options.args.filter(arg => arg.includes('--load-extension')).length) {
+          options.args.push(`--load-extension=${ui5ExtensionPath}`);
+        } else {
+          options.args = options.args.map(arg => {
+            let na2 = arg;
+            if (na2.includes('--load-extension='))
+              na2 = na2.replace('--load-extension=', `--load-extension=${ui5ExtensionPath},`);
+            return na2;
+          });
+        }
+      }
+      options.devtools = true;
+      if (options.args.includes('--app=data:text/html,'))
+        options.args = options.args.filter(value => value !== '--app=data:text/html,');
+    }
     const launchOptions = this._validateLaunchOptions(options);
     const controller = new ProgressController(metadata, this);
     controller.setLogName('browser');
@@ -259,7 +327,7 @@ export abstract class BrowserType extends SdkObject {
           new Promise((resolve, reject) => timer = setTimeout(reject, timeout)),
         ]);
       } catch (ignored) {
-        await kill().catch(ignored => {}); // Make sure to await actual process exit.
+        await kill().catch(ignored => { }); // Make sure to await actual process exit.
       } finally {
         clearTimeout(timer!);
       }
@@ -327,7 +395,7 @@ export abstract class BrowserType extends SdkObject {
     return this.doRewriteStartupLog(error);
   }
 
-  readyState(options: types.LaunchOptions): BrowserReadyState|undefined {
+  readyState(options: types.LaunchOptions): BrowserReadyState | undefined {
     return undefined;
   }
 
