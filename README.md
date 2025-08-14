@@ -8,9 +8,11 @@ There are a lot of issues in using plain-vanilla Playwright on SAP Web Applicati
 
 Since this is **built on top of Playwright** all the playwright functions and features come with this as well. 
 
-[Visit this URL for Playwright documentation - https://playwright.dev/](https://playwright.dev/)
+[Playwright-SAP documentation - https://arpitsureka.github.io/playwright-sap/ ](https://arpitsureka.github.io/playwright-sap/)
 
-[Visit this for Playwright-SAP documentation - https://arpitsureka.github.io/playwright-sap/ ](https://arpitsureka.github.io/playwright-sap/)
+
+[Playwright documentation - https://playwright.dev/](https://playwright.dev/)
+
 
 ## Installation
 
@@ -23,6 +25,7 @@ The easiest way to get started with Playwright Test is to run the init command.
 ```Shell
 # Run from your project's root directory
 npm init playwright-sap@latest
+
 # Or create a new project
 npm init playwright-sap@latest new-project
 ```
@@ -36,3 +39,7 @@ In case of Issues please raise them here - https://github.com/ArpitSureka/playwr
 Playwright, built by Microsoft, is an outstanding open-source project.
 
 A big salute 🫡 and heartfelt thanks to all the developers and teams at Microsoft who made Playwright what it is today.👏
+
+----------------------------------------------------------------------------------------------------------------
+
+Note that this project is no where associated with SAP, Playwright or Microsoft Corportaion.
