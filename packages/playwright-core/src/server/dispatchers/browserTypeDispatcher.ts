@@ -39,7 +39,6 @@ export class BrowserTypeDispatcher extends Dispatcher<BrowserType, channels.Brow
   }
 
   async launchPersistentContext(params: channels.BrowserTypeLaunchPersistentContextParams, metadata: CallMetadata): Promise<channels.BrowserTypeLaunchPersistentContextResult> {
-    // console.log('32ewdsfghtynuhtgfdcsadefvrgrtgbrtredf');
     const browserContext = await this._object.launchPersistentContext(metadata, params.userDataDir, params);
     const browserDispatcher = new BrowserDispatcher(this, browserContext._browser);
     const contextDispatcher = BrowserContextDispatcher.from(browserDispatcher, browserContext);

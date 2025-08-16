@@ -475,6 +475,8 @@ async function launchContext(options: Options, extraOptions: LaunchOptions): Pro
       launchOptions.proxy.bypass = options.proxyBypass;
   }
 
+  /** Commenting this part for persitant context for UI5 Extension
+
   const browser = await browserType.launch(launchOptions);
 
   if (process.env.PWTEST_CLI_IS_UNDER_TEST) {
@@ -501,6 +503,7 @@ async function launchContext(options: Options, extraOptions: LaunchOptions): Pro
       }
     });
   }
+   */
 
   // Viewport size
   if (options.viewportSize) {
@@ -568,13 +571,45 @@ async function launchContext(options: Options, extraOptions: LaunchOptions): Pro
 
   // Close app when the last window closes.
 
-  const context = await browser.newContext(contextOptions);
+  // Commenting this part for persitant context for UI5 Extension
+  // const context = await browser.newContext(contextOptions, true);
+
+  const context = await browserType.launchPersistentContext('', { ...launchOptions, ...contextOptions });
+  const browser = context.browser();
+
+  if (browser === null)
+    throw new Error('Browser error Codegen.');
+
+  if (process.env.PWTEST_CLI_IS_UNDER_TEST) {
+    (process as any)._didSetSourcesForTest = (text: string) => {
+      process.stdout.write('\n-------------8<-------------\n');
+      process.stdout.write(text);
+      process.stdout.write('\n-------------8<-------------\n');
+      const autoExitCondition = process.env.PWTEST_CLI_AUTO_EXIT_WHEN;
+      if (autoExitCondition && text.includes(autoExitCondition))
+        closeBrowser();
+    };
+    // Make sure we exit abnormally when browser crashes.
+    const logs: string[] = [];
+    require('playwright-core/lib/utilsBundle').debug.log = (...args: any[]) => {
+      const line = require('util').format(...args) + '\n';
+      logs.push(line);
+      process.stderr.write(line);
+    };
+    browser.on('disconnected', () => {
+      const hasCrashLine = logs.some(line => line.includes('process did exit:') && !line.includes('process did exit: exitCode=0, signal=null'));
+      if (hasCrashLine) {
+        process.stderr.write('Detected browser crash.\n');
+        gracefullyProcessExitDoNotHang(1);
+      }
+    });
+  }
 
   let closingBrowser = false;
   async function closeBrowser() {
     // We can come here multiple times. For example, saving storage creates
     // a temporary page and we call closeBrowser again when that page closes.
-    if (closingBrowser)
+    if (closingBrowser || !browser)
       return;
     closingBrowser = true;
     if (options.saveStorage)
@@ -612,7 +647,9 @@ async function launchContext(options: Options, extraOptions: LaunchOptions): Pro
 }
 
 async function openPage(context: BrowserContext, url: string | undefined): Promise<Page> {
-  const page = await context.newPage();
+  let [page] = context.pages();
+  if (!page)
+    page = await context.newPage();
   if (url) {
     if (fs.existsSync(url))
       url = 'file://' + path.resolve(url);

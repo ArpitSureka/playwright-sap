@@ -63,7 +63,6 @@ export const chromiumSwitches = (assistantMode?: boolean, channel?: string) => [
   '--no-default-browser-check',
   '--disable-default-apps',
   '--disable-dev-shm-usage',
-  '--disable-extensions',
   '--disable-features=' + disabledFeatures(assistantMode).join(','),
   channel === 'chromium-tip-of-tree' ? '--enable-features=CDPScreenshotNewSurface' : '',
   '--allow-pre-commit-input',

@@ -84,40 +84,6 @@ export abstract class BrowserType extends SdkObject {
   }
 
   async launch(metadata: CallMetadata, options: types.LaunchOptions, protocolLogger?: types.ProtocolLogger): Promise<Browser> {
-    const ui5ExtensionPath = path.resolve(__filename, '../sap/ui5Extension');
-    if (options.headless === false) {
-      if (!options.args) {
-        options.args = [
-          `--disable-extensions-except=${ui5ExtensionPath}`,
-          `--load-extension=${ui5ExtensionPath}`
-        ];
-      } else {
-        if (!options.args.filter(arg => arg.includes('--disable-extensions-except')).length) {
-          options.args.push(`--disable-extensions-except=${ui5ExtensionPath}`);
-        } else {
-          options.args = options.args.map(arg => {
-            let na2 = arg;
-            if (na2.includes('--disable-extensions-except='))
-              na2 = na2.replace('--disable-extensions-except=', `--disable-extensions-except=${ui5ExtensionPath},`);
-            return na2;
-          });
-        }
-        if (!options.args.filter(arg => arg.includes('--load-extension')).length) {
-          options.args.push(`--load-extension=${ui5ExtensionPath}`);
-        } else {
-          options.args = options.args.map(arg => {
-            let na2 = arg;
-            if (na2.includes('--load-extension='))
-              na2 = na2.replace('--load-extension=', `--load-extension=${ui5ExtensionPath},`);
-            return na2;
-          });
-        }
-      }
-      options.devtools = true;
-      if (options.args.includes('--app=data:text/html,'))
-        options.args = options.args.filter(value => value !== '--app=data:text/html,');
-    }
-    // console.log(options);
     options = this._validateLaunchOptions(options);
     const controller = new ProgressController(metadata, this);
     controller.setLogName('browser');
@@ -131,40 +97,6 @@ export abstract class BrowserType extends SdkObject {
   }
 
   async launchPersistentContext(metadata: CallMetadata, userDataDir: string, options: channels.BrowserTypeLaunchPersistentContextOptions & { timeout: number, cdpPort?: number, internalIgnoreHTTPSErrors?: boolean }): Promise<BrowserContext> {
-    const ui5ExtensionPath = path.resolve(__filename, '../sap/ui5Extension');
-    // console.log("yoyoyooyoy");
-    if (options.headless === false) {
-      if (!options.args) {
-        options.args = [
-          `--disable-extensions-except=${ui5ExtensionPath}`,
-          `--load-extension=${ui5ExtensionPath}`
-        ];
-      } else {
-        if (!options.args.filter(arg => arg.includes('--disable-extensions-except')).length) {
-          options.args.push(`--disable-extensions-except=${ui5ExtensionPath}`);
-        } else {
-          options.args = options.args.map(arg => {
-            let na2 = arg;
-            if (na2.includes('--disable-extensions-except='))
-              na2 = na2.replace('--disable-extensions-except=', `--disable-extensions-except=${ui5ExtensionPath},`);
-            return na2;
-          });
-        }
-        if (!options.args.filter(arg => arg.includes('--load-extension')).length) {
-          options.args.push(`--load-extension=${ui5ExtensionPath}`);
-        } else {
-          options.args = options.args.map(arg => {
-            let na2 = arg;
-            if (na2.includes('--load-extension='))
-              na2 = na2.replace('--load-extension=', `--load-extension=${ui5ExtensionPath},`);
-            return na2;
-          });
-        }
-      }
-      options.devtools = true;
-      if (options.args.includes('--app=data:text/html,'))
-        options.args = options.args.filter(value => value !== '--app=data:text/html,');
-    }
     const launchOptions = this._validateLaunchOptions(options);
     const controller = new ProgressController(metadata, this);
     controller.setLogName('browser');

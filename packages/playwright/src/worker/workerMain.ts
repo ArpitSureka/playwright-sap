@@ -368,19 +368,21 @@ export class WorkerMain extends ProcessRunner {
       }
 
 
-      if (testInfo.config.sapConfig && testInfo.config.sapConfig.url && testInfo.config.sapConfig.username && testInfo.config.sapConfig.password && testFunctionParams && testFunctionParams.page && typeof testFunctionParams.page.SAPLogin === 'function'){
-        try {
-          await testInfo._runWithTimeout({ type: 'test' }, async () => {
-            if (testInfo.config.sapConfig && testInfo.config.sapConfig.url && testInfo.config.sapConfig.username && testInfo.config.sapConfig.password && testFunctionParams && testFunctionParams.page && typeof testFunctionParams.page.SAPLogin === 'function')
-              await testFunctionParams.page.SAPLogin(testInfo.config.sapConfig.username, testInfo.config.sapConfig.password, testInfo.config.sapConfig.url);
-          });
-        } catch (error){
-          throw Error(error);
-        }
-      }
+      // if (testInfo.config.sapConfig && testInfo.config.sapConfig.url && testInfo.config.sapConfig.username && testInfo.config.sapConfig.password && testFunctionParams && testFunctionParams.page && typeof testFunctionParams.page.SAPLogin === 'function'){
+      //   try {
+      //     await testInfo._runWithTimeout({ type: 'test' }, async () => {
+      //       if (testInfo.config.sapConfig && testInfo.config.sapConfig.url && testInfo.config.sapConfig.username && testInfo.config.sapConfig.password && testFunctionParams && testFunctionParams.page && typeof testFunctionParams.page.SAPLogin === 'function')
+      //         await testFunctionParams.page.SAPLogin(testInfo.config.sapConfig.username, testInfo.config.sapConfig.password, testInfo.config.sapConfig.url);
+      //     });
+      //   } catch (error){
+      //     throw Error(error);
+      //   }
+      // }
 
       await testInfo._runWithTimeout({ type: 'test' }, async () => {
         // Now run the test itself.
+        if (testInfo.config.sapConfig && testInfo.config.sapConfig.url && testInfo.config.sapConfig.username && testInfo.config.sapConfig.password && testFunctionParams && testFunctionParams.page && typeof testFunctionParams.page.SAPLogin === 'function')
+          await testFunctionParams.page.SAPLogin(testInfo.config.sapConfig.username, testInfo.config.sapConfig.password, testInfo.config.sapConfig.url);
         const fn = test.fn; // Extract a variable to get a better stack trace ("myTest" vs "TestCase.myTest [as fn]").
         await fn(testFunctionParams, testInfo);
       });
