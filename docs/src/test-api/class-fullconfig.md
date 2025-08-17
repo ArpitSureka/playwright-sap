@@ -76,6 +76,15 @@ See [`property: TestConfig.preserveOutput`].
 
 List of resolved projects.
 
+## property: FullConfig.sapConfig
+* since: v1.10
+- type: ?<[Object]>
+  - `url` <[string]> SAP login page URL.
+  - `username` <[string]> Username which should be used for login.
+  - `password` <[string]> Password which should be used for login.
+
+Automatic login in every test.
+
 ## property: FullConfig.quiet
 * since: v1.10
 - type: <[boolean]>

@@ -350,12 +350,11 @@ test('example test', async ({}, testInfo) => {
 ## property: TestConfig.sapConfig
 * since: v1.10
 - type: ?<[Object]>
-  - `url` <[string]> SAP login page URL. currently supports only Fiori.
+  - `url` <[string]> SAP login page URL.
   - `username` <[string]> Username which should be used for login.
   - `password` <[string]> Password which should be used for login.
 
-Automatic login in every test and during codegen recording.
-
+Automatic login in every test.
 
 ## property: TestConfig.snapshotDir
 * since: v1.10

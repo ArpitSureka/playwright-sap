@@ -380,11 +380,15 @@ export class Page extends ChannelOwner<channels.PageChannel> implements api.Page
       if (url)
         res = await this.goto(url);
 
-      const result = await Promise.race([
-        this.getByRole('textbox', { name: 'User Required' }).waitFor({ timeout: 30000 }).then(() => 'NETWEAVER').catch(() => null),
-        this.getByRole('textbox', { name: 'User' }).waitFor({ timeout: 30000 }).then(() => 'FIORI').catch(() => null),
-      ]);
-
+      await this.waitForLoadState();
+      let result = null;
+      try {
+        result = await Promise.race([
+          this.getByRole('textbox', { name: 'User Required' }).waitFor({ timeout: 30000 }).then(() => 'NETWEAVER').catch(() => null),
+          this.getByRole('textbox', { name: 'User' }).waitFor({ timeout: 30000 }).then(() => 'FIORI').catch(() => null),
+        ]);
+      } catch (error) {
+      }
       if (result === 'FIORI') {
         await this.getByRole('textbox', { name: 'User' }).click();
         await this.waitForTimeout(50);

@@ -110,6 +110,7 @@ export class FullConfigInternal {
       version: require('../../package.json').version,
       workers: resolveWorkers(takeFirst(configCLIOverrides.debug ? 1 : undefined, configCLIOverrides.workers, userConfig.workers, '50%')),
       webServer: null,
+      sapConfig: userConfig.sapConfig
     };
     for (const key in userConfig) {
       if (key.startsWith('@'))

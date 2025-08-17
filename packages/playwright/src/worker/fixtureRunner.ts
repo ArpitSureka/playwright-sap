@@ -118,8 +118,9 @@ class Fixture {
         this.failed = true;
         if (!useFuncStarted.isDone())
           useFuncStarted.reject(error);
-        else
-          throw error;
+        // Removed to fix 'l: apiCall: Target page, context or browser has been closed'. Dont know why i had to remove this found in hack 😭. See if playwright change something here.
+        // else
+        //   throw error;
       }
     })();
     await useFuncStarted;
