@@ -15,12 +15,15 @@
  * limitations under the License.
  */
 
-import { buildUI5TreeModel, checkOverlap, UI5Node } from '@sap/common';
+import { buildUI5TreeModel, checkOverlap, checkSAPUI5, UI5Node } from '@sap/common';
 
 // This function is used to check sap selectror, wether result and target element has the same ui5 parent element
 export function checkSAPSelector(result: Element, targetElement: Element, window: Window): Boolean {
   let currentElement: Element | null = targetElement;
   let ui5TargetTree: UI5Node[] = [];
+  if (!checkSAPUI5(window))
+    return false;
+
   while (currentElement && (ui5TargetTree.length === 0 || !checkOverlap(ui5TargetTree, targetElement))){
     ui5TargetTree = buildUI5TreeModel(currentElement, window, 1);
     currentElement = currentElement.parentElement;

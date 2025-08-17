@@ -16,6 +16,7 @@
  */
 
 import { UI5properties } from './types/properties';
+import { LRUCache2 } from './utils/LRUCache';
 
 export type UI5Node = {
   id: string;
@@ -23,12 +24,6 @@ export type UI5Node = {
   type: string;
   content: UI5Node[];
 };
-
-export function buildUI5TreeModel(nodeElement: Element, win: Window, depth: number | null = null): UI5Node[] {
-  const resultArray: UI5Node[] = [];
-  _createUI5TreeModel(nodeElement, resultArray, win, depth);
-  return resultArray;
-}
 
 // Checks if the window is SAP UI5 window
 export function checkSAPUI5(win: Window): boolean {
@@ -72,50 +67,71 @@ export function UI5errorMessage(win: Window, message: string): void {
   });
 }
 
-// Need to add caching for performance
-const _createUI5TreeModel = function(nodeElement: Element, resultArray: UI5Node[], win: Window, depth: number | null = null): void {
+// Assume each map element is taking 0.02 MB of storage. Total space now taken by cache is approx 40 mb.
+// Current caching algo is very bad. There is a lot of repitative data in cache. as i am storing again and again same thing in children.
+/**
+Parent1
+  |- SubParent
+        |-Child - This is stored 3 times 1st time is child, then in subparent, then in Parent 1
+ */
+const cache_ui5Tree = new LRUCache2<string, UI5Node[]>(2000);
+
+const generateHash = function(str: string): string {
+  let hash = 0;
+  for (const char of str) {
+    hash = (hash << 5) - hash + char.charCodeAt(0);
+    hash |= 0; // Constrain to 32bit integer
+  }
+  return hash.toString();
+};
+
+function hashElement(el: Element): string {
+  return generateHash(el.outerHTML);
+}
+
+export function buildUI5TreeModel(nodeElement: Element, win: Window, depth: number | null = null): UI5Node[] {
 
   if (depth !== null && depth <= 0)
-    return;
-  const node = nodeElement;
-  let childNode = node.firstElementChild;
-  const results = resultArray;
-  let subResult = results;
-  const control = _getElementById(node.id, win);
-  let childDepth = depth;
+    return [];
 
-  if (node.getAttribute('data-sap-ui') && control) {
+  const children: UI5Node[] = [];
+  let child = nodeElement.firstElementChild;
 
-    results.push({
+  const decreaseDepth = (nodeElement.getAttribute('data-sap-ui') || nodeElement.getAttribute('data-sap-ui-area')) ? 1 : 0;
+
+  while (child) {
+    const key = hashElement(child);
+    const cachedResult = cache_ui5Tree.get(key);
+    if (cachedResult) {
+      children.push(...cachedResult);
+    } else {
+      const childNodes = buildUI5TreeModel(child, win, depth ? depth - decreaseDepth : null);
+      children.push(...childNodes);
+      cache_ui5Tree.set(key, childNodes);
+    }
+    child = child.nextElementSibling;
+  }
+
+  const control = _getElementById(nodeElement.id, win);
+
+  if (nodeElement.getAttribute('data-sap-ui') && control) {
+    return [{
       id: control.getId(),
-      role: control.getMetadata().getName().split('.').pop(),
+      role: control.getMetadata().getName().split('.').pop() || '',
       type: 'sap-ui-control',
-      content: [],
-    });
-    if (depth !== null)
-      childDepth = depth - 1;
-    subResult = results[results.length - 1].content;
-  } else if (node.getAttribute('data-sap-ui-area')) {
-
-    results.push({
-      id: node.id,
+      content: children,
+    }];
+  } else if (nodeElement.getAttribute('data-sap-ui-area')) {
+    return [{
+      id: nodeElement.id,
       role: 'sap-ui-area',
       type: 'data-sap-ui',
-      content: [],
-    });
-    if (depth !== null)
-      childDepth = depth - 1;
-    subResult = results[results.length - 1].content;
+      content: children,
+    }];
   }
 
-  if (childDepth && childDepth <= 0)
-    return;
-
-  while (childNode) {
-    _createUI5TreeModel(childNode, subResult, win, childDepth);
-    childNode = childNode.nextElementSibling;
-  }
-};
+  return children;
+}
 
 // Control Properties Info
 // ================================================================================
