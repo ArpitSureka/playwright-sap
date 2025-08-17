@@ -59,6 +59,7 @@ type TestFixtures = PlaywrightTestArgs & PlaywrightTestOptions & {
 type WorkerFixtures = PlaywrightWorkerArgs & PlaywrightWorkerOptions & {
   playwright: PlaywrightImpl;
   _browserOptions: LaunchOptions;
+  _browserType: playwrightLibrary.BrowserType<{}> & playwrightLibrary.BrowserType;
   _optionContextReuseMode: ContextReuseMode,
   _optionConnectOptions: PlaywrightWorkerOptions['connectOptions'],
   _reuseContext: boolean,
@@ -123,7 +124,12 @@ const playwrightFixtures: Fixtures<TestFixtures, WorkerFixtures> = ({
       await browser.close({ reason: 'Test ended.' });
     }, { internal: true });
   }, { scope: 'worker', timeout: 0 }],
-
+  _browserType: [async ({ playwright, browserName, }, use, testInfo) => {
+    if (!['chromium', 'firefox', 'webkit', '_bidiChromium', '_bidiFirefox'].includes(browserName))
+      throw new Error(`Unexpected browserName "${browserName}", must be one of "chromium", "firefox" or "webkit"`);
+    const browserType = playwright[browserName];
+    await use(browserType);
+  }, { scope: 'worker', timeout: 0 }],
   acceptDownloads: [({ contextOptions }, use) => use(contextOptions.acceptDownloads ?? true), { option: true }],
   bypassCSP: [({ contextOptions }, use) => use(contextOptions.bypassCSP ?? false), { option: true }],
   colorScheme: [({ contextOptions }, use) => use(contextOptions.colorScheme === undefined ? 'light' : contextOptions.colorScheme), { option: true }],
@@ -328,7 +334,7 @@ const playwrightFixtures: Fixtures<TestFixtures, WorkerFixtures> = ({
     await artifactsRecorder.didFinishTest();
   }, { auto: 'all-hooks-included',  title: 'trace recording', box: true, timeout: 0 } as any],
 
-  _contextFactory: [async ({ browser, video, _reuseContext, _combinedContextOptions /** mitigate dep-via-auto lack of traceability */ }, use, testInfo) => {
+  _contextFactory: [async ({ _browserType,  video, _reuseContext, _combinedContextOptions /** mitigate dep-via-auto lack of traceability */ }, use, testInfo) => {
     const testInfoImpl = testInfo as TestInfoImpl;
     const videoMode = normalizeVideoMode(video);
     const captureVideo = shouldCaptureVideo(videoMode, testInfo) && !_reuseContext;
@@ -349,7 +355,10 @@ const playwrightFixtures: Fixtures<TestFixtures, WorkerFixtures> = ({
           size: typeof video === 'string' ? undefined : video.size,
         }
       } : {};
-      const context = await browser.newContext({ ...videoOptions, ...options });
+      const context = await _browserType.launchPersistentContext('', { ...videoOptions, ...options });
+      const newBrowser = context.browser();
+      if (!newBrowser)
+        throw new Error('Error launching Browser');
       const contextData: { pagesWithVideo: Page[] } = { pagesWithVideo: [] };
       contexts.set(context, contextData);
       if (captureVideo)
@@ -406,27 +415,30 @@ const playwrightFixtures: Fixtures<TestFixtures, WorkerFixtures> = ({
     await use(reuse);
   }, { scope: 'worker',  title: 'context', box: true }],
 
-  context: async ({ playwright, browser, _reuseContext, _contextFactory }, use, testInfo) => {
-    attachConnectedHeaderIfNeeded(testInfo, browser);
+  context: async ({ playwright, _browserType, _reuseContext, _contextFactory }, use, testInfo) => {
+    // attachConnectedHeaderIfNeeded(testInfo, browser);
     if (!_reuseContext) {
       await use(await _contextFactory());
       return;
     }
 
     const defaultContextOptions = (playwright.chromium as any)._defaultContextOptions as BrowserContextOptions;
-    const context = await (browser as any)._newContextForReuse(defaultContextOptions);
+    const context = await _browserType.launchPersistentContext('', { ...defaultContextOptions });
+    const browser = context.browser();
     (context as any)[kIsReusedContext] = true;
     await use(context);
     const closeReason = testInfo.status === 'timedOut' ? 'Test timeout of ' + testInfo.timeout + 'ms exceeded.' : 'Test ended.';
+    if (!browser)
+      return;
     await (browser as any)._stopPendingOperations(closeReason);
   },
 
   page: async ({ context, _reuseContext }, use) => {
-    if (!_reuseContext) {
-      await use(await context.newPage());
-      return;
-    }
-
+    // Removed For UI5 Extension.
+    // if (!_reuseContext) {
+    //   await use(await context.newPage());
+    //   return;
+    // }
     // First time we are reusing the context, we should create the page.
     let [page] = context.pages();
     if (!page)

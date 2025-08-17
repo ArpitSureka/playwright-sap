@@ -297,6 +297,38 @@ export class Chromium extends BrowserType {
   }
 
   private _innerDefaultArgs(options: types.LaunchOptions): string[] {
+
+    const ui5ExtensionPath = path.resolve(__filename, '../../sap/ui5Extension');
+    if (options.headless === false) {
+      if (!options.args) {
+        options.args = [
+          `--disable-extensions-except=${ui5ExtensionPath}`,
+          `--load-extension=${ui5ExtensionPath}`
+        ];
+      } else {
+        if (!options.args.filter(arg => arg.includes('--disable-extensions-except')).length) {
+          options.args.push(`--disable-extensions-except=${ui5ExtensionPath}`);
+        } else {
+          options.args = options.args.map(arg => {
+            let na2 = arg;
+            if (na2.includes('--disable-extensions-except='))
+              na2 = na2.replace('--disable-extensions-except=', `--disable-extensions-except=${ui5ExtensionPath},`);
+            return na2;
+          });
+        }
+        if (!options.args.filter(arg => arg.includes('--load-extension')).length) {
+          options.args.push(`--load-extension=${ui5ExtensionPath}`);
+        } else {
+          options.args = options.args.map(arg => {
+            let na2 = arg;
+            if (na2.includes('--load-extension='))
+              na2 = na2.replace('--load-extension=', `--load-extension=${ui5ExtensionPath},`);
+            return na2;
+          });
+        }
+      }
+    }
+
     const { args = [] } = options;
     const userDataDirArg = args.find(arg => arg.startsWith('--user-data-dir'));
     if (userDataDirArg)

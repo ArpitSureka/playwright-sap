@@ -30,7 +30,7 @@ import { SdkObject } from './instrumentation';
 import { PipeTransport } from './pipeTransport';
 import { envArrayToObject, launchProcess } from './utils/processLauncher';
 import { ProgressController } from './progress';
-import {  isProtocolError } from './protocolError';
+import { isProtocolError } from './protocolError';
 import { registry } from './registry';
 import { ClientCertificatesProxy } from './socksClientCertificatesInterceptor';
 import { WebSocketTransport } from './transport';
@@ -52,7 +52,7 @@ export const kNoXServerRunningError = 'Looks like you launched a headed browser 
 
 
 export abstract class BrowserReadyState {
-  protected readonly _wsEndpoint = new ManualPromise<string|undefined>();
+  protected readonly _wsEndpoint = new ManualPromise<string | undefined>();
 
   onBrowserExit(): void {
     // Unblock launch when browser prematurely exits.
@@ -259,7 +259,7 @@ export abstract class BrowserType extends SdkObject {
           new Promise((resolve, reject) => timer = setTimeout(reject, timeout)),
         ]);
       } catch (ignored) {
-        await kill().catch(ignored => {}); // Make sure to await actual process exit.
+        await kill().catch(ignored => { }); // Make sure to await actual process exit.
       } finally {
         clearTimeout(timer!);
       }
@@ -327,7 +327,7 @@ export abstract class BrowserType extends SdkObject {
     return this.doRewriteStartupLog(error);
   }
 
-  readyState(options: types.LaunchOptions): BrowserReadyState|undefined {
+  readyState(options: types.LaunchOptions): BrowserReadyState | undefined {
     return undefined;
   }
 
