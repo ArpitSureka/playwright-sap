@@ -1053,6 +1053,7 @@ Attribute name to get the value for.
   - `name` ?<[string]> name of the clicked object.
   - `pos` ?<[int]> number of role.
   - `wnd` ?<[int]> window number in the sid. default 0.
+  - `sub` ?<[string]> subscreen section in sid. default 'usr'
 
 
 

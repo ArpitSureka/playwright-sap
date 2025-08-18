@@ -2996,8 +2996,6 @@ export interface Page {
    * Using locateSID locator is a little difficult as it is hard to read that why we created getByRoleSID locator. this
    * locator internally uses locateSID locator. This makes reading and debugging the code easier.
    *
-   * Note : This can only be used when sid is of the format wnd[<x>]/usr/.
-   *
    * **Example**
    *
    * ```js
@@ -3017,6 +3015,11 @@ export interface Page {
      * number of role.
      */
     pos?: number;
+
+    /**
+     * subscreen section in sid. default 'usr'
+     */
+    sub?: string;
 
     /**
      * window number in the sid. default 0.
@@ -6836,8 +6839,6 @@ export interface Frame {
    * Using locateSID locator is a little difficult as it is hard to read that why we created getByRoleSID locator. this
    * locator internally uses locateSID locator. This makes reading and debugging the code easier.
    *
-   * Note : This can only be used when sid is of the format wnd[<x>]/usr/.
-   *
    * **Example**
    *
    * ```js
@@ -6857,6 +6858,11 @@ export interface Frame {
      * number of role.
      */
     pos?: number;
+
+    /**
+     * subscreen section in sid. default 'usr'
+     */
+    sub?: string;
 
     /**
      * window number in the sid. default 0.
@@ -13569,8 +13575,6 @@ export interface Locator {
    * Using locateSID locator is a little difficult as it is hard to read that why we created getByRoleSID locator. this
    * locator internally uses locateSID locator. This makes reading and debugging the code easier.
    *
-   * Note : This can only be used when sid is of the format wnd[<x>]/usr/.
-   *
    * **Example**
    *
    * ```js
@@ -13590,6 +13594,11 @@ export interface Locator {
      * number of role.
      */
     pos?: number;
+
+    /**
+     * subscreen section in sid. default 'usr'
+     */
+    sub?: string;
 
     /**
      * window number in the sid. default 0.
@@ -19937,8 +19946,6 @@ export interface FrameLocator {
    * Using locateSID locator is a little difficult as it is hard to read that why we created getByRoleSID locator. this
    * locator internally uses locateSID locator. This makes reading and debugging the code easier.
    *
-   * Note : This can only be used when sid is of the format wnd[<x>]/usr/.
-   *
    * **Example**
    *
    * ```js
@@ -19958,6 +19965,11 @@ export interface FrameLocator {
      * number of role.
      */
     pos?: number;
+
+    /**
+     * subscreen section in sid. default 'usr'
+     */
+    sub?: string;
 
     /**
      * window number in the sid. default 0.

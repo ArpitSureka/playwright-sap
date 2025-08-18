@@ -26,7 +26,8 @@ export type ByRoleUI5Options = {
 export type ByRoleSIDOptions = {
   name?: string,
   pos?: number,
-  wnd?: number | undefined
+  wnd?: number | undefined,
+  sub?: string
 };
 
 export function getByRoleUI5Selector(role: string, properties: ByRoleUI5Properties = {}, options: ByRoleUI5Options = {}): string {

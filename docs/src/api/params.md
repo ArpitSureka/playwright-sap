@@ -1690,8 +1690,6 @@ await page.locateSID('wnd[0]/tbar[1]/btn[8]').click();
 
 Using locateSID locator is a little difficult as it is hard to read that why we created getByRoleSID locator. this locator internally uses locateSID locator. This makes reading and debugging the code easier.
 
-Note : This can only be used when sid is of the format wnd[<x>]/usr/.
-
 **Example**
 ```js
 await page.getByRoleSID('label', { name: 'FEEDBACK' }).click();

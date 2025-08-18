@@ -1,3 +1,4 @@
+/* eslint-disable no-labels */
 /**
  * Copyright (c) Arpit Sureka.
  * Orignal Copyright (c) Microsoft Corporation.
@@ -44,33 +45,53 @@ export function getSIDandElementFromElement(targetNode: Node): { sid: string, el
   if (!searchRootElement)
     return null; // No valid starting point for the search
 
-  let sid = undefined;
+  let sid: string | null | undefined = undefined;
   let currentAncestor: Element | null = searchRootElement;
   let count = 0;
 
-  // Loop outward, level by level (distance 1, then 2, and so on)
-  while (currentAncestor && count < 3) {
+  // Later Improvement - Make score according to the distance higher distance higher score. Also give more poor score when searching in children for sid.
+
+  // Loop outward, level by level (distance 1, then 2, and so on) - Checks for Parents 5 levels.
+  while (currentAncestor && count < 5) {
 
     // Help Button issue that comes when the user is zse16 page and clicks on help button for an input field.
     if (currentAncestor.id && currentAncestor.id.includes('helpbutton'))
       break;
 
     // Check ancestor at the current distance
-    if (currentAncestor) {
+    if (currentAncestor.hasAttribute('lsdata')) {
       sid = getSIDfromElement(currentAncestor);
       if (sid)
         return { sid, element: currentAncestor };
 
       // If sid is null there is a problem. either that node has lsData and it dosnt have sid or an error has been caught
-      if (sid === null)
-        break;
+      break;
     }
     count++;
 
-    // Move to the next level for the next iteration
-    if (currentAncestor)
-      currentAncestor = currentAncestor.parentElement; // Move one level up
+    currentAncestor = currentAncestor.parentElement; // Move one level up
+  }
 
+  const queue: { node: Element; depth: number; }[] = [{ node: searchRootElement, depth: 0 }];
+
+  // Searching Children elements.
+  outerLoop: while (queue.length > 0) {
+    const curr_element = queue.shift();
+    if (!curr_element || curr_element.depth > 2 || curr_element.node.id.includes('helpbutton')) // Limit search to 3 levels deep. Here since there is a for loop below n actually searches n+1 levels.
+      break;
+
+    const { node, depth } = curr_element;
+    for (const child of node.children) {
+      if (child.hasAttribute('lsdata')) {
+        sid = getSIDfromElement(child);
+        if (sid)
+          return { sid, element: child };
+
+        // If sid is null there is a problem. either that node has lsData and it dosnt have sid or an error has been caught
+        break outerLoop;
+      }
+      queue.push({ node: child, depth: depth + 1 });
+    }
   }
 
   return null; // No matching element found

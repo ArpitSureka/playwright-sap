@@ -85,7 +85,9 @@ const generateHash = function(str: string): string {
   return hash.toString();
 };
 
-function hashElement(el: Element): string {
+function hashElement(el: Element, depth?: number | null): string {
+  if (depth)
+    return generateHash(depth.toString() + el.outerHTML + depth.toString());
   return generateHash(el.outerHTML);
 }
 
@@ -100,7 +102,7 @@ export function buildUI5TreeModel(nodeElement: Element, win: Window, depth: numb
   const decreaseDepth = (nodeElement.getAttribute('data-sap-ui') || nodeElement.getAttribute('data-sap-ui-area')) ? 1 : 0;
 
   while (child) {
-    const key = hashElement(child);
+    const key = hashElement(child, depth);
     const cachedResult = cache_ui5Tree.get(key);
     if (cachedResult) {
       children.push(...cachedResult);
