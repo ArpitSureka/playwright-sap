@@ -50,9 +50,6 @@ export function getByRoleSIDSelector(role: string, options: ByRoleSIDOptions): s
   if (!Object.values(sidPrefixMapping).includes(role))
     throw new Error('Invalid SID role name provided.');
 
-  if (!(options.name || options.pos))
-    throw new Error('Both name and pos are missing');
-
   if (options.name && options.pos)
     throw new Error('Both name and pos provided. Only one allowed');
 
@@ -61,11 +58,9 @@ export function getByRoleSIDSelector(role: string, options: ByRoleSIDOptions): s
     throw new Error(`Invalid SID role name provided: ${role}`);
 
   const wndPart = options.wnd ? `wnd[${options.wnd}]` : 'wnd[0]';
+  const subPart = options.sub ? options.sub : 'usr';
 
-  if (options.name)
-    return `sid=${wndPart}/usr/${prefix}${options.name}`;
-  if (options.pos)
-    return `sid=${wndPart}/usr/${prefix}[${options.pos}]`;
+  const finalPart = `${prefix}${options.name ? options.name : ''}${options.pos ? `[${options.pos}]` : ''}`;
 
-  throw new Error('Both name and pos are missing');
+  return `sid=${wndPart}/${subPart}/${finalPart}`;
 }

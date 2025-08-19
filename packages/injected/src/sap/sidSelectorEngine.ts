@@ -23,6 +23,7 @@ export const SIDSelectorEngine: SelectorEngine = {
     if (!document)
       return [];
     const result: Element[] = [];
+    // Make Currenlty this sid wnd[0]/usr/ctxtVBAK-VBELN would also match if the user uses locator - wnd[0]/usr/ctxtVB - make it exact match.
     const sid_xpath =  `//*[contains(@lsdata, '${selector}')]`;
     const it = document.evaluate(sid_xpath, root, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE);
     for (let node = it.iterateNext(); node; node = it.iterateNext()) {

@@ -58,34 +58,67 @@ export function javascriptSIDLocatorGenerator(sid: string): string {
   // Add code to handle the SID Role locator generation
   if (sid.split('/').length === 3) {
     const [wnd, usr, type] = sid.replace("'", '').replace('"', '').split('/');
-    if (!wnd.includes('[') || !wnd.includes(']') || usr !== 'usr')
+    if (!wnd.includes('[') || !wnd.includes(']'))
       return `locateSID(${sid})`;
+
+    let prefixPart: string | undefined;
+    let namePart: string | undefined;
+    let wndPart: number | undefined;
+    let posPart: number | undefined;
+    let usrPart: string | undefined;
 
     // wndNum = '1'
     const wndNum = wnd.split('[')[1].split(']').filter(val => val !== '');
+    if (Number(wndNum[0]) !== 0)
+      wndPart = Number(wndNum[0]);
 
-    // for cases like type = btn[12]
-    if (type.replace("'", '').replace('"', '').includes('[') && type.replace("'", '').replace('"', '').includes(']') && type.replace("'", '').replace('"', '').split(']').filter(val => val !== '').length === 1) {
-      const typeName = type.replace("'", '').replace('"', '').split('[')[0];
-      const typeIndex = type.replace("'", '').replace('"', '').match(/\[(.*?)\]/);
-      if (Object.keys(sidPrefixMapping).includes(typeName) && typeIndex && typeIndex.length === 2 && typeIndex[1] &&  Number.isInteger(Number(typeIndex[1]))) {
-        if (Number(wndNum) === 0)
-          return `getByRoleSID('${sidPrefixMapping[typeName]}', { pos: ${Number(typeIndex[1])} })`;
-        else
-          return `getByRoleSID('${sidPrefixMapping[typeName]}', { pos: ${Number(typeIndex[1])}, wnd: ${wndNum[0]} })`;
-      }
-    }
+    if (usr !== 'usr')
+      usrPart = usr;
 
     // for cases like type = lblCOCD
     const typeSplit = type.replace("'", '').replace('"', '').match(/^([^A-Z]*)(.*)$/);
     if (wnd.split('[')[0] === 'wnd' && typeSplit && typeSplit.length === 3 && !typeSplit.includes(':') && !typeSplit.includes('/')) {
       if (Object.keys(sidPrefixMapping).includes(typeSplit[1]) && wndNum.length === 1 && Number.isInteger(Number(wndNum))) {
-        if (Number(wndNum) === 0)
-          return `getByRoleSID('${sidPrefixMapping[typeSplit[1]]}', { name: '${typeSplit[2]}' })`;
-        else
-          return `getByRoleSID('${sidPrefixMapping[typeSplit[1]]}', { name: '${typeSplit[2]}', wnd: ${wndNum[0]} })`;
+        prefixPart = sidPrefixMapping[typeSplit[1]];
+        namePart = typeSplit[2];
       }
     }
+
+    // for cases like type = btn[12]
+    if (!prefixPart && !namePart && type.replace("'", '').replace('"', '').includes('[') && type.replace("'", '').replace('"', '').includes(']') && type.replace("'", '').replace('"', '').split(']').filter(val => val !== '').length === 1) {
+      const typeName = type.replace("'", '').replace('"', '').split('[')[0];
+      const typeIndex = type.replace("'", '').replace('"', '').match(/\[(.*?)\]/);
+      if (Object.keys(sidPrefixMapping).includes(typeName) && typeIndex && typeIndex.length === 2 && Number.isInteger(Number(typeIndex[1]))) {
+        prefixPart = sidPrefixMapping[typeName];
+        posPart = Number(typeIndex[1]);
+      }
+    }
+
+    const options: string[] = [];
+    let optionsPart: string = '';
+
+    // This should not happen. Some bug if this is reached.
+    if ((posPart !== undefined && namePart) || prefixPart === undefined)
+      return `locateSID(${sid})`;
+
+    // postPart can be 0 so dont use it like this if(posPart)
+    if (posPart !== undefined)
+      options.push(`pos: ${posPart}`);
+
+    if (namePart)
+      options.push(`name: '${namePart}'`);
+
+    if (usrPart)
+      options.push(`sub: '${usrPart}'`);
+
+    if (wndPart !== undefined)
+      options.push(`wnd: ${wndPart}`);
+
+    if (options.length !== 0)
+      optionsPart = `, { ${options.join(', ')} }`;
+
+    return `getByRoleSID('${prefixPart}'${optionsPart})`;
+
   }
 
   return `locateSID(${sid})`;
