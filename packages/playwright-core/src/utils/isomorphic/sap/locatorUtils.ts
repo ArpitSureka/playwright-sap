@@ -57,10 +57,10 @@ export function getByRoleSIDSelector(role: string, options: ByRoleSIDOptions): s
   if (!prefix)
     throw new Error(`Invalid SID role name provided: ${role}`);
 
-  const wndPart = options.wnd ? `wnd[${options.wnd}]` : 'wnd[0]';
+  const wndPart = options.wnd !== undefined ? `wnd[${options.wnd}]` : 'wnd[0]';
   const subPart = options.sub ? options.sub : 'usr';
 
-  const finalPart = `${prefix}${options.name ? options.name : ''}${options.pos ? `[${options.pos}]` : ''}`;
-
+  // Pos can be 0 as well so dont check like options.pos use undefined.
+  const finalPart = `${prefix}${options.name ? options.name : ''}${options.pos !== undefined ? `[${options.pos}]` : ''}`;
   return `sid=${wndPart}/${subPart}/${finalPart}`;
 }
