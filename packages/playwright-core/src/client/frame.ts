@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import { getByRoleSIDSelector, getByRoleUI5Selector, locateSIDSelector } from '../utils/isomorphic/sap/locatorUtils';
+import { getByRoleSIDSelector, getByRoleUI5Selector, locateSIDSelector, locateUI5Selector } from '../utils/isomorphic/sap/locatorUtils';
 import { EventEmitter } from './eventEmitter';
 import { ChannelOwner } from './channelOwner';
 import { addSourceUrlToScript } from './clientHelper';
@@ -362,6 +362,10 @@ export class Frame extends ChannelOwner<channels.FrameChannel> implements api.Fr
 
   locateSID(sid: string): Locator {
     return this.locator(locateSIDSelector(sid));
+  }
+
+  locateUI5(xpath: string): Locator {
+    return this.locator(locateUI5Selector(xpath));
   }
 
   getByRoleSID(role: string, options: ByRoleSIDOptions): Locator {

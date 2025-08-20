@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { getByRoleSIDSelector, getByRoleUI5Selector, locateSIDSelector } from '../utils/isomorphic/sap/locatorUtils';
+import { getByRoleSIDSelector, getByRoleUI5Selector, locateSIDSelector, locateUI5Selector } from '../utils/isomorphic/sap/locatorUtils';
 import { ElementHandle } from './elementHandle';
 import { parseResult, serializeArgument } from './jsHandle';
 import { asLocator } from '../utils/isomorphic/locatorGenerators';
@@ -198,6 +198,10 @@ export class Locator implements api.Locator {
 
   locateSID(sid: string): Locator {
     return this.locator(locateSIDSelector(sid));
+  }
+
+  locateUI5(xpath: string): Locator {
+    return this.locator(locateUI5Selector(xpath));
   }
 
   getByRoleSID(role: string, options: ByRoleSIDOptions): Locator {
@@ -456,6 +460,10 @@ export class FrameLocator implements api.FrameLocator {
 
   locateSID(sid: string): Locator {
     return this.locator(locateSIDSelector(sid));
+  }
+
+  locateUI5(xpath: string): Locator {
+    return this.locator(locateUI5Selector(xpath));
   }
 
   getByRoleSID(role: string, options: ByRoleSIDOptions): Locator {

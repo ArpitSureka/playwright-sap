@@ -3612,6 +3612,12 @@ export interface Page {
   locateSID(sid: string): Locator;
 
   /**
+   * Locate elements using UI5 Xpath
+   * @param xpath
+   */
+  locateUI5(xpath: string): Locator;
+
+  /**
    * The method returns an element locator that can be used to perform actions on this page / frame. Locator is resolved
    * to the element immediately before performing an action, so a series of actions on the same locator can in fact be
    * performed on different DOM elements. That would happen if the DOM structure between those actions has changed.
@@ -14063,6 +14069,12 @@ export interface Locator {
    * @param sid
    */
   locateSID(sid: string): Locator;
+
+  /**
+   * Locate elements using UI5 Xpath
+   * @param xpath
+   */
+  locateUI5(xpath: string): Locator;
 
   /**
    * The method finds an element matching the specified selector in the locator's subtree. It also accepts filter

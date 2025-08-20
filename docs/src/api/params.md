@@ -1686,6 +1686,11 @@ SID is the identifier you see in lsdata attribute of html element, for example: 
 await page.locateSID('wnd[0]/tbar[1]/btn[8]').click();
 ```
 
+## template-locator-locateUI5
+
+Locate elements using UI5 Xpath
+
+
 ## template-locator-getByRoleSID
 
 Using locateSID locator is a little difficult as it is hard to read that why we created getByRoleSID locator. this locator internally uses locateSID locator. This makes reading and debugging the code easier.

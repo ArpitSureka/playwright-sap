@@ -1286,6 +1286,17 @@ Attribute name to get the value for.
 
 ### option: Locator.getByPlaceholder.exact = %%-locator-get-by-text-exact-%%
 
+## method: Locator.locateUI5
+* since: v1.27
+- returns: <[Locator]>
+
+%%-template-locator-locateUI5-%%
+
+### param: Locator.locateUI5.xpath
+* since: v1.27
+* langs: js
+- `xpath` <[string]>
+
 ## method: Locator.locateSID
 * since: v1.27
 - returns: <[Locator]>

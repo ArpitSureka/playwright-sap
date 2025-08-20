@@ -760,6 +760,10 @@ export class Page extends ChannelOwner<channels.PageChannel> implements api.Page
     return this.mainFrame().locateSID(sid);
   }
 
+  locateUI5(xpath: string): Locator {
+    return this.mainFrame().locateUI5(xpath);
+  }
+
   getByRoleSID(role: string, options: ByRoleSIDOptions): Locator {
     return this.mainFrame().getByRoleSID(role, options);
   }
