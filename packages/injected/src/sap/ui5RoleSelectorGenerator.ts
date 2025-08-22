@@ -18,9 +18,10 @@
 import { InjectedScript } from '@injected/injectedScript';
 import { SelectorToken } from '@injected/selectorGenerator';
 import { escapeForAttributeSelector } from '@isomorphic/stringUtils';
-import { buildUI5TreeModel, checkOverlap, checkSAPUI5, getPropertiesUsingControlId, UI5errorMessage, UI5Node } from '@sap/common';
+import { checkSAPUI5, getPropertiesUsingControlId, UI5errorMessage, UI5Node } from '@sap/common';
 
 import { checkIfRoleAllowed, checkIfRoleAllowedWithoutProperties, getAllowedProperties } from './allowedRolesAndProperties';
+import { getClosestUI5ElementFromCurrentElement } from './common';
 
 import type { UI5Property } from '@sap/types/properties';
 
@@ -29,7 +30,7 @@ const ui5BasicScore = 30;
 
 // Builds UI5 Selectors
 // Add no text option in buildUI5Selectors to work with expect text feature.
-export function buildUI5Selectors(injectedScript: InjectedScript, element: Element): SelectorToken[][] {
+export function buildUI5RoleSelectors(injectedScript: InjectedScript, element: Element): SelectorToken[][] {
 
   const candidates: SelectorToken[][] = [];
   const win = injectedScript.window;
@@ -37,34 +38,17 @@ export function buildUI5Selectors(injectedScript: InjectedScript, element: Eleme
   try {
     if (checkSAPUI5(win)) {
 
-      let ui5SelectorMap_element: UI5Node[] = [];
-      let currentElement: Element | null = element;
-
-      while (currentElement && (ui5SelectorMap_element.length === 0 || !checkOverlap(ui5SelectorMap_element, element))) {
-        if (currentElement === element.getRootNode() || currentElement === element.ownerDocument.body)
-          return [];
-        ui5SelectorMap_element = buildUI5TreeModel(currentElement, win, 1);
-        currentElement = currentElement.parentElement;
-      }
-
-      if (!currentElement || currentElement === (injectedScript.document.body as Element))
-        return [];
-
-      const ui5_element = checkOverlap(ui5SelectorMap_element, element);
-
+      const ui5_element = getClosestUI5ElementFromCurrentElement(element, injectedScript);
       if (ui5_element) {
         const roleSelectors = makeRoleUI5Selectors(ui5_element, win);
         if (roleSelectors && roleSelectors.length)
           // Currently directly taking first role selector randomly can improve this by giving each propertyRole and PropertyName different scores.
           candidates.push([roleSelectors[0]]);
-      } else {
-        // console.log('error is here');
-        UI5errorMessage(win, 'Error in makeUI5XpathSelector: ');
       }
       return candidates;
     }
   } catch (error) {
-    UI5errorMessage(win, 'Error in making UI5 Selector: ' + error);
+    UI5errorMessage(win, 'Error in making UI5 Role Selector: ' + error);
   }
 
   return candidates;

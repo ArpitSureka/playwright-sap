@@ -353,6 +353,8 @@ export class JavaScriptLocatorFactory implements LocatorFactory {
         else if (options.exact && attrString2.length === 0)
           attrString2 = ', {}, { exact: true }';
         return `getByRoleUI5(${this.quote(body as string)}${attrString2})`;
+      case 'ui5:xpath':
+        return `locateUI5(${this.quote(body as string)})`;
       case 'sid':
         return javascriptSIDLocatorGenerator(this.quote(body as string));
       default:

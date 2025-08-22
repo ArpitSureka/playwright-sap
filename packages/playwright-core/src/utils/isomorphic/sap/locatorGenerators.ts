@@ -19,9 +19,10 @@
 
 import { LocatorBase, LocatorFactory, LocatorOptions } from '../locatorGenerators';
 import { parseAttributeSelector, ParsedSelectorPart } from '../selectorParser';
+import { getByRoleSIDSelector } from './locatorUtils';
 import { sidPrefixMapping } from './sidPrefixMapping';
 
-export type LocatorTypeSAP = 'ui5:role' | 'sid';
+export type LocatorTypeSAP = 'ui5:role' | 'sid' | 'ui5:xpath';
 
 // Return example for getByRoleUI5('grid', {text: 'My Grid', exact: true})
 // options = {
@@ -49,6 +50,9 @@ export function innerAsLocatorsSAP(part: ParsedSelectorPart, base: LocatorBase, 
   }
   if (part.name === 'sid' && typeof part.body === 'string')
     return [factory.generateLocator(base, 'sid', part.body as string)];
+
+  if (part.name === 'ui5:xpath' && typeof part.body === 'string')
+    return [factory.generateLocator(base, 'ui5:xpath', part.body as string)];
 
   return null;
 }
@@ -117,7 +121,11 @@ export function javascriptSIDLocatorGenerator(sid: string): string {
     if (options.length !== 0)
       optionsPart = `, { ${options.join(', ')} }`;
 
-    return `getByRoleSID('${prefixPart}'${optionsPart})`;
+    // Checking if converting back matches with orignal sid
+    const selectorSid = getByRoleSIDSelector(prefixPart, { pos: posPart, name: namePart, sub: usrPart, wnd: wndPart }).replace('sid=', '');
+
+    if (selectorSid === sid)  // Else return locateSID
+      return `getByRoleSID('${prefixPart}'${optionsPart})`;
 
   }
 

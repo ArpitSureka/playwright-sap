@@ -26,7 +26,7 @@ export type ByRoleUI5Options = {
 export type ByRoleSIDOptions = {
   name?: string,
   pos?: number,
-  wnd?: number | undefined,
+  wnd?: number,
   sub?: string
 };
 

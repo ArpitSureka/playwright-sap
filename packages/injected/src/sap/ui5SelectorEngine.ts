@@ -19,8 +19,34 @@ import { SelectorEngine, SelectorRoot } from '@injected/selectorEngine';
 import { parseAttributeSelector } from '@isomorphic/selectorParser';
 import { buildUI5TreeModel, checkSAPUI5, getElementFromUI5Id, getPropertiesUsingControlId, UI5Node } from '@sap/common';
 
-import { createPropertyValueMatcher } from './common';
+import { createPropertyValueMatcher, findByXPathInUI5Tree } from './common';
 import { isElementVisible } from './domUtils';
+
+export function ui5XpathEngine(): SelectorEngine {
+  return {
+    queryAll: (scope: SelectorRoot, selector: string): Element[] => {
+
+      const document = scope.ownerDocument || scope;
+      const window = document?.defaultView;
+
+      if (!window)
+        throw new Error(`Window missing error UI5 Selector Engine`);
+      if (!checkSAPUI5(window))
+        throw new Error(`SAP UI5 not found in page.`);
+
+      const ui5DocumentTree = buildUI5TreeModel(document.body, window);
+      const result: Element[] = [];
+
+      findByXPathInUI5Tree(ui5DocumentTree, selector).forEach(node => {
+        const ele = getElementFromUI5Id(node.id, window);
+        if (ele)
+          result.push(ele);
+      });
+
+      return getUniqueInteractableHTMLElements(result);
+    }
+  };
+}
 
 export function ui5RoleEngine(): SelectorEngine {
   return {
@@ -49,17 +75,7 @@ export function ui5RoleEngine(): SelectorEngine {
       else if (parsed.attributes.length > 1)
         throw new Error(`Not supported multiple attributes in UI5 selector: ${selector}`);
 
-      const resultSet = new Set<Element>();
-      result.forEach(ele => {
-        // If the element is not a direct child of the scope, we can ignore it.
-        const match = ele.querySelector('button,select,input,[role=button],[role=checkbox],[role=radio],a,[role=link]');
-        if (match && isElementVisible(match))
-          resultSet.add(match);
-        else
-          resultSet.add(ele);
-        // resultSet.add(ele);
-      });
-      return Array.from(resultSet);
+      return getUniqueInteractableHTMLElements(result);
     }
   };
 }
@@ -122,4 +138,17 @@ function checkIfNodeContainsProperty(node: UI5Node, role: string,  window: Windo
     }
   }
   return false;
+}
+
+function getUniqueInteractableHTMLElements(result: Element[]): Element[] {
+  const resultSet = new Set<Element>();
+  result.forEach(ele => {
+    // If the element is not a direct child of the scope, we can ignore it.
+    const match = ele.querySelector('button,select,input,[role=button],[role=checkbox],[role=radio],a,[role=link]');
+    if (match && isElementVisible(match))
+      resultSet.add(match);
+    else
+      resultSet.add(ele);
+  });
+  return Array.from(resultSet);
 }

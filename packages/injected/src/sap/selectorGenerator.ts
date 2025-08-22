@@ -17,26 +17,35 @@
 
 import { InjectedScript } from '@injected/injectedScript';
 import { SelectorToken } from '@injected/selectorGenerator';
+import { checkSAPUI5 } from '@sap/common';
 
-import { buildUI5Selectors } from './ui5selectorGenerator';
+import { buildUI5RoleSelectors } from './ui5RoleSelectorGenerator';
 import { checkSAPSelector } from './common';
 import { getSIDandElementFromElement, sidSelectorGenerator } from './sidSelectorGenerator';
+import { buildUI5XpathSelectors } from './ui5XpathSelectorGenerator';
 
 const kNthScoreUI5 = 10;
 
 export function buildSAPSelectors(injectedScript: InjectedScript, element: Element): SelectorToken[][] {
-  const ui5Selector =  buildUI5Selectors(injectedScript, element);
-  if (ui5Selector.length)
-    return ui5Selector;
+
+  if (checkSAPUI5(injectedScript.window)) {
+    const ui5RoleSelector = buildUI5RoleSelectors(injectedScript, element);
+    if (ui5RoleSelector.length)
+      return ui5RoleSelector;
+    const ui5XpathSelector = buildUI5XpathSelectors(injectedScript, element);
+    if (ui5XpathSelector.length)
+      return ui5XpathSelector;
+  }
 
   return sidSelectorGenerator(element);
 }
 
 // Only UI5 Selectors require this function sid based selectors would automatically work with existing chooseFirstSelector function.
 export function chooseFirstSelectorSAP(window: Window, tokens: SelectorToken[], targetElement: Element, result: Element[]): SelectorToken[] | null {
-  let ui5Selector = false;
-  tokens.forEach(selector => ui5Selector = selector.engine === 'ui5:role' || ui5Selector);
-  // Not written case for nth selector
+
+  let ui5Selector: string | undefined;
+  tokens.forEach(selector => ui5Selector = ['ui5:role', 'ui5:xpath'].includes(selector.engine) ?  selector.engine : ui5Selector);
+
   if (ui5Selector && result.length === 1) {
     if (checkSAPSelector(result[0], targetElement, window))
       return tokens;

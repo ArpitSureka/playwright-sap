@@ -27,7 +27,6 @@ export const SIDSelectorEngine: SelectorEngine = {
     // const sid_xpath =  `//*[contains(@lsdata, '${selector}')]`;
 
     const sid_xpath = `//*[contains(@lsdata, '"SID":"${selector}"')]`;
-    console.log(sid_xpath);
     const it = document.evaluate(sid_xpath, root, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE);
     for (let node = it.iterateNext(); node; node = it.iterateNext()) {
       if (node.nodeType === Node.ELEMENT_NODE)
