@@ -22,19 +22,20 @@ import { checkSAPUI5 } from '@sap/common';
 import { buildUI5RoleSelectors } from './ui5RoleSelectorGenerator';
 import { checkSAPSelector } from './common';
 import { getSIDandElementFromElement, sidSelectorGenerator } from './sidSelectorGenerator';
-import { buildUI5XpathSelectors } from './ui5XpathSelectorGenerator';
+// import { buildUI5XpathSelectors } from './ui5XpathSelectorGenerator';
 
 const kNthScoreUI5 = 10;
 
-export function buildSAPSelectors(injectedScript: InjectedScript, element: Element): SelectorToken[][] {
+export function buildSAPSelectors(injectedScript: InjectedScript, element: Element, allowText: boolean = true): SelectorToken[][] {
 
+  // console.log('Hello');
   if (checkSAPUI5(injectedScript.window)) {
-    const ui5RoleSelector = buildUI5RoleSelectors(injectedScript, element);
+    const ui5RoleSelector = buildUI5RoleSelectors(injectedScript, element, allowText);
     if (ui5RoleSelector.length)
       return ui5RoleSelector;
-    const ui5XpathSelector = buildUI5XpathSelectors(injectedScript, element);
-    if (ui5XpathSelector.length)
-      return ui5XpathSelector;
+    // const ui5XpathSelector = buildUI5XpathSelectors(injectedScript, element);
+    // if (ui5XpathSelector.length)
+    //   return ui5XpathSelector;
   }
 
   return sidSelectorGenerator(element);

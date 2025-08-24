@@ -166,7 +166,7 @@ function generateSelectorFor(cache: Cache, injectedScript: InjectedScript, targe
     // This if else stops concating sap selectors with other selectors. Quality of the concat was not good.
     // Problem example - ui5 samples - toggle button page- https://ui5.sap.com/#/entity/sap.m.ToggleButton at the list toggle button page.
     if (element === targetElement)
-      sapCandidates = buildSAPSelectors(injectedScript, element);
+      sapCandidates = buildSAPSelectors(injectedScript, element, allowText);
     if (element !== targetElement) {
       // Do not use regex for parent elements (for performance).
       textCandidates = filterRegexTokens(textCandidates);

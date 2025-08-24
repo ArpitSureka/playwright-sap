@@ -34,7 +34,8 @@ import { createVueEngine } from './vueSelectorEngine';
 import { XPathEngine } from './xpathSelectorEngine';
 import { ConsoleAPI } from './consoleApi';
 import { UtilityScript } from './utilityScript';
-import { ui5RoleEngine, ui5XpathEngine } from './sap/ui5SelectorEngine';
+// import { ui5RoleEngine, ui5XpathEngine } from './sap/ui5SelectorEngine';
+import { ui5RoleEngine } from './sap/ui5SelectorEngine';
 import { SIDSelectorEngine } from './sap/sidSelectorEngine';
 
 import type { AriaTemplateNode } from '@isomorphic/ariaSnapshot';
@@ -235,7 +236,7 @@ export class InjectedScript {
     this._engines.set('aria-ref', this._createAriaRefEngine());
 
     this._engines.set('ui5:role', ui5RoleEngine());
-    this._engines.set('ui5:xpath', ui5XpathEngine());
+    // this._engines.set('ui5:xpath', ui5XpathEngine());
 
     this._engines.set('sid', SIDSelectorEngine);
 

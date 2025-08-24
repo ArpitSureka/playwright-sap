@@ -18,10 +18,10 @@
 import { InjectedScript } from '@injected/injectedScript';
 import { SelectorToken } from '@injected/selectorGenerator';
 import { escapeForAttributeSelector } from '@isomorphic/stringUtils';
-import { checkSAPUI5, getPropertiesUsingControlId, UI5errorMessage, UI5Node } from '@sap/common';
+import { checkSAPUI5, getElementFromUI5Id, getPropertiesUsingControlId, UI5errorMessage, UI5Node } from '@sap/common';
 
-import { checkIfRoleAllowed, checkIfRoleAllowedWithoutProperties, getAllowedProperties } from './allowedRolesAndProperties';
-import { getClosestUI5ElementFromCurrentElement } from './common';
+import { checkIfRoleAllowed, checkIfRoleAllowedWithoutProperties, getAllowedProperties, obviousTextProperties } from './allowedRolesAndProperties';
+import { cosineSimilarity, getClosestUI5ElementFromCurrentElement, suitableTextAlternatives_sap } from './common';
 
 import type { UI5Property } from '@sap/types/properties';
 
@@ -30,7 +30,7 @@ const ui5BasicScore = 30;
 
 // Builds UI5 Selectors
 // Add no text option in buildUI5Selectors to work with expect text feature.
-export function buildUI5RoleSelectors(injectedScript: InjectedScript, element: Element): SelectorToken[][] {
+export function buildUI5RoleSelectors(injectedScript: InjectedScript, element: Element, allowText: boolean = true): SelectorToken[][] {
 
   const candidates: SelectorToken[][] = [];
   const win = injectedScript.window;
@@ -40,7 +40,10 @@ export function buildUI5RoleSelectors(injectedScript: InjectedScript, element: E
 
       const ui5_element = getClosestUI5ElementFromCurrentElement(element, injectedScript);
       if (ui5_element) {
-        const roleSelectors = makeRoleUI5Selectors(ui5_element, win);
+        let ui5_element_textContent: string|undefined;
+        if (!allowText)
+          ui5_element_textContent = getElementFromUI5Id(ui5_element.id, win)?.textContent; // Dont use the textContent of element use of ui5_element;
+        const roleSelectors = makeRoleUI5Selectors(ui5_element, win, ui5_element_textContent);
         if (roleSelectors && roleSelectors.length)
           // Currently directly taking first role selector randomly can improve this by giving each propertyRole and PropertyName different scores.
           candidates.push([roleSelectors[0]]);
@@ -54,7 +57,7 @@ export function buildUI5RoleSelectors(injectedScript: InjectedScript, element: E
   return candidates;
 }
 
-function makeRoleUI5Selectors(ui5Node: UI5Node, win: Window): SelectorToken[] | null {
+function makeRoleUI5Selectors(ui5Node: UI5Node, win: Window, innerText?: string): SelectorToken[] | null {
   if (!ui5Node)
     return null;
 
@@ -64,12 +67,12 @@ function makeRoleUI5Selectors(ui5Node: UI5Node, win: Window): SelectorToken[] | 
   const selectorTokens: SelectorToken[] = [];
 
   if (properties && checkIfRoleAllowed(element.role)) {
-    const ownPropertySelectors = makeSelectorFromOwnProperties(properties.own, element.role);
+    const ownPropertySelectors = makeSelectorFromOwnProperties(properties.own, element.role, innerText);
     selectorTokens.push(...ownPropertySelectors);
   }
 
   if (properties && properties.inherited.length && checkIfRoleAllowed(element.role)) {
-    const inheritedPropertySelectors = makeSelectorFromInheritedProperties(properties.inherited, element.role);
+    const inheritedPropertySelectors = makeSelectorFromInheritedProperties(properties.inherited, element.role, innerText);
     selectorTokens.push(...inheritedPropertySelectors);
   }
 
@@ -88,7 +91,7 @@ function makeRoleUI5Selectors(ui5Node: UI5Node, win: Window): SelectorToken[] | 
 }
 
 
-function makeSelectorFromOwnProperties(ownProperties: UI5Property, elementRole: string): SelectorToken[] {
+function makeSelectorFromOwnProperties(ownProperties: UI5Property, elementRole: string, innerText?: string): SelectorToken[] {
   // const selectorTokens: SelectorToken[] = [];
   const selectorTokensData: selectorTokensData[] = [];
   const propertyRole: string | undefined = ownProperties.meta?.controlName?.split('.').pop();
@@ -105,10 +108,10 @@ function makeSelectorFromOwnProperties(ownProperties: UI5Property, elementRole: 
     }
   }
 
-  return checkAndMakeSelectorTokens(selectorTokensData);
+  return checkAndMakeSelectorTokens(selectorTokensData, innerText);
 }
 
-function makeSelectorFromInheritedProperties(inheritedProperties: UI5Property[], elementRole: string): SelectorToken[] {
+function makeSelectorFromInheritedProperties(inheritedProperties: UI5Property[], elementRole: string, innerText?: string): SelectorToken[] {
   const selectorTokensData: selectorTokensData[] = [];
   if (!inheritedProperties)
     return [];
@@ -125,89 +128,50 @@ function makeSelectorFromInheritedProperties(inheritedProperties: UI5Property[],
     }
   }
 
-  return checkAndMakeSelectorTokens(selectorTokensData);
+  return checkAndMakeSelectorTokens(selectorTokensData, innerText);
 }
 
-function checkAndMakeSelectorTokens(selectorTokens: selectorTokensData[]) {
+function checkAndMakeSelectorTokens(selectorTokens: selectorTokensData[], innerText?: string) {
   const result: SelectorToken[] = [];
   selectorTokens.forEach(selectorToken => {
-    // Both propertyName and propertyRole shoudnt be text if they are use playwright default getByText Locator
-    if (!(selectorToken.propertyName.toLowerCase() === 'text' && selectorToken.propertyRole.toLowerCase() === 'text')){
 
-      let propertyValue = selectorToken.propertyValue;
+    let propertyValue = selectorToken.propertyValue;
 
-      // Changing text if it is too long. Currently dont have {exact: true} support in getByRoleUI5.
-      // This feature needs to be devloped further. Not ready right now.
-      if (selectorToken.propertyName.toLowerCase() === 'text' && propertyValue.length > 70)
-        propertyValue = suitableTextAlternatives(propertyValue).sort((a, b) => b.scoreBonus - a.scoreBonus)[0].text;
+    if (innerText) {
+      if (obviousTextProperties.includes(selectorToken.propertyName))
+        return;
 
-      // sometimes button(propertyRole) dont have text and have icon(propertyName) in that case
-      // if (selectorToken.propertyName.toLowerCase() === 'icon' && propertyValue.includes('sap-icon://') && propertyValue.indexOf('sap-icon://') === 0)
-      //   propertyValue = propertyValue.replace('sap-icon://', '');
+      // Removing in case obviousTextProperties misses few properties.
+      if (cosineSimilarity(innerText, selectorToken.propertyValue) > 0.2)
+        return;
+    }
 
-      // // sometimes icon(propertyRole) have src(propertyName) which is an icon
-      // if (selectorToken.propertyRole.toLowerCase() === 'icon' && selectorToken.propertyName.toLowerCase() === 'src' && propertyValue.includes('sap-icon://') && propertyValue.indexOf('sap-icon://') === 0)
-      //   propertyValue = propertyValue.replace('sap-icon://', '');
+    // Changing text if it is too long. Currently dont have {exact: true} support in getByRoleUI5.
+    // This feature needs to be devloped further. Not ready right now.
+    if (selectorToken.propertyName.toLowerCase() === 'text' && propertyValue.length > 70)
+      propertyValue = suitableTextAlternatives_sap(propertyValue).sort((a, b) => b.scoreBonus - a.scoreBonus)[0].text;
 
-      // Incase any more edge cases are added here add the corresponding code in createPropertyValueMatcher - packages/injected/src/sap/common.ts
+    // Incase any more edge cases are added here add the corresponding code in createPropertyValueMatcher - packages/injected/src/sap/common.ts
 
+    // If Both propertyName and propertyRole are text then preferabely use getByTextLocator.
+    // Shift this Later to the part where we rearrange priorities of the locators when UI5 locators are present.
+    // Upcoming feature in the next version from 1.2.0
+    if (selectorToken.propertyName.toLowerCase() === 'text' && selectorToken.propertyRole.toLowerCase() === 'text'){
+      result.push({
+        engine: 'ui5:role',
+        selector: `${selectorToken.propertyRole}[${selectorToken.propertyName}=${escapeForAttributeSelector(propertyValue, false)}]`,
+        score: 220
+      });
+    } else {
       result.push({
         engine: 'ui5:role',
         selector: `${selectorToken.propertyRole}[${selectorToken.propertyName}=${escapeForAttributeSelector(propertyValue, false)}]`,
         score: ui5BasicScore + Math.trunc((selectorToken.score ? selectorToken.score : 0) / 10)
       });
     }
+
   });
   return result;
 }
 
 type selectorTokensData  = {propertyRole: string, propertyName: string, propertyValue: string, score?: number};
-
-// ----------------------------------------------------
-// Copied fron packages/injected/src/selectorGenerator.ts
-
-function suitableTextAlternatives(text: string) {
-  let result: { text: string, scoreBonus: number }[] = [];
-
-  {
-    const match = text.match(/^([\d.,]+)[^.,\w]/);
-    const leadingNumberLength = match ? match[1].length : 0;
-    if (leadingNumberLength) {
-      const alt = trimWordBoundary(text.substring(leadingNumberLength).trimStart(), 80);
-      result.push({ text: alt, scoreBonus: alt.length <= 30 ? 2 : 1 });
-    }
-  }
-
-  {
-    const match = text.match(/[^.,\w]([\d.,]+)$/);
-    const trailingNumberLength = match ? match[1].length : 0;
-    if (trailingNumberLength) {
-      const alt = trimWordBoundary(text.substring(0, text.length - trailingNumberLength).trimEnd(), 80);
-      result.push({ text: alt, scoreBonus: alt.length <= 30 ? 2 : 1 });
-    }
-  }
-
-  if (text.length <= 30) {
-    result.push({ text, scoreBonus: 0 });
-  } else {
-    result.push({ text: trimWordBoundary(text, 80), scoreBonus: 0 });
-    result.push({ text: trimWordBoundary(text, 30), scoreBonus: 1 });
-  }
-
-  result = result.filter(r => r.text);
-  if (!result.length)
-    result.push({ text: text.substring(0, 80), scoreBonus: 0 });
-
-  return result;
-}
-
-function trimWordBoundary(text: string, maxLength: number) {
-  if (text.length <= maxLength)
-    return text;
-  text = text.substring(0, maxLength);
-  // Find last word boundary in the text.
-  const match = text.match(/^(.*)\b(.+?)$/);
-  if (!match)
-    return '';
-  return match[1].trimEnd();
-}

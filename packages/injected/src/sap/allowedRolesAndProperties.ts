@@ -54,6 +54,8 @@ const implicitlyAllowedProperties: string[] = [
   'months', 'days', 'items', 'viewKey', 'startHour', 'endHour'
 ];
 
+export const obviousTextProperties = ['text', 'title', 'value', 'description', 'headerText', 'header', 'htmlText', 'noDataText'];
+
 const allowedWithoutProperties: string[] = [
   'TablePopin', 'Row', 'ColumnListItem', 'InfoButton', 'SmartToggle', 'CustomListItem', 'GridListItem', 'ToolbarSeparator',
   'GroupElement', 'ColumnHeaderLabel', 'SemanticPage', 'AssociativeSplitter', 'ResponsiveSplitterPage', 'ResponsiveSplitter',
@@ -101,8 +103,8 @@ export function getAllowedProperties(propertyRole: string): string[] {
 
     if (explicitlyDenied)
       allowedProperties = removeItems(allowedProperties, explicitlyDenied); // Remove explicitly denied properties from the allowed list
-  }
 
+  }
   return allowedProperties;
 }
 

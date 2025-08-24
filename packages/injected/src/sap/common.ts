@@ -18,6 +18,11 @@
 import { InjectedScript } from '@injected/injectedScript';
 import { buildUI5TreeModel, checkOverlap, checkSAPUI5, UI5Node } from '@sap/common';
 
+export type UI5PropertyType = {
+  propertyValue: string,
+  propertyName: string
+};
+
 // This function is used to check sap selectror, wether result and target element has the same ui5 parent element
 export function checkSAPSelector(result: Element, targetElement: Element, window: Window): Boolean {
   let currentElement: Element | null = targetElement;
@@ -47,22 +52,29 @@ export function checkSAPSelector(result: Element, targetElement: Element, window
 }
 
 // Inspired from packages/injected/src/injectedScript.ts - createTextMatcher
-export function createPropertyValueMatcher(propertyRole: string, propertyValue?: string, propertyName?: string,  exact: boolean = false): ((elementValue: string) => boolean) | undefined {
+export function createPropertyValueMatcher(propertyRole: string, properties?: UI5PropertyType[],  exact: boolean = false): ((elementValue: string) => boolean) | undefined {
 
-  if (!(propertyValue && propertyName))
-    return;
+  if (!properties)
+    return undefined;
 
-  // Cases added corresponding to the code in checkAndMakeSelectorTokens - packages/injected/src/sap/common.ts
-  // if (propertyName.toLowerCase() === 'icon' || (propertyRole.toLowerCase() === 'icon' && propertyName.toLowerCase() === 'src'))
-  //   return (elementValue: string) => elementValue.includes(propertyValue);
+  if (properties?.length > 1)
+    throw new Error('Multiple Properties not supported currenlty');
+
+  const { propertyValue, propertyName } = properties[0];
 
   if (propertyName.toLowerCase() !== 'text') {
-    if (exact)
+    if (exact) {
       return (elementValue: string) => elementValue === propertyValue;
-    else
-      return (elementValue: string) => elementValue.toLowerCase() === propertyValue.toLowerCase();
+    } else {
+      return (elementValue: string): boolean => {
+        if (elementValue.length > 70)
+          return propertyValue.toLowerCase() === suitableTextAlternatives_sap(elementValue).sort((a, b) => b.scoreBonus - a.scoreBonus)[0].text.toLowerCase();
+        return elementValue.toLowerCase() === propertyValue.toLowerCase();
+      };
+    }
   }
 
+  //  Testing is Pending.
   // This is a regex checker in case propertyName. regex wont come from codegen but if the user explicitly tries to use regex in code.
   if (propertyValue[0] === '/' && propertyValue.lastIndexOf('/') > 0) {
     const lastSlash = propertyValue.lastIndexOf('/');
@@ -103,6 +115,55 @@ export function getClosestUI5ElementFromCurrentElement(element: Element, injecte
 }
 
 
+// ----------------------------------------------------
+// Copied fron packages/injected/src/selectorGenerator.ts
+
+export function suitableTextAlternatives_sap(text: string) {
+  let result: { text: string, scoreBonus: number }[] = [];
+
+  {
+    const match = text.match(/^([\d.,]+)[^.,\w]/);
+    const leadingNumberLength = match ? match[1].length : 0;
+    if (leadingNumberLength) {
+      const alt = trimWordBoundary(text.substring(leadingNumberLength).trimStart(), 80);
+      result.push({ text: alt, scoreBonus: alt.length <= 30 ? 2 : 1 });
+    }
+  }
+
+  {
+    const match = text.match(/[^.,\w]([\d.,]+)$/);
+    const trailingNumberLength = match ? match[1].length : 0;
+    if (trailingNumberLength) {
+      const alt = trimWordBoundary(text.substring(0, text.length - trailingNumberLength).trimEnd(), 80);
+      result.push({ text: alt, scoreBonus: alt.length <= 30 ? 2 : 1 });
+    }
+  }
+
+  if (text.length <= 30) {
+    result.push({ text, scoreBonus: 0 });
+  } else {
+    result.push({ text: trimWordBoundary(text, 80), scoreBonus: 0 });
+    result.push({ text: trimWordBoundary(text, 30), scoreBonus: 1 });
+  }
+
+  result = result.filter(r => r.text);
+  if (!result.length)
+    result.push({ text: text.substring(0, 80), scoreBonus: 0 });
+
+  return result;
+}
+
+function trimWordBoundary(text: string, maxLength: number) {
+  if (text.length <= maxLength)
+    return text;
+  text = text.substring(0, maxLength);
+  // Find last word boundary in the text.
+  const match = text.match(/^(.*)\b(.+?)$/);
+  if (!match)
+    return '';
+  return match[1].trimEnd();
+}
+
 /**
  * Generates the shortest unique XPath for a node with a given ID in a UI5-like DOM.
  * The XPath does not use the node's ID.
@@ -126,7 +187,15 @@ export function getShortestUniqueXPathInUI5DOM(dom: UI5Node[], targetId: string)
   // 2. Generate the XPath segments for each node in the path
   const pathSegments = nodePath.map(({ node, siblings }) => {
     const index = getNodeIndex(node, siblings);
-    return `${node.role}[${index}]`;
+
+    // Checking if siblings contains the same node.role.
+    let sameNodeRole = false;
+    siblings.filter(sibling => sibling.id !== node.id).forEach(sibling => sameNodeRole = sibling.role === node.role || sameNodeRole);
+
+    if (sameNodeRole)
+      return `${node.role}[${index}]`;
+
+    return node.role;
   });
 
   // 3. Find the shortest unique path by starting from the target and moving up
@@ -135,7 +204,7 @@ export function getShortestUniqueXPathInUI5DOM(dom: UI5Node[], targetId: string)
     const candidateXpath = `//${relativeSegments.join('/')}`;
 
     // Check for uniqueness. The path starts with //, so search is always relative.
-    const matches = findNodesByXpath(dom, relativeSegments, true);
+    const matches = findByXPathInUI5Tree(dom, candidateXpath);
 
     if (matches.length === 1 && matches[0].id === targetId)
       return candidateXpath; // Found the shortest unique relative path
@@ -152,11 +221,7 @@ export function getShortestUniqueXPathInUI5DOM(dom: UI5Node[], targetId: string)
  * @param isRelativeSearch If true, the first segment can match any descendant.
  * @returns An array of matching UI5Nodes.
  */
-const findNodesRecursive = (
-  nodes: UI5Node[],
-  segments: string[],
-  isRelativeSearch: boolean
-): UI5Node[] => {
+const findNodesRecursive = (nodes: UI5Node[], segments: string[], isRelativeSearch: boolean): UI5Node[] => {
   if (!segments.length)
     return []; // Should not happen if called correctly
 
@@ -174,13 +239,28 @@ const findNodesRecursive = (
     roleCounter[node.role] = (roleCounter[node.role] || 0) + 1;
 
     // Check if the current node is a match for the segment
-    if (node.role === parsedSegment.role && roleCounter[node.role] === parsedSegment.index) {
+    if (node.role === parsedSegment.role && parsedSegment.index && roleCounter[node.role] === parsedSegment.index) {
       if (remainingSegments.length === 0) {
         // This is the last segment, so this node is a final match
         matchedNodes.push(node);
       } else {
         // Match found, continue searching in its children (now a direct search)
         matchedNodes.push(...findNodesRecursive(node.content, remainingSegments, false));
+      }
+    }
+  }
+
+  if (!parsedSegment.index) {
+    for (const node of nodes) {
+      // Check if the current node is a match for the segment
+      if (node.role === parsedSegment.role && roleCounter[node.role] === 1) {
+        if (remainingSegments.length === 0) {
+          // This is the last segment, so this node is a final match
+          matchedNodes.push(node);
+        } else {
+          // Match found, continue searching in its children (now a direct search)
+          matchedNodes.push(...findNodesRecursive(node.content, remainingSegments, false));
+        }
       }
     }
   }
@@ -234,10 +314,12 @@ export function findByXPathInUI5Tree(dom: UI5Node[], xpath: string): UI5Node[] {
  * @param segment The XPath segment string.
  * @returns An object with role and index, or null if parsing fails.
  */
-const parseSegment = (segment: string): { role: string; index: number } | null => {
-  const match = segment.match(/^(\w+)\[(\d+)\]$/);
+const parseSegment = (segment: string): { role: string; index?: number } | null => {
+  const match = segment.match(/^(\w+)(?:\[(\d+)\])?$/);
   if (!match)
     return null;
+  if (match.length === 1)
+    return { role: match[1] };
   return { role: match[1], index: parseInt(match[2], 10) };
 };
 
@@ -259,65 +341,15 @@ const getNodeIndex = (targetNode: UI5Node, siblings: UI5Node[]): number => {
   return index;
 };
 
+/** This is a very very shitty function remove this immideately. Takes up a lot of RAM. */
 /**
- * Finds all nodes in a DOM tree that match a given XPath.
- * This is a simplified evaluator that supports '//' and '/'.
- * @param nodes The current list of nodes to search within.
- * @param segments The remaining XPath segments to match.
- * @param isRelative Whether the search is relative ('//').
- * @returns A list of matching nodes.
- */
-const findNodesByXpath = (
-  nodes: UI5Node[],
-  segments: string[],
-  isRelative: boolean
-): UI5Node[] => {
-  if (!segments.length)
-    return [];
-
-  const [currentSegment, ...remainingSegments] = segments;
-  const parsedSegment = parseSegment(currentSegment);
-  if (!parsedSegment)
-    return []; // Invalid segment
-
-  const foundNodes: UI5Node[] = [];
-
-  for (const node of nodes) {
-    // Check if the current node matches the segment
-    const nodeIndex = getNodeIndex(node, nodes);
-    if (node.role === parsedSegment.role && nodeIndex === parsedSegment.index) {
-      if (remainingSegments.length === 0) {
-        foundNodes.push(node);
-      } else {
-        // Match found, continue searching in children with a non-relative path
-        foundNodes.push(...findNodesByXpath(node.content, remainingSegments, false));
-      }
-    }
-
-    // If relative, continue searching in children with the same segments
-    if (isRelative)
-      foundNodes.push(...findNodesByXpath(node.content, segments, true));
-  }
-
-  return foundNodes;
-};
-
-
-/**
- * Finds the target node by its ID and returns its ancestor path.
+ * Finds the target node by its ID and returns its ancestor path. - Returns Full Xpath.
  * @param dom The root nodes of the DOM.
  * @param targetId The ID of the node to find.
  * @returns An array of nodes representing the path from root to target, or null.
  */
-const findNodePath = (
-  dom: UI5Node[],
-  targetId: string
-): { node: UI5Node; siblings: UI5Node[] }[] | null => {
-  const search = (
-    nodes: UI5Node[],
-    id: string,
-    ancestors: { node: UI5Node; siblings: UI5Node[] }[]
-  ): { node: UI5Node; siblings: UI5Node[] }[] | null => {
+const findNodePath = (dom: UI5Node[], targetId: string): { node: UI5Node; siblings: UI5Node[] }[] | null => {
+  const search = (nodes: UI5Node[], id: string, ancestors: { node: UI5Node; siblings: UI5Node[] }[]): { node: UI5Node; siblings: UI5Node[] }[] | null => {
     for (const node of nodes) {
       const currentPath = [...ancestors, { node, siblings: nodes }];
       if (node.id === id)
@@ -332,3 +364,19 @@ const findNodePath = (
   };
   return search(dom, targetId, []);
 };
+
+// To compare closeness of 2 strings.
+export function cosineSimilarity(a: string, b: string): number {
+  const wordsA = a.split(/\s+/);
+  const wordsB = b.split(/\s+/);
+
+  const allWords = Array.from(new Set([...wordsA, ...wordsB]));
+  const vecA = allWords.map(w => wordsA.filter(x => x === w).length);
+  const vecB = allWords.map(w => wordsB.filter(x => x === w).length);
+
+  const dot = vecA.reduce((sum, v, i) => sum + v * vecB[i], 0);
+  const magA = Math.sqrt(vecA.reduce((sum, v) => sum + v * v, 0));
+  const magB = Math.sqrt(vecB.reduce((sum, v) => sum + v * v, 0));
+
+  return dot / (magA * magB || 1);
+}
