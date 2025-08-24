@@ -1,6 +1,6 @@
 # 🎭 + <img src="https://www.sap.com/dam/application/shared/logos/sap-logo-svg.svg" alt="SAPLogo" width="50"/>&nbsp;Playwright-SAP
 
-## [Documentation](https://arpitsureka.github.io/playwright-sap/)
+## [Documentation](https://playwright-sap.dev/)
 
 Playwright-SAP is a framework for Web Testing and Automation of **SAP Web Applications like Fiori, Netweaver, UI5.**
 
@@ -8,7 +8,7 @@ There are a lot of issues in using plain-vanilla Playwright on SAP Web Applicati
 
 Since this is **built on top of Playwright** all the playwright functions and features come with this as well. 
 
-[Playwright-SAP documentation - https://arpitsureka.github.io/playwright-sap/ ](https://arpitsureka.github.io/playwright-sap/)
+[Playwright-SAP documentation - https://playwright-sap.dev/ ](https://playwright-sap.dev/)
 
 
 [Playwright documentation - https://playwright.dev/](https://playwright.dev/)
@@ -38,7 +38,7 @@ In case of Issues please raise them here - https://github.com/ArpitSureka/playwr
 ---------------------------------------------------------------------------------------------------------------
 Playwright, built by Microsoft, is an outstanding open-source project.
 
-A big salute 🫡 and heartfelt thanks to all the developers and teams at Microsoft who made Playwright what it is today.👏
+Heartfelt thanks to all the developers and teams at Microsoft who made Playwright what it is today.👏
 
 ----------------------------------------------------------------------------------------------------------------
 

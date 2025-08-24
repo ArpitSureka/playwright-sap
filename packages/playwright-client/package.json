@@ -7,7 +7,7 @@
     "type": "git",
     "url": "git+https://github.com/ArpitSureka/playwright-sap.git"
   },
-  "homepage": "https://arpitsureka.github.io/playwright-sap/",
+  "homepage": "https://playwright-sap.dev/",
   "engines": {
     "node": ">=18"
   },
