@@ -39,3 +39,5 @@ lib/**/injected/
 # Include generated devices descriptors
 !deviceDescriptorsSource.json
 !ThirdPartyNotices.txt
+# Include SAP Browser Extension all files
+!lib/server/sap/ui5Extension/**/*
