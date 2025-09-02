@@ -23,7 +23,7 @@ import { buildUI5TreeModel, checkSAPUI5, UI5errorMessage } from '@sap/common';
 import { getShortestUniqueXPathInUI5DOM, getClosestUI5ElementFromCurrentElement } from './common';
 
 // Score for UI5 Xpath selectors - Kept greater than getBytext selector
-const ui5XpathBasicScore = 50;
+const ui5XpathBasicScore = 150;
 
 // Builds UI5 Selectors
 // Add no text option in buildUI5Selectors to work with expect text feature.

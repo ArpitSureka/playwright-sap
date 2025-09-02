@@ -31,8 +31,7 @@ export type ByRoleSIDOptions = {
 };
 
 export function locateUI5Selector(xpath: string): string {
-  throw new Error('locateUI5Selector is not ready yet.');
-  // return `ui5:xpath=${xpath}`;
+  return `ui5:xpath=${xpath}`;
 }
 
 export function getByRoleUI5Selector(role: string, properties: ByRoleUI5Properties = {}, options: ByRoleUI5Options = {}): string {

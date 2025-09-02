@@ -16,6 +16,6 @@
  */
 
 export const _builtinEnginesSAP = new Set([
-  'ui5:role', 'sid'
-  // 'ui5:xpath'
+  'ui5:role', 'sid',
+  'ui5:xpath'
 ]);
