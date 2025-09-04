@@ -18,7 +18,7 @@
 import { InjectedScript } from '@injected/injectedScript';
 import { SelectorToken } from '@injected/selectorGenerator';
 import { escapeForAttributeSelector } from '@isomorphic/stringUtils';
-import { checkSAPUI5, getElementFromUI5Id, getPropertiesUsingControlId, UI5errorMessage, UI5Node } from '@sap/common';
+import { checkSAPUI5, getPropertiesUsingControlId, UI5errorMessage, UI5Node } from '@sap/common';
 
 import { checkIfRoleAllowed, checkIfRoleAllowedWithoutProperties, getAllowedProperties, obviousTextProperties } from './allowedRolesAndProperties';
 import { cosineSimilarity, getClosestUI5ElementFromCurrentElement, suitableTextAlternatives_sap } from './common';
@@ -40,9 +40,9 @@ export function buildUI5RoleSelectors(injectedScript: InjectedScript, element: E
 
       const ui5_element = getClosestUI5ElementFromCurrentElement(element, injectedScript);
       if (ui5_element) {
-        let ui5_element_textContent: string|undefined;
+        let ui5_element_textContent: string | undefined;
         if (!allowText)
-          ui5_element_textContent = getElementFromUI5Id(ui5_element.id, win)?.textContent; // Dont use the textContent of element use of ui5_element;
+          ui5_element_textContent = win.document.getElementById(ui5_element.id)?.textContent || undefined;// Dont use the textContent of element use of ui5_element;
         const roleSelectors = makeRoleUI5Selectors(ui5_element, win, ui5_element_textContent);
         if (roleSelectors && roleSelectors.length)
           // Currently directly taking first role selector randomly can improve this by giving each propertyRole and PropertyName different scores.

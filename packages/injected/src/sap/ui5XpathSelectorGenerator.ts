@@ -17,13 +17,15 @@
 
 import { InjectedScript } from '@injected/injectedScript';
 import { SelectorToken } from '@injected/selectorGenerator';
-import { buildUI5TreeModel, checkSAPUI5, UI5errorMessage } from '@sap/common';
+import { checkSAPUI5, UI5errorMessage } from '@sap/common';
+import { buildUI5XmlTree } from '@sap/src/UI5XML';
+import { getXpathById } from '@sap/src/UI5Xpath';
 
 
-import { getShortestUniqueXPathInUI5DOM, getClosestUI5ElementFromCurrentElement } from './common';
+import { getClosestUI5ElementFromCurrentElement } from './common';
 
 // Score for UI5 Xpath selectors - Kept greater than getBytext selector
-const ui5XpathBasicScore = 150;
+const ui5XpathBasicScore = 50;
 
 // Builds UI5 Selectors
 // Add no text option in buildUI5Selectors to work with expect text feature.
@@ -35,13 +37,12 @@ export function buildUI5XpathSelectors(injectedScript: InjectedScript, element: 
   try {
     if (checkSAPUI5(win)) {
 
-      const ui5SelectorMap_element = buildUI5TreeModel(injectedScript.document.body, win);
-
+      const UI5XmlDom = buildUI5XmlTree(injectedScript.document, win);
       const ui5_element = getClosestUI5ElementFromCurrentElement(element, injectedScript);
       if (!ui5_element)
         return [];
 
-      const shortXpath = getShortestUniqueXPathInUI5DOM(ui5SelectorMap_element, ui5_element.id);
+      const shortXpath = getXpathById(UI5XmlDom, ui5_element.id);
       if (!shortXpath)
         return [];
 

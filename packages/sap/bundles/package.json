@@ -1,0 +1,8 @@
+{
+  "name": "sap-bundle",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "xpath": "0.0.34"
+  }
+}

@@ -17,9 +17,11 @@
 
 import { SelectorEngine, SelectorRoot } from '@injected/selectorEngine';
 import { parseAttributeSelector } from '@isomorphic/selectorParser';
-import { buildUI5TreeModel, checkSAPUI5, getElementFromUI5Id, getPropertiesUsingControlId, UI5Node } from '@sap/common';
+import { buildUI5TreeModel, checkSAPUI5, getPropertiesUsingControlId, UI5Node } from '@sap/common';
+import { buildUI5XmlTree } from '@sap/src/UI5XML';
+import { findElementsUsingXpath } from '@sap/src/UI5Xpath';
 
-import { createPropertyValueMatcher, findByXPathInUI5Tree, UI5PropertyType } from './common';
+import { createPropertyValueMatcher, UI5PropertyType } from './common';
 import { isElementVisible } from './domUtils';
 
 export function ui5XpathEngine(): SelectorEngine {
@@ -34,11 +36,11 @@ export function ui5XpathEngine(): SelectorEngine {
       if (!checkSAPUI5(window))
         throw new Error(`SAP UI5 not found in page.`);
 
-      const ui5DocumentTree = buildUI5TreeModel(document.body, window);
+      const UI5XmlDom = buildUI5XmlTree(document, window);
       const result: Element[] = [];
 
-      findByXPathInUI5Tree(ui5DocumentTree, selector).forEach(node => {
-        const ele = getElementFromUI5Id(node.id, window);
+      findElementsUsingXpath(UI5XmlDom, selector).forEach(node => {
+        const ele = document.getElementById(node.id); // Need to do this because node coming from here belongs to a different dom structure.
         if (ele)
           result.push(ele);
       });
@@ -94,7 +96,7 @@ function ui5IdSelectorEngineForProperty(ui5Tree: UI5Node[], role: string, window
 
     // This search can be optimized currently this function builds both properites inherited and own. We can optimize it to first fetch own properties and then check inherited properties only if own properties are not found.  -- Need to implement.
     if (checkIfNodeContainsProperty(node, role, window, property, propertyValueMatcher)) {
-      const ele = getElementFromUI5Id(node.id, window);
+      const ele = window.document.getElementById(node.id);
       if (ele)
         result.push(ele);
     }
