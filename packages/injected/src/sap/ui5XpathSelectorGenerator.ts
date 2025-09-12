@@ -17,12 +17,10 @@
 
 import { InjectedScript } from '@injected/injectedScript';
 import { SelectorToken } from '@injected/selectorGenerator';
-import { checkSAPUI5, UI5errorMessage } from '@sap/common';
+import { checkSAPUI5, getClosestUI5ElementFromCurrentElement, UI5errorMessage } from '@sap/common';
 import { buildUI5XmlTree } from '@sap/src/UI5XML';
 import { getXpathById } from '@sap/src/UI5Xpath';
 
-
-import { getClosestUI5ElementFromCurrentElement } from './common';
 
 // Score for UI5 Xpath selectors - Kept greater than getBytext selector
 const ui5XpathBasicScore = 190;
@@ -38,7 +36,7 @@ export function buildUI5XpathSelectors(injectedScript: InjectedScript, element: 
     if (checkSAPUI5(win)) {
 
       const UI5XmlDom = buildUI5XmlTree(injectedScript.document, win);
-      const ui5_element = getClosestUI5ElementFromCurrentElement(element, injectedScript);
+      const ui5_element = getClosestUI5ElementFromCurrentElement(element, win);
       if (!ui5_element)
         return [];
 

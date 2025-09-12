@@ -15,9 +15,7 @@
  * limitations under the License.
  */
 
-import { InjectedScript } from '@injected/injectedScript';
-import { _getElementById, buildUI5TreeModel, checkOverlap, checkOverlapXML, checkSAPUI5, UI5Node } from '@sap/common';
-import { buildUI5XmlTree } from '@sap/src/UI5XML';
+import { checkSAPUI5, getClosestUI5ElementFromCurrentElement } from '@sap/common';
 
 export type UI5PropertyType = {
   propertyValue: string,
@@ -26,27 +24,13 @@ export type UI5PropertyType = {
 
 // This function is used to check sap selectror, wether result and target element has the same ui5 parent element
 export function checkSAPSelector(result: Element, targetElement: Element, window: Window): Boolean {
-  let currentElement: Element | null = targetElement;
-  let ui5TargetTree: UI5Node[] = [];
   if (!checkSAPUI5(window))
     return false;
 
-  while (currentElement && (ui5TargetTree.length === 0 || !checkOverlap(ui5TargetTree, targetElement))){
-    ui5TargetTree = buildUI5TreeModel(currentElement, window, 1);
-    currentElement = currentElement.parentElement;
-  }
-  let resultUI5Tree: UI5Node[] = [];
-  let resultElement: Element = result;
-  while ((resultUI5Tree.length === 0 || !checkOverlap(resultUI5Tree, result)) && resultElement){
-    resultUI5Tree = buildUI5TreeModel(resultElement, window, 1);
-    if (resultElement.parentElement)
-      resultElement = resultElement.parentElement;
-    else
-      return false;
-  }
+  const resultEle = getClosestUI5ElementFromCurrentElement(result, window);
+  const targetEle = getClosestUI5ElementFromCurrentElement(targetElement, window);
 
-  //
-  if (ui5TargetTree.length && resultUI5Tree.length &&  resultUI5Tree[0].id === ui5TargetTree[0].id && resultUI5Tree[0].role === ui5TargetTree[0].role)
+  if (resultEle && targetEle && resultEle === targetEle)
     return true;
 
   return false;
@@ -90,32 +74,6 @@ export function createPropertyValueMatcher(propertyRole: string, properties?: UI
 
   // Currently i mode is the default if present or not prosent
   return (elementValue: string) => elementValue.toLowerCase().includes(propertyValue.toLowerCase()) ;
-}
-
-export function getClosestUI5ElementFromCurrentElement(element: Element, injectedScript: InjectedScript): Element | null {
-
-  let currentElement: Element | null = element;
-  const UI5XmlDom = buildUI5XmlTree(injectedScript.document, injectedScript.window);
-
-  while (1) {
-    if (!currentElement || currentElement === element.getRootNode() || currentElement === element.ownerDocument.body)
-      return null;
-    if (_getElementById(currentElement.id, injectedScript.window)) { // _getElementById can be replaced by UI5XmlDom.getElementById
-      const ui5Elem = UI5XmlDom.getElementById(currentElement.id);
-      if (ui5Elem && checkOverlapXML(ui5Elem, element))
-        break;
-    }
-    currentElement = currentElement.parentElement;
-  }
-
-  if (!currentElement || currentElement === (injectedScript.document.body as Element))
-    return null; // This line should not be reachable
-
-  const ui5Elem = UI5XmlDom.getElementById(currentElement.id);
-  if (ui5Elem)
-    return ui5Elem;
-
-  return null; // This line should not be reachable
 }
 
 // ----------------------------------------------------

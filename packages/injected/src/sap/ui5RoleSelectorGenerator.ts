@@ -18,10 +18,10 @@
 import { InjectedScript } from '@injected/injectedScript';
 import { SelectorToken } from '@injected/selectorGenerator';
 import { escapeForAttributeSelector } from '@isomorphic/stringUtils';
-import { checkSAPUI5, getPropertiesUsingControlId, UI5errorMessage } from '@sap/common';
+import { checkSAPUI5, getClosestUI5ElementFromCurrentElement, getPropertiesUsingControlId, UI5errorMessage } from '@sap/common';
 
 import { checkIfRoleAllowed, checkIfRoleAllowedWithoutProperties, getAllowedProperties, obviousTextProperties } from './allowedRolesAndProperties';
-import { cosineSimilarity, getClosestUI5ElementFromCurrentElement, suitableTextAlternatives_sap } from './common';
+import { cosineSimilarity, suitableTextAlternatives_sap } from './common';
 
 import type { UI5Property } from '@sap/types/properties';
 
@@ -38,7 +38,7 @@ export function buildUI5RoleSelectors(injectedScript: InjectedScript, element: E
   try {
     if (checkSAPUI5(win)) {
 
-      const ui5_element = getClosestUI5ElementFromCurrentElement(element, injectedScript);
+      const ui5_element = getClosestUI5ElementFromCurrentElement(element, win);
       if (ui5_element) {
         let ui5_element_textContent: string | undefined;
         if (!allowText)

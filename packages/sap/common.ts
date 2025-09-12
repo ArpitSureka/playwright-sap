@@ -16,7 +16,7 @@
  */
 import * as properites from '@sap/src/properties';
 
-import { LRUCache2 } from './utils/LRUCache';
+import { buildUI5XmlTree } from './src/UI5XML';
 
 export type UI5Node = {
   id: string;
@@ -56,86 +56,32 @@ export function UI5errorMessage(win: Window, message: string): void {
   });
 }
 
-// Assume each map element is taking 0.02 MB of storage. Total space now taken by cache is approx 40 mb.
-// Current caching algo is very bad. There is a lot of repitative data in cache. as i am storing again and again same thing in children.
-/**
-Parent1
-  |- SubParent
-        |-Child - This is stored 3 times 1st time is child, then in subparent, then in Parent 1
- */
-const cache_ui5Tree = new LRUCache2<string, UI5Node[]>(2000);
+// Note that this returns element from UI5 Dom and not the website dom.
+export function getClosestUI5ElementFromCurrentElement(element: Element, window: Window): Element | null {
 
-const generateHash = function(str: string): string {
-  let hash = 0;
-  for (const char of str) {
-    hash = (hash << 5) - hash + char.charCodeAt(0);
-    hash |= 0; // Constrain to 32bit integer
-  }
-  return hash.toString();
-};
+  let currentElement: Element | null = element;
+  const UI5XmlDom = buildUI5XmlTree(window.document, window);
 
-function hashElement(el: Element, depth?: number | null): string {
-  if (depth)
-    return generateHash(depth.toString() + el.outerHTML + depth.toString());
-  return generateHash(el.outerHTML);
-}
-
-export function buildUI5TreeModel(nodeElement: Element, win: Window, depth: number | null = null): UI5Node[] {
-
-  if (depth !== null && depth <= 0)
-    return [];
-
-  const children: UI5Node[] = [];
-  let child = nodeElement.firstElementChild;
-
-  const decreaseDepth = (nodeElement.getAttribute('data-sap-ui') || nodeElement.getAttribute('data-sap-ui-area')) ? 1 : 0;
-
-  while (child) {
-    const key = hashElement(child, depth);
-    const cachedResult = cache_ui5Tree.get(key);
-    if (cachedResult) {
-      children.push(...cachedResult);
-    } else {
-      const childNodes = buildUI5TreeModel(child, win, depth ? depth - decreaseDepth : null);
-      children.push(...childNodes);
-      cache_ui5Tree.set(key, childNodes);
+  while (1) {
+    if (!currentElement || currentElement === element.getRootNode() || currentElement === element.ownerDocument.body)
+      return null;
+    if (_getElementById(currentElement.id, window)) { // _getElementById can be replaced by UI5XmlDom.getElementById
+      const ui5Elem = UI5XmlDom.getElementById(currentElement.id);
+      if (ui5Elem && checkOverlapXML(ui5Elem, element))
+        break;
     }
-    child = child.nextElementSibling;
+    currentElement = currentElement.parentElement;
   }
 
-  const control = _getElementById(nodeElement.id, win);
+  if (!currentElement || currentElement === (window.document.body as Element))
+    return null; // This line should not be reachable
 
-  if (nodeElement.getAttribute('data-sap-ui') && control) {
-    return [{
-      id: control.getId(),
-      role: control.getMetadata().getName().split('.').pop() || '',
-      type: 'sap-ui-control',
-      content: children,
-    }];
-  } else if (nodeElement.getAttribute('data-sap-ui-area')) {
-    return [{
-      id: nodeElement.id,
-      role: 'sap-ui-area',
-      type: 'data-sap-ui',
-      content: children,
-    }];
-  }
+  const ui5Elem = UI5XmlDom.getElementById(currentElement.id);
+  if (ui5Elem)
+    return ui5Elem;
 
-  return children;
+  return null; // This line should not be reachable
 }
-
-export const checkOverlap = function(ui5SelectorMap_element: UI5Node[], targetElement: Element): UI5Node | null {
-
-  for (const item of ui5SelectorMap_element) {
-    const container = document.getElementById(item.id);
-    if (!container || !targetElement)
-      continue;
-
-    if (container.contains(targetElement))
-      return item;
-  }
-  return null;
-};
 
 export const checkOverlapXML = function(UI5XmlEle: Element, targetElement: Element): boolean {
 
