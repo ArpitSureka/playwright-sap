@@ -30,12 +30,12 @@ export function buildSAPSelectors(injectedScript: InjectedScript, element: Eleme
 
   // console.log('Hello');
   if (checkSAPUI5(injectedScript.window)) {
+    const result: SelectorToken[][] = [];
     const ui5RoleSelector = buildUI5RoleSelectors(injectedScript, element, allowText);
-    if (ui5RoleSelector.length)
-      return ui5RoleSelector;
     const ui5XpathSelector = buildUI5XpathSelectors(injectedScript, element);
-    if (ui5XpathSelector.length)
-      return ui5XpathSelector;
+    result.push(...ui5RoleSelector);
+    result.push(...ui5XpathSelector);
+    return result;
   }
 
   return sidSelectorGenerator(element);

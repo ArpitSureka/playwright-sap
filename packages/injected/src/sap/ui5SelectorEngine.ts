@@ -17,7 +17,7 @@
 
 import { SelectorEngine, SelectorRoot } from '@injected/selectorEngine';
 import { parseAttributeSelector } from '@isomorphic/selectorParser';
-import { buildUI5TreeModel, checkSAPUI5, getPropertiesUsingControlId, UI5Node } from '@sap/common';
+import { checkSAPUI5, getPropertiesUsingControlId } from '@sap/common';
 import { buildUI5XmlTree } from '@sap/src/UI5XML';
 import { findElementsUsingXpath } from '@sap/src/UI5Xpath';
 
@@ -68,12 +68,12 @@ export function ui5RoleEngine(): SelectorEngine {
       if (!checkSAPUI5(window))
         throw new Error(`SAP UI5 not found in page.`);
 
-      const ui5DocumentTree = buildUI5TreeModel(document.body, window);
+      const UI5XmlDom = buildUI5XmlTree(document, window);
       let result: Element[] = [];
       if (parsed.attributes.length === 0)
-        result = ui5IdSelectorEngineForProperty(ui5DocumentTree, role, window);
+        result = ui5IdSelectorEngineForProperty(UI5XmlDom, role, window);
       if (parsed.attributes.length === 1 && parsed.attributes[0].name)
-        result = ui5IdSelectorEngineForProperty(ui5DocumentTree, role, window, { propertyName: parsed.attributes[0].name, propertyValue: parsed.attributes[0].value }, parsed.attributes[0].caseSensitive);
+        result = ui5IdSelectorEngineForProperty(UI5XmlDom, role, window, { propertyName: parsed.attributes[0].name, propertyValue: parsed.attributes[0].value }, parsed.attributes[0].caseSensitive);
       else if (parsed.attributes.length > 1)
         throw new Error(`Not supported multiple attributes in UI5 selector: ${selector}`);
 
@@ -82,7 +82,7 @@ export function ui5RoleEngine(): SelectorEngine {
   };
 }
 
-function ui5IdSelectorEngineForProperty(ui5Tree: UI5Node[], role: string, window: Window, property?: UI5PropertyType, exact?: boolean): Element[] {
+function ui5IdSelectorEngineForProperty(UI5XmlDom: XMLDocument, role: string, window: Window, property?: UI5PropertyType, exact?: boolean): Element[] {
   // Depth-first search for nodes matching id and role
   const result: Element[] = [];
 
@@ -92,7 +92,7 @@ function ui5IdSelectorEngineForProperty(ui5Tree: UI5Node[], role: string, window
 
   const propertyValueMatcher = createPropertyValueMatcher(role, property ? [property] : undefined, exact);
 
-  function dfs(node: UI5Node) {
+  function dfs(node: Element) {
 
     // This search can be optimized currently this function builds both properites inherited and own. We can optimize it to first fetch own properties and then check inherited properties only if own properties are not found.  -- Need to implement.
     if (checkIfNodeContainsProperty(node, role, window, property, propertyValueMatcher)) {
@@ -101,23 +101,23 @@ function ui5IdSelectorEngineForProperty(ui5Tree: UI5Node[], role: string, window
         result.push(ele);
     }
 
-    if (node.content && node.content.length > 0) {
-      for (const child of node.content)
+    if (node.children && node.children.length > 0) {
+      for (const child of node.children)
         dfs(child);
     }
   }
 
-  for (const rootNode of ui5Tree)
-    dfs(rootNode);
+  for (const childNode of UI5XmlDom.children)
+    dfs(childNode);
 
   return result;
 }
 
 // propertyName is case-sensative
 // propertyValue is neither case sensative nor exact match if the string contains that string it will still be a match
-function checkIfNodeContainsProperty(node: UI5Node, role: string,  window: Window, property_node?: UI5PropertyType, propertyValueMatcher?: (text: string) => boolean): boolean {
+function checkIfNodeContainsProperty(node: Element, role: string,  window: Window, property_node?: UI5PropertyType, propertyValueMatcher?: (text: string) => boolean): boolean {
 
-  if (node.role.toLowerCase() !== role.toLowerCase())
+  if (node.nodeName.toLowerCase() !== role.toLowerCase() || node.nodeName === '')
     return false;
 
   if (!(property_node && propertyValueMatcher))

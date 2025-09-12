@@ -16,8 +16,9 @@
  */
 // import { createHash } from 'crypto';
 
-import { _getElementById, cyrb53 } from '@sap/common';
+import { _getElementById } from '@sap/common';
 import { LRUCache2 } from '@sap/utils/LRUCache';
+import { cyrb53 } from '@sap/utils/hashing';
 
 
 /**
