@@ -18,7 +18,7 @@
 import { InjectedScript } from '@injected/injectedScript';
 import { SelectorToken } from '@injected/selectorGenerator';
 import { escapeForAttributeSelector } from '@isomorphic/stringUtils';
-import { checkSAPUI5, getPropertiesUsingControlId, UI5errorMessage, UI5Node } from '@sap/common';
+import { checkSAPUI5, getPropertiesUsingControlId, UI5errorMessage } from '@sap/common';
 
 import { checkIfRoleAllowed, checkIfRoleAllowedWithoutProperties, getAllowedProperties, obviousTextProperties } from './allowedRolesAndProperties';
 import { cosineSimilarity, getClosestUI5ElementFromCurrentElement, suitableTextAlternatives_sap } from './common';
@@ -57,30 +57,28 @@ export function buildUI5RoleSelectors(injectedScript: InjectedScript, element: E
   return candidates;
 }
 
-function makeRoleUI5Selectors(ui5Node: UI5Node, win: Window, innerText?: string): SelectorToken[] | null {
-  if (!ui5Node)
+function makeRoleUI5Selectors(ui5_element: Element, win: Window, innerText?: string): SelectorToken[] | null {
+  if (!ui5_element)
     return null;
 
-  const element = ui5Node;
-
-  const properties = getPropertiesUsingControlId(element.id, win);
+  const properties = getPropertiesUsingControlId(ui5_element.id, win);
   const selectorTokens: SelectorToken[] = [];
 
-  if (properties && checkIfRoleAllowed(element.role)) {
-    const ownPropertySelectors = makeSelectorFromOwnProperties(properties.own, element.role, innerText);
+  if (properties && checkIfRoleAllowed(ui5_element.nodeName)) {
+    const ownPropertySelectors = makeSelectorFromOwnProperties(properties.own, ui5_element.nodeName, innerText);
     selectorTokens.push(...ownPropertySelectors);
   }
 
-  if (properties && properties.inherited.length && checkIfRoleAllowed(element.role)) {
-    const inheritedPropertySelectors = makeSelectorFromInheritedProperties(properties.inherited, element.role, innerText);
+  if (properties && properties.inherited.length && checkIfRoleAllowed(ui5_element.nodeName)) {
+    const inheritedPropertySelectors = makeSelectorFromInheritedProperties(properties.inherited, ui5_element.nodeName, innerText);
     selectorTokens.push(...inheritedPropertySelectors);
   }
 
   // Some UI5 controls like SearchField, StandardListItem, etc. dont have any properties but still can be selected by their role.
-  if (selectorTokens.length === 0 && checkIfRoleAllowedWithoutProperties(element.role)) {
+  if (selectorTokens.length === 0 && checkIfRoleAllowedWithoutProperties(ui5_element.nodeName)) {
     selectorTokens.push({
       engine: 'ui5:role',
-      selector: element.role,
+      selector: ui5_element.nodeName,
       score: ui5BasicScore
     });
   }

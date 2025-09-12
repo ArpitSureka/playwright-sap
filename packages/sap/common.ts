@@ -137,4 +137,18 @@ export const checkOverlap = function(ui5SelectorMap_element: UI5Node[], targetEl
   return null;
 };
 
+export const checkOverlapXML = function(UI5XmlEle: Element, targetElement: Element): boolean {
+
+  if (UI5XmlEle.id === '')
+    return false;
+
+  const container = document.getElementById(UI5XmlEle.id);
+
+  if (container && targetElement && container.contains(targetElement))
+    return true;
+
+  return false;
+
+};
+
 export const getPropertiesUsingControlId = properites.getPropertiesUsingControlId;

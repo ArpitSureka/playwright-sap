@@ -16,7 +16,8 @@
  */
 
 import { InjectedScript } from '@injected/injectedScript';
-import { buildUI5TreeModel, checkOverlap, checkSAPUI5, UI5Node } from '@sap/common';
+import { _getElementById, buildUI5TreeModel, checkOverlap, checkOverlapXML, checkSAPUI5, UI5Node } from '@sap/common';
+import { buildUI5XmlTree } from '@sap/src/UI5XML';
 
 export type UI5PropertyType = {
   propertyValue: string,
@@ -91,29 +92,31 @@ export function createPropertyValueMatcher(propertyRole: string, properties?: UI
   return (elementValue: string) => elementValue.toLowerCase().includes(propertyValue.toLowerCase()) ;
 }
 
-export function getClosestUI5ElementFromCurrentElement(element: Element, injectedScript: InjectedScript): UI5Node | null {
+export function getClosestUI5ElementFromCurrentElement(element: Element, injectedScript: InjectedScript): Element | null {
 
-  let ui5SelectorMap_element: UI5Node[] = [];
   let currentElement: Element | null = element;
+  const UI5XmlDom = buildUI5XmlTree(injectedScript.document, injectedScript.window);
 
-  while (currentElement && (ui5SelectorMap_element.length === 0 || !checkOverlap(ui5SelectorMap_element, element))) {
-    if (currentElement === element.getRootNode() || currentElement === element.ownerDocument.body)
+  while (1) {
+    if (!currentElement || currentElement === element.getRootNode() || currentElement === element.ownerDocument.body)
       return null;
-    ui5SelectorMap_element = buildUI5TreeModel(currentElement, injectedScript.window, 1);
+    if (_getElementById(currentElement.id, injectedScript.window)) { // _getElementById can be replaced by UI5XmlDom.getElementById
+      const ui5Elem = UI5XmlDom.getElementById(currentElement.id);
+      if (ui5Elem && checkOverlapXML(ui5Elem, element))
+        break;
+    }
     currentElement = currentElement.parentElement;
   }
 
   if (!currentElement || currentElement === (injectedScript.document.body as Element))
-    return null;
+    return null; // This line should not be reachable
 
-  const ui5_element = checkOverlap(ui5SelectorMap_element, element);
+  const ui5Elem = UI5XmlDom.getElementById(currentElement.id);
+  if (ui5Elem)
+    return ui5Elem;
 
-  if (ui5_element)
-    return ui5_element;
-
-  return null;
+  return null; // This line should not be reachable
 }
-
 
 // ----------------------------------------------------
 // Copied fron packages/injected/src/selectorGenerator.ts
