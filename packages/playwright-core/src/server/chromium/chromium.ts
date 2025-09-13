@@ -39,6 +39,7 @@ import { Browser } from '../browser';
 import { removeFolders } from '../utils/fileUtils';
 import { gracefullyCloseSet } from '../utils/processLauncher';
 import { ProgressController } from '../progress';
+import { updateOptionsToIncludeUI5Extension, pinUI5ExtensionByUpdatingPreferences } from './sap/chromium';
 
 import type { HTTPRequestParams } from '../utils/network';
 import type { BrowserOptions, BrowserProcess } from '../browser';
@@ -170,6 +171,10 @@ export class Chromium extends BrowserType {
     return env;
   }
 
+  override async prepareUserDataDir(options: types.LaunchOptions, userDataDir: string): Promise<void> {
+    await pinUI5ExtensionByUpdatingPreferences(userDataDir);
+  }
+
   override attemptToGracefullyCloseBrowser(transport: ConnectionTransport): void {
     const message: ProtocolRequest = { method: 'Browser.close', id: kBrowserCloseMessageId, params: {} };
     transport.send(message);
@@ -298,36 +303,7 @@ export class Chromium extends BrowserType {
 
   private _innerDefaultArgs(options: types.LaunchOptions): string[] {
 
-    const ui5ExtensionPath = path.resolve(__filename, '../../sap/ui5Extension');
-    if (options.headless === false) {
-      if (!options.args) {
-        options.args = [
-          `--disable-extensions-except=${ui5ExtensionPath}`,
-          `--load-extension=${ui5ExtensionPath}`
-        ];
-      } else {
-        if (!options.args.filter(arg => arg.includes('--disable-extensions-except')).length) {
-          options.args.push(`--disable-extensions-except=${ui5ExtensionPath}`);
-        } else {
-          options.args = options.args.map(arg => {
-            let na2 = arg;
-            if (na2.includes('--disable-extensions-except='))
-              na2 = na2.replace('--disable-extensions-except=', `--disable-extensions-except=${ui5ExtensionPath},`);
-            return na2;
-          });
-        }
-        if (!options.args.filter(arg => arg.includes('--load-extension')).length) {
-          options.args.push(`--load-extension=${ui5ExtensionPath}`);
-        } else {
-          options.args = options.args.map(arg => {
-            let na2 = arg;
-            if (na2.includes('--load-extension='))
-              na2 = na2.replace('--load-extension=', `--load-extension=${ui5ExtensionPath},`);
-            return na2;
-          });
-        }
-      }
-    }
+    options.args = updateOptionsToIncludeUI5Extension(options);
 
     const { args = [] } = options;
     const userDataDirArg = args.find(arg => arg.startsWith('--user-data-dir'));
