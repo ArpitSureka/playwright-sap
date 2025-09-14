@@ -16,6 +16,7 @@
  */
 
 import { checkSAPUI5, getClosestUI5ElementFromCurrentElement } from '@sap/common';
+import { UI5properties } from '@sap/types/properties';
 
 export type UI5PropertyType = {
   propertyValue: string,
@@ -37,43 +38,73 @@ export function checkSAPSelector(result: Element, targetElement: Element, window
 }
 
 // Inspired from packages/injected/src/injectedScript.ts - createTextMatcher
-export function createPropertyValueMatcher(propertyRole: string, properties?: UI5PropertyType[],  exact: boolean = false): ((elementValue: string) => boolean) | undefined {
+export function createPropertyValueMatcher(propertyRole: string, properties?: UI5PropertyType[],  exact: boolean = false): ((_properties: UI5properties) => boolean) | undefined {
 
   if (!properties)
     return undefined;
 
-  if (properties?.length > 1)
-    throw new Error('Multiple Properties not supported currenlty');
 
-  const { propertyValue, propertyName } = properties[0];
+  return (_properties: UI5properties): boolean => {
 
-  if (propertyName.toLowerCase() !== 'text') {
-    if (exact) {
-      return (elementValue: string) => elementValue === propertyValue;
-    } else {
-      return (elementValue: string): boolean => {
-        if (elementValue.length > 70)
-          return propertyValue.toLowerCase() === suitableTextAlternatives_sap(elementValue).sort((a, b) => b.scoreBonus - a.scoreBonus)[0].text.toLowerCase();
-        return elementValue.toLowerCase() === propertyValue.toLowerCase();
-      };
+    let matched = true;
+
+    // Update this function to make it work incase name is not an exact match. case sensative issue. PropertyName always start with small case - backgroundColorSet
+    const findPropertyValue = (name: string): string | undefined => {
+
+      if (_properties.own.properties[name])
+        return _properties.own.properties[name].value;
+
+      for (const inherited of _properties.inherited) {
+        if (inherited.properties[name])
+          return inherited.properties[name].value;
+      }
+
+      return undefined;
+    };
+
+    for (const property of properties) {
+
+      const { propertyValue, propertyName } = property;
+      const elementValue = findPropertyValue(propertyName);
+
+      if (!elementValue)
+        return false;
+
+      if (propertyName.toLowerCase() !== 'text') {
+        if (exact) {
+          matched &&= elementValue === propertyValue;
+        } else {
+          if (elementValue.length > 70)
+            matched &&= propertyValue.toLowerCase() === suitableTextAlternatives_sap(elementValue).sort((a, b) => b.scoreBonus - a.scoreBonus)[0].text.toLowerCase();
+          matched &&= elementValue.toLowerCase() === propertyValue.toLowerCase();
+        }
+      }
+
+      //  Testing is Pending.
+      // This is a regex checker in case propertyName. regex wont come from codegen but if the user explicitly tries to use regex in code.
+      if (propertyValue[0] === '/' && propertyValue.lastIndexOf('/') > 0) {
+        const lastSlash = propertyValue.lastIndexOf('/');
+        const re = new RegExp(propertyValue.substring(1, lastSlash), propertyValue.substring(lastSlash + 1));
+        matched &&= re.test(elementValue);
+      }
+
+      // In case the user explicitly adds exact = true - will only work when propertyName is text.
+      // Exact = true dosnt come directly from codegen.
+      if (exact)
+        matched &&= elementValue === propertyValue ;
+
+      // Currently i mode is the default if present or not prosent
+      matched &&=  elementValue.toLowerCase().includes(propertyValue.toLowerCase()) ;
+
+      if (!matched)
+        return matched;
+
     }
-  }
 
-  //  Testing is Pending.
-  // This is a regex checker in case propertyName. regex wont come from codegen but if the user explicitly tries to use regex in code.
-  if (propertyValue[0] === '/' && propertyValue.lastIndexOf('/') > 0) {
-    const lastSlash = propertyValue.lastIndexOf('/');
-    const re = new RegExp(propertyValue.substring(1, lastSlash), propertyValue.substring(lastSlash + 1));
-    return  (elementValue: string) => re.test(elementValue);
-  }
+    return matched;
 
-  // In case the user explicitly adds exact = true - will only work when propertyName is text.
-  // Exact = true dosnt come directly from codegen.
-  if (exact)
-    return  (elementValue: string) => elementValue === propertyValue ;
+  };
 
-  // Currently i mode is the default if present or not prosent
-  return (elementValue: string) => elementValue.toLowerCase().includes(propertyValue.toLowerCase()) ;
 }
 
 // ----------------------------------------------------

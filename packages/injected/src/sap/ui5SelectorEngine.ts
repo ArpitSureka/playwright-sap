@@ -20,6 +20,7 @@ import { parseAttributeSelector } from '@isomorphic/selectorParser';
 import { checkSAPUI5, getPropertiesUsingControlId } from '@sap/common';
 import { buildUI5XmlTree } from '@sap/src/UI5XML';
 import { findElementsUsingXpath } from '@sap/src/UI5Xpath';
+import { UI5properties } from '@sap/types/properties';
 
 import { createPropertyValueMatcher, UI5PropertyType } from './common';
 import { isElementVisible } from './domUtils';
@@ -73,7 +74,8 @@ export function ui5RoleEngine(): SelectorEngine {
       if (parsed.attributes.length === 0)
         result = ui5IdSelectorEngineForProperty(UI5XmlDom, role, window);
       if (parsed.attributes.length === 1 && parsed.attributes[0].name)
-        result = ui5IdSelectorEngineForProperty(UI5XmlDom, role, window, { propertyName: parsed.attributes[0].name, propertyValue: parsed.attributes[0].value }, parsed.attributes[0].caseSensitive);
+
+        result = ui5IdSelectorEngineForProperty(UI5XmlDom, role, window, parsed.attributes.map(atr => ({ propertyName: atr.name, propertyValue: atr.value })), parsed.attributes[0].caseSensitive);
       else if (parsed.attributes.length > 1)
         throw new Error(`Not supported multiple attributes in UI5 selector: ${selector}`);
 
@@ -82,7 +84,7 @@ export function ui5RoleEngine(): SelectorEngine {
   };
 }
 
-function ui5IdSelectorEngineForProperty(UI5XmlDom: XMLDocument, role: string, window: Window, property?: UI5PropertyType, exact?: boolean): Element[] {
+function ui5IdSelectorEngineForProperty(UI5XmlDom: XMLDocument, role: string, window: Window, property?: UI5PropertyType[], exact?: boolean): Element[] {
   // Depth-first search for nodes matching id and role
   const result: Element[] = [];
 
@@ -90,7 +92,7 @@ function ui5IdSelectorEngineForProperty(UI5XmlDom: XMLDocument, role: string, wi
   // if (!getAllowedProperties(role).includes(propertyName))
   //   throw new Error(`Property ${propertyName} is not supported.`);
 
-  const propertyValueMatcher = createPropertyValueMatcher(role, property ? [property] : undefined, exact);
+  const propertyValueMatcher = createPropertyValueMatcher(role, property, exact);
 
   function dfs(node: Element) {
 
@@ -115,7 +117,7 @@ function ui5IdSelectorEngineForProperty(UI5XmlDom: XMLDocument, role: string, wi
 
 // propertyName is case-sensative
 // propertyValue is neither case sensative nor exact match if the string contains that string it will still be a match
-function checkIfNodeContainsProperty(node: Element, role: string,  window: Window, property_node?: UI5PropertyType, propertyValueMatcher?: (text: string) => boolean): boolean {
+function checkIfNodeContainsProperty(node: Element, role: string,  window: Window, property_node?: UI5PropertyType[], propertyValueMatcher?: ((_properties: UI5properties) => boolean)): boolean {
 
   if (node.nodeName.toLowerCase() !== role.toLowerCase() || node.nodeName === '')
     return false;
@@ -127,18 +129,9 @@ function checkIfNodeContainsProperty(node: Element, role: string,  window: Windo
   if (!properties)
     return false;
 
-  const property = properties.own.properties[property_node.propertyName];
-  if (property && property.value && propertyValueMatcher(property.value))
+  if (propertyValueMatcher(properties))
     return true;
 
-
-  if (properties.inherited.length) {
-    for (const inherited of properties.inherited) {
-      const inheritedProperty = inherited.properties[property_node.propertyName];
-      if (inheritedProperty && inheritedProperty.value && propertyValueMatcher(inheritedProperty.value))
-        return true;
-    }
-  }
   return false;
 }
 

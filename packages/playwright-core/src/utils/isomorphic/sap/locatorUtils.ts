@@ -37,9 +37,6 @@ export function locateUI5Selector(xpath: string): string {
 export function getByRoleUI5Selector(role: string, properties: ByRoleUI5Properties = {}, options: ByRoleUI5Options = {}): string {
   const optionsString: string[] = [];
 
-  if (Object.entries(properties).length > 1)
-    throw new Error('Support for multiple properties have not been added yet.');
-
   for (const [key, value] of Object.entries(properties))
     optionsString.push(`[${key}=${escapeForAttributeSelector(value, !!options.exact)}]`);
 
