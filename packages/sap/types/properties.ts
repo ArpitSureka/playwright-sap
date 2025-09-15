@@ -51,12 +51,13 @@
 //     ],
 //     "isPropertiesData": true
 // };
-export type UI5properties = {
+export type UI5propertiesOriginal = {
     own: UI5Property;
     inherited: UI5Property[];
     // isPropertiesData: boolean; // Uncomment if needed
 };
 
+export type UI5properties = Map<string, string | boolean | number>;
 
 // {
 //     "meta": {
@@ -77,7 +78,7 @@ export type UI5Property = {
     },
     properties: {
         [key: string]: { // key is the propertyName
-            value: string; // value of the propertyValue
+            value: string | boolean | number; // value of the propertyValue
             // type: string; // Uncomment if needed
             // isDefault: boolean; // Uncomment if needed
         };

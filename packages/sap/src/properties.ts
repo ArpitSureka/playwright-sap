@@ -16,7 +16,7 @@
  */
 
 import { _getElementById } from '@sap/common';
-import { UI5properties } from '@sap/types/properties';
+import { UI5properties, UI5Property } from '@sap/types/properties';
 
 
 // Control Properties Info
@@ -31,19 +31,33 @@ import { UI5properties } from '@sap/types/properties';
  * @private
  */
 // Caching is not implemented yet, so this function will always return fresh data. -- Need to implement.
-export const getPropertiesUsingControlId = function(controlId: string, win: Window): UI5properties | undefined {
+export const getPropertiesUsingControlId = function(controlId: string, win: Window): UI5properties {
   const control = _getElementById(controlId, win);
-  let properties: UI5properties | undefined;
+  const properties: UI5properties = new Map();
 
   try {
     if (control) {
-      const inheritedProperties = _getInheritedProperties(control, win) || [];
-      const ownProperties = _getOwnProperties(control);
-      if (inheritedProperties && ownProperties) {
-        properties = {
-          own: ownProperties,
-          inherited: inheritedProperties,
-        };
+      const inheritedProperties: UI5Property[] = _getInheritedProperties(control, win) || [];
+      const ownProperties: UI5Property = _getOwnProperties(control);
+      if (inheritedProperties) {
+        // Cannot do this as i want to start with the oldest parent. Override the same properties in case there are properties with same name.
+        // even though gpt assured that ui5 already overrides if inherites properties with same name.
+        for (let i = inheritedProperties.length - 1; i > -1; i--) {
+          const temp = new Map(
+              Object.entries(inheritedProperties[i].properties).map(([key, obj]) => [key, obj.value])
+          );
+          temp.forEach((value, key) => {
+            properties.set(key, value);
+          });
+        }
+      }
+      if (ownProperties) {
+        const temp = new Map(
+            Object.entries(ownProperties.properties).map(([key, obj]) => [key, obj.value])
+        ) as UI5properties;
+        temp.forEach((value, key) => {
+          properties.set(key, value);
+        });
       }
     }
   } catch (error) {

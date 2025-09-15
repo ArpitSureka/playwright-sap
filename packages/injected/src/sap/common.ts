@@ -51,12 +51,10 @@ export function createPropertyValueMatcher(propertyRole: string, properties?: UI
     // Update this function to make it work incase name is not an exact match. case sensative issue. PropertyName always start with small case - backgroundColorSet
     const findPropertyValue = (name: string): string | undefined => {
 
-      if (_properties.own.properties[name])
-        return _properties.own.properties[name].value;
-
-      for (const inherited of _properties.inherited) {
-        if (inherited.properties[name])
-          return inherited.properties[name].value;
+      if (_properties.get(name)) {
+        const val = _properties.get(name);
+        if (typeof(val) === 'string')
+          return val;
       }
 
       return undefined;

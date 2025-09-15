@@ -23,7 +23,7 @@ import { checkSAPUI5, getClosestUI5ElementFromCurrentElement, getPropertiesUsing
 import { checkIfRoleAllowed, checkIfRoleAllowedWithoutProperties, getAllowedProperties, obviousTextProperties } from './allowedRolesAndProperties';
 import { cosineSimilarity, suitableTextAlternatives_sap } from './common';
 
-import type { UI5Property } from '@sap/types/properties';
+import type { UI5properties } from '@sap/types/properties';
 
 // Score for UI5 selectors
 const ui5BasicScore = 30;
@@ -38,15 +38,18 @@ export function buildUI5RoleSelectors(injectedScript: InjectedScript, element: E
   try {
     if (checkSAPUI5(win)) {
 
+      // ui5_element is from UI5 XML DOM.
       const ui5_element = getClosestUI5ElementFromCurrentElement(element, win);
       if (ui5_element) {
         let ui5_element_textContent: string | undefined;
         if (!allowText)
           ui5_element_textContent = win.document.getElementById(ui5_element.id)?.textContent || undefined;// Dont use the textContent of element use of ui5_element;
         const roleSelectors = makeRoleUI5Selectors(ui5_element, win, ui5_element_textContent);
-        if (roleSelectors && roleSelectors.length)
-          // Currently directly taking first role selector randomly can improve this by giving each propertyRole and PropertyName different scores.
-          candidates.push([roleSelectors[0]]);
+        if (roleSelectors) {
+          roleSelectors.forEach(token => {
+            candidates.push([token]);
+          });
+        }
       }
       return candidates;
     }
@@ -65,13 +68,8 @@ function makeRoleUI5Selectors(ui5_element: Element, win: Window, innerText?: str
   const selectorTokens: SelectorToken[] = [];
 
   if (properties && checkIfRoleAllowed(ui5_element.nodeName)) {
-    const ownPropertySelectors = makeSelectorFromOwnProperties(properties.own, ui5_element.nodeName, innerText);
+    const ownPropertySelectors = makeSelectorFromProperties(properties, ui5_element.nodeName, innerText);
     selectorTokens.push(...ownPropertySelectors);
-  }
-
-  if (properties && properties.inherited.length && checkIfRoleAllowed(ui5_element.nodeName)) {
-    const inheritedPropertySelectors = makeSelectorFromInheritedProperties(properties.inherited, ui5_element.nodeName, innerText);
-    selectorTokens.push(...inheritedPropertySelectors);
   }
 
   // Some UI5 controls like SearchField, StandardListItem, etc. dont have any properties but still can be selected by their role.
@@ -88,46 +86,24 @@ function makeRoleUI5Selectors(ui5_element: Element, win: Window, innerText?: str
   return selectorTokens;
 }
 
-
-function makeSelectorFromOwnProperties(ownProperties: UI5Property, elementRole: string, innerText?: string): SelectorToken[] {
-  // const selectorTokens: SelectorToken[] = [];
+function makeSelectorFromProperties(properties: UI5properties, elementRole: string, innerText?: string): SelectorToken[] {
   const selectorTokensData: selectorTokensData[] = [];
-  const propertyRole: string | undefined = ownProperties.meta?.controlName?.split('.').pop();
-  if (!propertyRole || propertyRole !== elementRole || !checkIfRoleAllowed(propertyRole))
+
+  // console.log('hi');
+  if (elementRole === '' || !checkIfRoleAllowed(elementRole))
     return [];
-  const allowedProperties = getAllowedProperties(propertyRole);
-  if (ownProperties && ownProperties.properties && propertyRole.length > 0) {
-    for (const propertyName in ownProperties.properties) {
-      if (allowedProperties.includes(propertyName)) {
-        const propertyValue: string = ownProperties.properties[propertyName].value;
-        if (propertyValue && propertyValue.length > 0)
-          selectorTokensData.push({ propertyRole, propertyName, propertyValue, score: allowedProperties.indexOf(propertyName) });
-      }
+  const allowedProperties = getAllowedProperties(elementRole);
+  for (const propertyName of properties.keys()) {
+    if (allowedProperties.includes(propertyName)) {
+      const propertyValue = properties.get(propertyName);
+      if (propertyValue && typeof(propertyValue) === 'string' && propertyValue.length > 0)
+        selectorTokensData.push({ propertyRole: elementRole, propertyName, propertyValue, score: allowedProperties.indexOf(propertyName) });
     }
   }
 
   return checkAndMakeSelectorTokens(selectorTokensData, innerText);
 }
 
-function makeSelectorFromInheritedProperties(inheritedProperties: UI5Property[], elementRole: string, innerText?: string): SelectorToken[] {
-  const selectorTokensData: selectorTokensData[] = [];
-  if (!inheritedProperties)
-    return [];
-  for (const inheritedProperty of inheritedProperties) {
-    if (!elementRole || elementRole.length === 0 || !checkIfRoleAllowed(elementRole))
-      continue;
-    const allowedProperties = getAllowedProperties(elementRole);
-    for (const propertyName in inheritedProperty.properties) {
-      if (allowedProperties.includes(propertyName)){
-        const propertyValue: string = inheritedProperty.properties[propertyName].value;
-        if (propertyValue && propertyValue.length > 0)
-          selectorTokensData.push({ propertyRole: elementRole, propertyName, propertyValue, score: allowedProperties.indexOf(propertyName) });
-      }
-    }
-  }
-
-  return checkAndMakeSelectorTokens(selectorTokensData, innerText);
-}
 
 function checkAndMakeSelectorTokens(selectorTokens: selectorTokensData[], innerText?: string) {
   const result: SelectorToken[] = [];
