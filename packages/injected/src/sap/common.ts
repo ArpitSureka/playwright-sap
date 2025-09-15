@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 
+import { AttributeSelectorPart } from '@isomorphic/selectorParser';
 import { checkSAPUI5, getClosestUI5ElementFromCurrentElement } from '@sap/common';
 import { UI5properties } from '@sap/types/properties';
 
@@ -38,7 +39,7 @@ export function checkSAPSelector(result: Element, targetElement: Element, window
 }
 
 // Inspired from packages/injected/src/injectedScript.ts - createTextMatcher
-export function createPropertyValueMatcher(propertyRole: string, properties?: UI5PropertyType[],  exact: boolean = false): ((_properties: UI5properties) => boolean) | undefined {
+export function createPropertyValueMatcher(propertyRole: string, properties?: AttributeSelectorPart[]): ((_properties: UI5properties) => boolean) | undefined {
 
   if (!properties)
     return undefined;
@@ -62,7 +63,10 @@ export function createPropertyValueMatcher(propertyRole: string, properties?: UI
 
     for (const property of properties) {
 
-      const { propertyValue, propertyName } = property;
+      const propertyName = property.name;
+      const propertyValue = property.value;
+      const exact = property.caseSensitive;
+
       const elementValue = findPropertyValue(propertyName);
 
       if (!elementValue)

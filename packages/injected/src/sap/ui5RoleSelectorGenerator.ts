@@ -27,6 +27,7 @@ import type { UI5properties } from '@sap/types/properties';
 
 // Score for UI5 selectors
 const ui5BasicScore = 30;
+const ui5TextScore = 220;
 
 // Builds UI5 Selectors
 // Add no text option in buildUI5Selectors to work with expect text feature.
@@ -68,8 +69,8 @@ function makeRoleUI5Selectors(ui5_element: Element, win: Window, innerText?: str
   const selectorTokens: SelectorToken[] = [];
 
   if (properties && checkIfRoleAllowed(ui5_element.nodeName)) {
-    const ownPropertySelectors = makeSelectorFromProperties(properties, ui5_element.nodeName, innerText);
-    selectorTokens.push(...ownPropertySelectors);
+    const selectors = makeSelectorFromProperties(properties, ui5_element.nodeName, innerText);
+    selectorTokens.push(...selectors);
   }
 
   // Some UI5 controls like SearchField, StandardListItem, etc. dont have any properties but still can be selected by their role.
@@ -107,6 +108,7 @@ function makeSelectorFromProperties(properties: UI5properties, elementRole: stri
 
 function checkAndMakeSelectorTokens(selectorTokens: selectorTokensData[], innerText?: string) {
   const result: SelectorToken[] = [];
+  selectorTokens.sort((a, b) => a.score - b.score);
   selectorTokens.forEach(selectorToken => {
 
     let propertyValue = selectorToken.propertyValue;
@@ -134,7 +136,7 @@ function checkAndMakeSelectorTokens(selectorTokens: selectorTokensData[], innerT
       result.push({
         engine: 'ui5:role',
         selector: `${selectorToken.propertyRole}[${selectorToken.propertyName}=${escapeForAttributeSelector(propertyValue, false)}]`,
-        score: 220
+        score: ui5TextScore
       });
     } else {
       result.push({
@@ -148,4 +150,4 @@ function checkAndMakeSelectorTokens(selectorTokens: selectorTokensData[], innerT
   return result;
 }
 
-type selectorTokensData  = {propertyRole: string, propertyName: string, propertyValue: string, score?: number};
+type selectorTokensData  = {propertyRole: string, propertyName: string, propertyValue: string, score: number};
