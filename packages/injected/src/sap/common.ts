@@ -16,7 +16,7 @@
  */
 
 import { AttributeSelectorPart } from '@isomorphic/selectorParser';
-import { checkSAPUI5, getClosestUI5ElementFromCurrentElement } from '@sap/common';
+import { checkOverlap, checkSAPUI5, getClosestUI5ElementFromCurrentElement } from '@sap/common';
 import { UI5properties } from '@sap/types/properties';
 
 export type UI5PropertyType = {
@@ -32,7 +32,7 @@ export function checkSAPSelector(result: Element, targetElement: Element, window
   const resultEle = getClosestUI5ElementFromCurrentElement(result, window);
   const targetEle = getClosestUI5ElementFromCurrentElement(targetElement, window);
 
-  if (resultEle && targetEle && resultEle === targetEle)
+  if (resultEle && targetEle && resultEle === targetEle && checkOverlap(resultEle, targetElement))
     return true;
 
   return false;

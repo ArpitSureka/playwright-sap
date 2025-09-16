@@ -27,7 +27,14 @@ import type { UI5properties } from '@sap/types/properties';
 
 // Score for UI5 selectors
 const ui5BasicScore = 30;
+
+// Kept this higher than score of getByText
 const ui5TextScore = 220;
+
+// This is the max number of properties that will be clubbed together when creating UI5 getByRoleSelector
+const maxPropertiesTogetherViaCodegen = 3;
+
+const maxUI5Selectors = 5;
 
 // Builds UI5 Selectors
 // Add no text option in buildUI5Selectors to work with expect text feature.
@@ -88,9 +95,8 @@ function makeRoleUI5Selectors(ui5_element: Element, win: Window, innerText?: str
 }
 
 function makeSelectorFromProperties(properties: UI5properties, elementRole: string, innerText?: string): SelectorToken[] {
-  const selectorTokensData: selectorTokensData[] = [];
+  let selectorTokensData: selectorTokensData[] = [];
 
-  // console.log('hi');
   if (elementRole === '' || !checkIfRoleAllowed(elementRole))
     return [];
   const allowedProperties = getAllowedProperties(elementRole);
@@ -98,21 +104,28 @@ function makeSelectorFromProperties(properties: UI5properties, elementRole: stri
     if (allowedProperties.includes(propertyName)) {
       const propertyValue = properties.get(propertyName);
       if (propertyValue && typeof(propertyValue) === 'string' && propertyValue.length > 0)
-        selectorTokensData.push({ propertyRole: elementRole, propertyName, propertyValue, score: allowedProperties.indexOf(propertyName) });
+        selectorTokensData.push({ propertyName, propertyValue, score: allowedProperties.indexOf(propertyName) });
     }
   }
 
-  return checkAndMakeSelectorTokens(selectorTokensData, innerText);
+  selectorTokensData.sort((a, b) => a.score - b.score);
+  selectorTokensData = selectorTokensData.slice(0, maxUI5Selectors);
+
+  return checkAndMakeSelectorTokens(selectorTokensData, elementRole, innerText);
 }
 
+type selectorTokensData  = { propertyName: string, propertyValue: string, score: number};
 
-function checkAndMakeSelectorTokens(selectorTokens: selectorTokensData[], innerText?: string) {
+function checkAndMakeSelectorTokens(selectorTokens: selectorTokensData[], propertyRole: string, innerText?: string) {
   const result: SelectorToken[] = [];
-  selectorTokens.sort((a, b) => a.score - b.score);
+
+  // positions store the p
+  const positions: number[] = [];
+  const data: {selector: string, score: number}[] = [];
+
   selectorTokens.forEach(selectorToken => {
 
     let propertyValue = selectorToken.propertyValue;
-
     if (innerText) {
       if (obviousTextProperties.includes(selectorToken.propertyName))
         return;
@@ -132,16 +145,15 @@ function checkAndMakeSelectorTokens(selectorTokens: selectorTokensData[], innerT
     // If Both propertyName and propertyRole are text then preferabely use getByTextLocator.
     // Shift this Later to the part where we rearrange priorities of the locators when UI5 locators are present.
     // Upcoming feature in the next version from 1.2.0
-    if (selectorToken.propertyName.toLowerCase() === 'text' && selectorToken.propertyRole.toLowerCase() === 'text'){
-      result.push({
-        engine: 'ui5:role',
-        selector: `${selectorToken.propertyRole}[${selectorToken.propertyName}=${escapeForAttributeSelector(propertyValue, false)}]`,
+
+    if (selectorToken.propertyName.toLowerCase() === 'text' && propertyRole.toLowerCase() === 'text') {
+      data.push({
+        selector: `[${selectorToken.propertyName}=${escapeForAttributeSelector(propertyValue, false)}]`,
         score: ui5TextScore
       });
     } else {
-      result.push({
-        engine: 'ui5:role',
-        selector: `${selectorToken.propertyRole}[${selectorToken.propertyName}=${escapeForAttributeSelector(propertyValue, false)}]`,
+      data.push({
+        selector: `[${selectorToken.propertyName}=${escapeForAttributeSelector(propertyValue, false)}]`,
         score: ui5BasicScore + Math.trunc((selectorToken.score ? selectorToken.score : 0) / 10)
       });
     }
@@ -149,5 +161,3 @@ function checkAndMakeSelectorTokens(selectorTokens: selectorTokensData[], innerT
   });
   return result;
 }
-
-type selectorTokensData  = {propertyRole: string, propertyName: string, propertyValue: string, score: number};

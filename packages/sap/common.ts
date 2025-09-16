@@ -83,6 +83,23 @@ export function getClosestUI5ElementFromCurrentElement(element: Element, window:
   return null; // This line should not be reachable
 }
 
+// element is from UI5 XML DOM
+export const checkOverlap = function(element: Element, targetElement: Element): boolean {
+
+  const container = document.getElementById(element.id);
+  if (!container || !targetElement)
+    return false;
+
+  if (container.contains(targetElement))
+    return getDistanceBetween2HTMLelements(container, targetElement, 5) < 5;
+
+  // Not sure if this should be here remove if this causes issues.
+  if (targetElement.contains(container))
+    return getDistanceBetween2HTMLelements(targetElement, container, 3) < 3;
+
+  return false;
+};
+
 export const checkOverlapXML = function(UI5XmlEle: Element, targetElement: Element): boolean {
 
   if (UI5XmlEle.id === '')
@@ -95,6 +112,19 @@ export const checkOverlapXML = function(UI5XmlEle: Element, targetElement: Eleme
 
   return false;
 
+};
+
+const getDistanceBetween2HTMLelements = function(outerEle: Element, innerEle: Element, maxTraversal?: number): number {
+  let count = 0 ;
+  let current: Element | null = innerEle;
+
+  while (current && current !== outerEle) {
+    if (maxTraversal && count > maxTraversal)
+      break;
+    count ++;
+    current = current.parentElement;
+  }
+  return count;
 };
 
 export const getPropertiesUsingControlId = properites.getPropertiesUsingControlId;

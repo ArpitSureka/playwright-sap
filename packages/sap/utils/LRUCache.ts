@@ -47,4 +47,8 @@ export class LRUCache2<K, V> {
     }
     this.cache.set(key, value);
   }
+
+  clear() {
+    this.cache.clear();
+  }
 }
