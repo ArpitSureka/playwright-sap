@@ -157,7 +157,40 @@ function checkAndMakeSelectorTokens(selectorTokens: selectorTokensData[], proper
         score: ui5BasicScore + Math.trunc((selectorToken.score ? selectorToken.score : 0) / 10)
       });
     }
-
   });
+
+  data.sort((a, b) => a.score - b.score);
+  positions.push(data.length);
+
+  for (let i = 1; i < maxPropertiesTogetherViaCodegen; i++) {
+    const low = i === 1 ? 0 : positions[i - 2];
+    const high = positions[i - 1];
+
+    for (let j = low; j < high; j++){
+      const first = data[j];
+      for (let k = 0; k < positions[0]; k++) {
+        const second = data[k];
+
+        if (j === k)
+          continue;
+
+        data.push({
+          selector: first.selector + second.selector,
+          score: first.score + second.score
+        });
+      }
+    }
+
+    positions.push(data.length);
+  }
+
+  data.forEach(selector => {
+    result.push({
+      engine: 'ui5:role',
+      selector: `${propertyRole}${selector.selector}`,
+      score: selector.score
+    });
+  });
+
   return result;
 }
