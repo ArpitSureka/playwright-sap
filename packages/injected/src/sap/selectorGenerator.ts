@@ -31,17 +31,20 @@ export function buildSAPSelectors(injectedScript: InjectedScript, element: Eleme
 
   if (checkSAPUI5(injectedScript.window)) {
 
-    const sapSelectorCache = checkIfCacheContainsSAPSelector(injectedScript, element, allowText);
-    if (sapSelectorCache)
-      return sapSelectorCache;
-
     const result: SelectorToken[][] = [];
-    const ui5RoleSelector = buildUI5RoleSelectors(injectedScript, element, allowText);
+    const sapSelectorCache = checkIfCacheContainsSAPSelector(injectedScript, element, allowText);
+    if (sapSelectorCache) {
+      result.push(...sapSelectorCache);
+    } else {
+      result.push(...buildUI5RoleSelectors(injectedScript, element, allowText));
+      addSAPSelectorInCache(injectedScript, element, allowText, result);
+    }
+
+    // Keeping XPath selector out of cache. Dont know why but xpath selector is not behaving properly with cache.
+    // Not sure about this but better safe then sorry.
     const ui5XpathSelector = buildUI5XpathSelectors(injectedScript, element);
-    result.push(...ui5RoleSelector);
     result.push(...ui5XpathSelector);
 
-    addSAPSelectorInCache(injectedScript, element, allowText, result);
     return result;
   }
 

@@ -22,8 +22,9 @@ import { buildUI5XmlTree } from '@sap/src/UI5XML';
 import { getXpathById } from '@sap/src/UI5Xpath';
 
 
-// Score for UI5 Xpath selectors - Kept greater than getBytext selector
-const ui5XpathBasicScore = 190;
+// Score for UI5 Xpath selectors - Kept greater than getBytext selector.
+// Not satisfied with the UI5 Xpath Performance. Kepping it Somewhat high only.
+const ui5XpathBasicScore = 200;
 
 // Builds UI5 Selectors
 // Add no text option in buildUI5Selectors to work with expect text feature.
