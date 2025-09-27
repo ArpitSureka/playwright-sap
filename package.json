@@ -106,5 +106,5 @@
     "minimatch": "^10.0.3",
     "npm-packlist": "^10.0.1"
   },
-  "keywords": ["playwright", "playwright-sap", "SAP Automation", "SAP Testing", "SAP E2E Testing"]
+  "keywords": ["playwright", "playwright-sap", "SAP Automation", "SAP Testing", "SAP E2E Testing", "SAP"]
 }

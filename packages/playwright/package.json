@@ -61,5 +61,5 @@
   "optionalDependencies": {
     "fsevents": "2.3.2"
   },
-  "keywords": ["playwright", "playwright-sap", "SAP Automation", "SAP Testing", "SAP E2E Testing"]
+  "keywords": ["playwright", "playwright-sap", "SAP Automation", "SAP Testing", "SAP E2E Testing", "SAP"]
 }

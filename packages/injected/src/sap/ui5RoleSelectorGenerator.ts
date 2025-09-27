@@ -103,6 +103,8 @@ function makeSelectorFromProperties(properties: UI5properties, elementRole: stri
   for (const propertyName of properties.keys()) {
     if (allowedProperties.includes(propertyName)) {
       const propertyValue = properties.get(propertyName);
+
+      // Only allowing string ones in generator. but in selector engine number and boolean also works.
       if (propertyValue && typeof(propertyValue) === 'string' && propertyValue.length > 0)
         selectorTokensData.push({ propertyName, propertyValue, score: allowedProperties.indexOf(propertyName) });
     }

@@ -56,6 +56,8 @@ export function createPropertyValueMatcher(propertyRole: string, properties?: At
         const val = _properties.get(name);
         if (typeof(val) === 'string')
           return val;
+        else if (val)
+          return val.toString();
       }
 
       return undefined;
