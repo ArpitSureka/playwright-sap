@@ -118,7 +118,7 @@ function makeSelectorFromProperties(properties: UI5properties, elementRole: stri
 
 type selectorTokensData  = { propertyName: string, propertyValue: string, score: number};
 
-function checkAndMakeSelectorTokens(selectorTokens: selectorTokensData[], propertyRole: string, innerText?: string) {
+function checkAndMakeSelectorTokens(selectorTokens: selectorTokensData[], propertyRole: string, innerText?: string): SelectorToken[] {
   const result: SelectorToken[] = [];
 
   // positions store the p
@@ -178,7 +178,7 @@ function checkAndMakeSelectorTokens(selectorTokens: selectorTokensData[], proper
 
         data.push({
           selector: first.selector + second.selector,
-          score: first.score + second.score
+          score: first.score + (second.score / 10)
         });
       }
     }
